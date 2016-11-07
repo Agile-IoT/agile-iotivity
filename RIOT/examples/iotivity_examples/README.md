@@ -304,7 +304,7 @@ Managing a PUT request the output is like
 There are many different ways to test this scenario.
 
  - Tools: you can use [Copper(Cu)][7] or [coap-cli][8] to perform get request. The second one supports CBOR.
- - Iotivity Client: you can write an iotivity client that runs on Linux. An example of a client will be available soon.
+ - Iotivity Client: you can write an iotivity client that runs on Linux. [Here][9] there is a simple client that can be used as test client for this scenario.
 
 [1]: https://github.com/iotivity/iotivity-constrained/
 [2]: http://cbor.io/
@@ -314,4 +314,4 @@ There are many different ways to test this scenario.
 [6]: https://github.com/RIOT-OS/RIOT/pull/5926
 [7]: http://people.inf.ethz.ch/mkovatsc/copper.php
 [8]: https://github.com/mcollina/coap-cli
-
+[9]: https://github.com/Agile-IoT/agile-iotivity/tree/master/Simple-Client-Linux
