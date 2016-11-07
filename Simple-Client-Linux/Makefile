@@ -81,12 +81,3 @@ ${iotivity_dir}: ${usr_include_dir}
 	ls $@/resource
 
 prep: ${prep_tasks}
-
-run/%: ${CURDIR}/bin/%
-	${<D}/${<F}
-
-xterm/% : bin/%
-	xterm -e ${MAKE} run/${@F} &
-	sleep 5
-
-run: xterm/simple_client
