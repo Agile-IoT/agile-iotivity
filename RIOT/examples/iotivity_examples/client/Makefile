@@ -70,5 +70,3 @@ WERROR=0
 QUIET ?= 1
 
 include $(RIOTBASE)/Makefile.include
-
-	

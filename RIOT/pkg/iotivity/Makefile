@@ -27,7 +27,6 @@ copy_makefile:
 
 
 submodules-download:
-	git -C $(PKG_LIB) submodule update --init 
-	
+	git -C $(PKG_LIB) submodule update --init
 
 include $(RIOTBASE)/pkg/pkg.mk

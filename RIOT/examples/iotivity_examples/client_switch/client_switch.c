@@ -122,7 +122,7 @@ discovery(const char *di, const char *uri, oc_string_array_t types,
             memcpy(&light_server, server, sizeof(oc_server_handle_t));
 
             strncpy(light_1, uri, uri_len);
-            light_1[uri_len] = '\0';      
+            light_1[uri_len] = '\0';
 
             got_discovery_response = true;
 
@@ -169,8 +169,8 @@ static oc_event_callback_retval_t
 do_discovery(void *data)
 {
     if (got_discovery_response) {
-        PRINT("client_oic: Discovery done\n");   
-        oc_set_delayed_callback(NULL, &operate, 1);   
+        PRINT("client_oic: Discovery done\n");
+        oc_set_delayed_callback(NULL, &operate, 1);
         return DONE;
     }
     oc_do_ip_discovery("oic.r.light", &discovery, NULL);

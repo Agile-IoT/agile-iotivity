@@ -69,7 +69,7 @@ oc_main_thread(void *arg)
 {
     (void)arg;
 
-    pthread_cond_init(&cv, NULL);    
+    pthread_cond_init(&cv, NULL);
 
     static const oc_handler_t handler = {.init = app_init,
                                          .signal_event_loop = signal_event_loop,
@@ -87,7 +87,7 @@ oc_main_thread(void *arg)
     puts("server_oic: Configured network interfaces:");
     _netif_config(0, NULL);
 
-    
+
 
     oc_clock_time_t next_event;
     while (!quit) {

@@ -105,4 +105,3 @@ term: host-tools
 
 host-tools:
 	$(AD)env -u CC -u CFLAGS make -C $(RIOTBASE)/dist/tools
-	

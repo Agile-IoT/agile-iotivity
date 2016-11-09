@@ -107,4 +107,3 @@ res_light_register(void)
 
     res_light_set_led_state(false); //RIMANE TRUE... PERCHe'
 }
-

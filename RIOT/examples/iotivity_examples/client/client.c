@@ -122,7 +122,7 @@ discovery(const char *di, const char *uri, oc_string_array_t types,
             memcpy(&light_server, server, sizeof(oc_server_handle_t));
 
             strncpy(light_1, uri, uri_len);
-            light_1[uri_len] = '\0';      
+            light_1[uri_len] = '\0';
 
             got_discovery_response = true;
 
@@ -136,10 +136,10 @@ static oc_event_callback_retval_t
 periodic_put(void *data)
 {
     if (observe_stopped) {
-        PRINT("client_oic: Stop periodic PUT\n");     
+        PRINT("client_oic: Stop periodic PUT\n");
         return DONE;
     }
-   
+
     if (oc_init_put(light_1, &light_server, NULL, &put_light, HIGH_QOS, NULL)) {
         oc_rep_start_root_object();
         oc_rep_set_boolean(root, state, !light_state);
@@ -159,11 +159,11 @@ static oc_event_callback_retval_t
 do_discovery(void *data)
 {
     if (got_discovery_response) {
-        PRINT("client_oic: Discovery done\n");   
+        PRINT("client_oic: Discovery done\n");
         PRINT("client_oic: Ready...\n");
         oc_do_observe(light_1, &light_server, NULL, &observe_light, LOW_QOS, NULL);
         oc_set_delayed_callback(NULL, &periodic_put, 1);
-        oc_set_delayed_callback(NULL, &stop_observe, 100);   
+        oc_set_delayed_callback(NULL, &stop_observe, 100);
         set_led_state(true);
         return DONE;
     }

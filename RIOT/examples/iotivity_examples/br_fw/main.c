@@ -12,7 +12,7 @@
  * @{
  *
  * @file        main.c
- * @brief       This is a BR with multicast forwarding for OIC discovery 
+ * @brief       This is a BR with multicast forwarding for OIC discovery
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
  *                              <m.antonini@create-net.org>
@@ -83,20 +83,20 @@ void handle_incoming_message(uint8_t *payload, int *size, uint8_t *addr,
                   wk_addr, 16, AF_INET6,
                   port, MULTICAST_PORT);
 }
-void *start_oic_forwarding_loop(void *arg) 
+
+void *start_oic_forwarding_loop(void *arg)
 {
-    (void)arg;
+  (void)arg;
 
   msg_init_queue(_oic_fw_msg_queue, OIC_FW_QUEUE_SIZE);
 
-  
   static uint8_t addr[16] = { 0 };
   uint8_t remote_addr[16] = { 0 };
   size_t remote_addr_len;
   uint16_t remote_port;
 
   conn_udp_t conn;
- 
+
   int n = conn_udp_create(&conn, addr, sizeof(addr), AF_INET6, MULTICAST_PORT);
 
   if (n != 0) {
@@ -148,11 +148,11 @@ int main(void)
         printf("forwarder: error.. no available network interface\n");
         return -1;
     }
- 
+
     interface_pid = interfaces[0];
 
-    kernel_pid_t mcast_thread = thread_create(oic_forwarding_thread_stack, sizeof(oic_forwarding_thread_stack), 
-        THREAD_PRIORITY_MAIN, THREAD_CREATE_STACKTEST,  start_oic_forwarding_loop, 
+    kernel_pid_t mcast_thread = thread_create(oic_forwarding_thread_stack, sizeof(oic_forwarding_thread_stack),
+        THREAD_PRIORITY_MAIN, THREAD_CREATE_STACKTEST,  start_oic_forwarding_loop,
         NULL, "oic_fw_thread");
 
     /* start shell */

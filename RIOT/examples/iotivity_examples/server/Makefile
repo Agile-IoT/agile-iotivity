@@ -80,5 +80,5 @@ include $(RIOTBASE)/Makefile.include
 %.o: %.c
 	${CC} -c -o $@ $< ${CFLAGS} ${INCLUDES}
 
-clean: 
+clean:
 	rm -rf ${RES_OBJ}

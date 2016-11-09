@@ -4,7 +4,7 @@ These examples implement some simple clients and a server to test the IoTivity p
 All examples use the realm-local multicast address **ff03:158** instead the link-local multicast address **ff02::158**. Every payload is [CBOR][2] encoded.
 All examples have been tested on Native and SAMR21-XPRO.
 ##Index
- - Iotivity Examples 
+ - Iotivity Examples
    - [Server Example](#server_ex)
    - [Client Example](#client_ex)
    - [Client_Switch Example](#client_sw_ex)
@@ -22,7 +22,7 @@ All examples have been tested on Native and SAMR21-XPRO.
      - [Testing](#l2n_tst)
 
 ##<a name="server_ex"></a>Server Example
-This example implements an IoTivity Server that contains 4 resources. 
+This example implements an IoTivity Server that contains 4 resources.
  1. */oic/res*: returns the representation of resources available on the server.  Defined [here][3].
  2. */oic/p*: returns information about the platform on which the server runs. Defined [here][3].
  3. */oic/d*: returns information about the device on which the server runs. Defined [here][3].
@@ -32,16 +32,16 @@ This example implements an IoTivity Server that contains 4 resources.
 	- OBSERVE: the registered client is notified when the status changes. The payload is the same of the GET response.
 
 ## <a name="client_ex"></a>Client Example
-This example implements a simple client. It is able to discover resources with ResourceType *oic.r.light*. Once it finds a resource, it registers for OBSERVE notifications. It changes the status every second by sending a periodic PUT request. 
+This example implements a simple client. It is able to discover resources with ResourceType *oic.r.light*. Once it finds a resource, it registers for OBSERVE notifications. It changes the status every second by sending a periodic PUT request.
 
 ##<a name="client_sw_ex"></a>Client_Switch Example
 This example implements a simple client. It is able to discover resources with ResourceType *oic.r.light*. Once it finds a resource, it registers for OBSERVE notifications. It changes the status when the User Button is pressed. If the button  is not present it is just an observer.
 
 ##<a name="br_fw_ex"></a>BR_FW Example
-It is an "enhanced" version of the GNRC Border Router. It implements a simple forwarder (UDP server/client) for multicast requests with destination ff03::158 port 5683. 
+It is an "enhanced" version of the GNRC Border Router. It implements a simple forwarder (UDP server/client) for multicast requests with destination ff03::158 port 5683.
 
 #Scenarios
-It is possible to deploy 2 different scenarios with these examples. 
+It is possible to deploy 2 different scenarios with these examples.
 ##<a name="n2n_comm"></a>Node-to-Node Communications
 In this scenario, we will deploy an IoTivity Client and IoTivity Server on different nodes. We can choose two different clients for this scenario: client (periodic PUT) or client_switch (PUT sent on User Button pressed). The first one runs well both on native either on SAMR21-XPRO boards, the second one runs just on SAMR21-XPRO boards. Native target hasn't the button.
 ### <a name="sc_pput_native"></a>Server and Client (Periodic PUT) - native target
@@ -49,10 +49,10 @@ Create taps interfaces (to which RIOT will connect). Go to `/dist/tools/tapsetup
 ```
 $ sudo ./tapsetup -c
 ```
-After this step we have created three tap interfaces: tap0, tap1 and tapbr0. 
+After this step we have created three tap interfaces: tap0, tap1 and tapbr0.
 Now, we compile the server. Go to `/examples/iotivity-examples/server` and type
 ```
-$ make all BOARD=native 
+$ make all BOARD=native
 ```
 Run the server by invoking
 ```
@@ -73,9 +73,9 @@ server_oic: LED0 is OFF
 LED_RED_OFF
 oc_main: Stack successfully initialized
 server_oic: Configured network interfaces:
-Iface  5   HWaddr: e6:e8:ff:6b:0c:f2 
-           
-           MTU:1500  HL:64  RTR  RTR_ADV  
+Iface  5   HWaddr: e6:e8:ff:6b:0c:f2
+
+           MTU:1500  HL:64  RTR  RTR_ADV
            Source address length: 6
            Link type: wired
            inet6 addr: ff02::1/128  scope: local [multicast]
@@ -107,9 +107,9 @@ LED_RED_OFF
 client_oic: Waiting for address autoconfiguration...ipadapter: waiting for server requests...
 ipadapter: waiting for multicast requests...
 oc_main: Stack successfully initialized
-client_oic: Configured network interfaces:Iface  5   HWaddr: a6:ab:89:bd:1f:80 
-           
-           MTU:1500  HL:64  RTR  RTR_ADV  
+client_oic: Configured network interfaces:Iface  5   HWaddr: a6:ab:89:bd:1f:80
+
+           MTU:1500  HL:64  RTR  RTR_ADV
            Source address length: 6
            Link type: wired
            inet6 addr: ff02::1/128  scope: local [multicast]
@@ -132,7 +132,7 @@ LED_RED_ON
 ```
 Once the resource is discovered, the client registers as an Observer of the resource and it switches on its LED as notification of Discovery Completed.
 From this point it will send a PUT request every second.
-Client Output: 
+Client Output:
 ```
 client_oic: Sent PUT request
 Outgoing message to [fe80:0000:0000:0000:241c:c8ff:fe14:3d79]:56789
@@ -218,7 +218,7 @@ Now, we open a new terminal window, go to `/examples/iotivity-examples/client` a
 $ make flash BOARD=samr21-xpro SERIAL=client_node_serial
 $ make term BOARD=samr21-xpro SERIAL=client_node_serial
 ```
-Client performs the discovery phase. Once it is completed, client registers as an Observer of the resource, then it switches on its LED. 
+Client performs the discovery phase. Once it is completed, client registers as an Observer of the resource, then it switches on its LED.
 Client is now ready to send a PUT request when the User Button is pressed. The server LED will change the status when the button is pressed. Terminal outputs are similar to outputs in previous examples.
 ##<a name="l2n_comm"></a>Linux-to-Nodes communications
 In this scenario, we will deploy an IoTivity server on a RIOT node and the IoTivity client will run on a Linux machine. This architecture requires the "enhanced" version of the Border Router [BR_FW](br_fw_ex). It requires two SAMR21-XPRO nodes or similar.
@@ -241,7 +241,7 @@ We will use Serial Numbers in order to identify the designed node during the com
 ###<a name="l2n_br"></a>Start the Border Router
 Step 1) Open a terminal window in `/example/iotivity-examples/br_fw/` and type
 ```
-$ make flash BOARD=samr21-xpro SERIAL=br_node_serial 
+$ make flash BOARD=samr21-xpro SERIAL=br_node_serial
 ```
 Step 2) Once the flashing is finished, we have to open a network interface. Type
 ```
