@@ -1,13 +1,14 @@
 Simple Client Linux Example
 ========================
 
-This is a simple IoTivity client written for Linux. It is able to discover every resource by doing a query to a specific IP address (unicast or multicast). If some resources have as ResourceType *oic.r.light*, it tries to interact with them. This client was tested with the [IoTivity example][1] for RIOT-OS.
+This is a simple IoTivity client written for Linux. It is able to discover every resource by doing a query to a specific IP address (unicast or multicast). If some resources have as ResourceType *oic.r.light*, it tries to interact with them. This client was tested with the [IoTivity example][1] for RIOT-OS. 
 
 #Build
 Go to the /Simple-Client-Linux and type
 ```
  $ make
 ```
+NOTE: IoTivity was installed using the script `install_iotivity.sh` available on this repo.
 
 #Usage
 The command syntax is
