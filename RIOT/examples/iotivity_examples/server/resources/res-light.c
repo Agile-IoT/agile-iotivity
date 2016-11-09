@@ -1,7 +1,23 @@
 /*
- * Author: Mattia Antonini <mattia.antonini1@studenti.unipr.it> <m.antonini@create-net.org>
- * Description: light resource definition
+ * Copyright (C) 2016 Mattia Antonini <mattia.antonini1@studenti.unipr.it>
+ *                                    <m.antonini@create-net.org>
  *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup     Examples
+ * @{
+ *
+ * @file        res-light.c
+ * @brief       Resource light definition. Handler are defined here.
+ *
+ * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
+ *                              <m.antonini@create-net.org>
+ *
+ * @}
  */
 
 #include "oc_api.h"

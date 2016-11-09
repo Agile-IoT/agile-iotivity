@@ -1,11 +1,21 @@
+/*
+ * Copyright (C) 2016 Mattia Antonini <mattia.antonini1@studenti.unipr.it>
+ *                                    <m.antonini@create-net.org>
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
 /**
- * @ingroup     
+ * @ingroup     Examples
  * @{
  *
- * @file
+ * @file        main.c
  * @brief       This is a BR with multicast forwarding for OIC discovery 
  *
- * @author      
+ * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
+ *                              <m.antonini@create-net.org>
  *
  * @}
  */
