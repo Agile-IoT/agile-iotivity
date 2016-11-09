@@ -195,6 +195,12 @@ bool is_ipv6_address(const string& str)
     return inet_pton(AF_INET6, str.c_str(), &(sa.sin6_addr))!=0;
 }
 
+bool is_ipv4_address(const string& str)
+{
+    struct sockaddr_in sa;
+    return inet_pton(AF_INET, str.c_str(), &(sa.sin_addr))!=0;
+}
+
 /*****************************************************************************************************/
 void print_usage(char* program_name)
 {
@@ -220,9 +226,9 @@ int main(int argc, char *argv[])
     if(argc>1)
     {
         addr = std::string(argv[1]);
-        if(!is_ipv6_address(addr))
+        if(!is_ipv6_address(addr)&&!is_ipv4_address(addr))
         {
-             cerr << addr << " is not a valid IPv6 address" <<endl;
+             cerr << addr << " is not a valid IPv4/IPv6 address" <<endl;
              return -1;
         }
     }
