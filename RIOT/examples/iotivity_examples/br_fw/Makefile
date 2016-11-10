@@ -58,8 +58,6 @@ USEMODULE += pthread
 USEMODULE += shell
 USEMODULE += shell_commands
 
-USEPKG += iotivity
-
 SECURE ?= 0
 export SECURE
 
