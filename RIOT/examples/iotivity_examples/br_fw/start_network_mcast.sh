@@ -10,7 +10,7 @@ create_tap() {
     ip a a ${NETPREFIX}::1/64 dev ${TAP}
     ip r d ${NETPREFIX}::/64 dev ${TAP}
     ip r a ${NETPREFIX}::2 dev ${TAP}
-    ip r a ${NETPREFIX}::/64 via ${NETPREFIX}::2 dev ${TAP}
+    ip r a ${NETPREFIX}::/64 via ${NETPREFIX}::2 dev ${TAP} metric 1
 }
 
 create_mcast_route() {
