@@ -223,9 +223,6 @@ Client is now ready to send a PUT request when the User Button is pressed. The s
 ##<a name="l2n_comm"></a>Linux-to-Nodes communications
 In this scenario, we will deploy an IoTivity server on a RIOT node and the IoTivity client will run on a Linux machine. This architecture requires the "enhanced" version of the Border Router [BR_FW](br_fw_ex). It requires two SAMR21-XPRO nodes or similar.
 
-###Known Issue
-RIOT is affected by this [Bug][5]. If you want try this scenario, you have to patch (temporary) RIOT with this ["solution"][6].
-
 ###<a name="l2n_pre"></a>Preliminary shttps://github.com/RIOT-OS/RIOT/pull/5596tep
 Connect your nodes, go to `/examples/iotivity-examples/server` and check the list of USB-connected nodes by typing:
 ```
