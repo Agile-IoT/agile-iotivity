@@ -1,7 +1,22 @@
 /*
- * Author: Mattia Antonini <mattia.antonini1@studenti.unipr.it> <m.antonini@create-net.org>
- * Description: Header File simple IoTivity Client
+ * Copyright (C) 2016 CREATE-NET
  *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup
+ * @{
+ *
+ * @file        simple_client.h
+ * @brief       Header file for a Simple Client
+ *
+ * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
+ *                              <m.antonini@create-net.org>
+ *
+ * @}
  */
 
 #ifndef PRETTY_CLIENT_H_
