@@ -68,7 +68,8 @@ ${local_bindir}/%: %.o ${objs}
 	${CXX} -o ${@} $^ ${LDFLAGS} ${LIBS}
 
 clean:
-	rm -f *.o *~ ${objs} */*.o iotivity
+	rm -f ./*.o *~ ${objs} */*.o iotivity
+	rm -rf ${local_bindir}
 
 distclean: clean
 	rm -f ${simple_client}
