@@ -6,9 +6,8 @@ This repository contains instruction about the installation of [IoTivity] on a R
 #IoTivity on RaspberryPi
 The installation of IoTivity on a RaspberryPi can be done by invoking
 ```
-$ sudo -k ./install_iotivity.sh {Transport}
+$ sudo -k ./install_iotivity.sh
 ```
-where Transport can be ALL/BT/BLE/IP/NFC/none. If you are undecided, choose ALL.
 It was tested on RaspberryPi 3 with Raspian Jessie version September 2016.
 
 #Applications
