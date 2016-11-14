@@ -22,11 +22,13 @@ all: git-download submodules-download copy_makefile
 	cp $(PKG_BUILDDIR)/lib-iotivity.a ${BINDIR}/iotivity.a
 
 copy_makefile:
-	@echo 'Coping makefile'
-	cp ./Makefile.tomove $(PKG_LIB)/Makefile
+	@cp ./Makefile.tomove $(PKG_LIB)/Makefile
 
 
 submodules-download:
 	git -C $(PKG_LIB) submodule update --init
 
 include $(RIOTBASE)/pkg/pkg.mk
+
+clean:: copy_makefile
+	@"$(MAKE)" -BC $(PKG_BUILDDIR) clean

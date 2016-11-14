@@ -31,11 +31,11 @@ OBJ = $(SRC:.c=.o)
 
 lib-iotivity.a: ${OBJ}
 	${AR} rcs $@ ${OBJ}
-	@echo 'file: $^'
 
 $(OBJ): %.o: %.c
-	@echo 'file: ${OBJ}'
 	${CC} -o $@ ${RIOT_CFLAGS} ${IOTIVITY_CFLAGS} -c $<
 
-clean:
+clean: clean_iotivity
+
+clean_iotivity: 
 	rm -rf ${OBJ}
