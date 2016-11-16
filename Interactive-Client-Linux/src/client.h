@@ -76,6 +76,7 @@ class Client {
         void onGetDevice(const OC::HeaderOptions &, const OC::OCRepresentation &, int );
         void onGetGeneric(const OC::HeaderOptions &, const OC::OCRepresentation &, int);
         void interactResources();
+        void onGetTimeout(void);
 
     public:
         static Client *instance;

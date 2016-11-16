@@ -224,7 +224,7 @@ void Client::main()
                     if(resource.getURI() == URI_DEVICE)
                     {
                         onGetMutex.lock();
-                        resource.registerGETCallback(bind(&Client::onGetDevice, this,placeholders::_1, placeholders::_2, placeholders::_3));
+                        resource.registerGETCallbacks(bind(&Client::onGetDevice, this,placeholders::_1, placeholders::_2, placeholders::_3), bind(&Client::onGetTimeout, this), 5000);
                         resource.execGET();
                         onGetMutex.lock();
                         onGetMutex.unlock();
@@ -313,7 +313,7 @@ void Client::interactResources()
             {
                 case OP_GET:
                     onGetMutex.lock();
-                    res.registerGETCallback(bind(&Client::onGetGeneric, this,placeholders::_1, placeholders::_2, placeholders::_3));
+                    res.registerGETCallbacks(bind(&Client::onGetGeneric, this,placeholders::_1, placeholders::_2, placeholders::_3), bind(&Client::onGetTimeout, this), 5000);
                     res.execGET();
                     onGetMutex.lock();
                     printMessage("Press any key to return to continue...");
@@ -433,14 +433,18 @@ void Client::onGetGeneric(const HeaderOptions &hOps, const OCRepresentation &rep
             }
         }
         
-
-        cout << "size: " << rep.getValues().size()<< endl;
     }
     else
     {
         printMessage(string("ErrorCode ")+to_string(errCode));
     }
     onGetMutex.unlock();
+}
+
+void Client::onGetTimeout()
+{
+    onGetMutex.unlock();
+    printMessage("GET Timeout");
 }
 /************************************************************************************************/
 

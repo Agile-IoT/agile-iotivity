@@ -38,16 +38,13 @@ V=1
 
 CXXFLAGS+=-std=c++0x
 
+srcs?=$(wildcard ./src/*.cpp)
 objs?=${srcs:.cpp=.o}
 
 client?=${local_bindir}/client
-client_objs?=${cpp=.o}
+#client_objs?=${srcs:.cpp=.o}
 
 all?= ${oic_client} 
-
-${local_bindir}/client: client.o resource.o ${client_objs}
-	@-mkdir -p ${@D}
-	${CXX} -o ${@} $^ ${LDFLAGS} ${LIBS}
 
 all: prep ${all}
 

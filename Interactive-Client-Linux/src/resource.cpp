@@ -60,8 +60,14 @@ bool Resource::execGET()
     cout << "Performing GET..." << endl;
     if(resource)
     {
+        if(getDelay < 0)
+        {
+             cout << "Delay is lower than 0. Request suppressed." << endl;
+             return false;
+        }
         QueryParamsMap qpm;
-        resource->get(qpm, getCallback);
+        resource->get(qpm, bind(&Resource::onGetCallback, this, placeholders::_1, placeholders::_2, placeholders::_3));
+        getDelayedCallback = new DelayedCallback(getDelay, true, bind(&Resource::getExpirationInternalCallback, this));
         return true;
     }
     return false;
@@ -123,12 +129,55 @@ string Resource::getHost() const
     return resource->host();
 }
 
-void Resource::registerGETCallback(OC::GetCallback cb)
+void Resource::registerGETCallbacks(OC::GetCallback cb, std::function<void()> expCb, int delay)
 {
 #if PRINT_PRETTY_LOGS
     cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
     getCallback = cb;
+    getExpirationExternalCallback = expCb;
+    getDelay = delay;
+}
+
+void Resource::getExpirationInternalCallback()
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    getExpirationExternalCallback();
+}
+
+void Resource::postExpirationInternalCallback()
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    postExpirationExternalCallback();
+}
+
+void Resource::putExpirationInternalCallback()
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    putExpirationExternalCallback();
+}
+
+void Resource::deleteExpirationInternalCallback()
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    deleteExpirationExternalCallback();
+}
+
+void Resource::onGetCallback(const OC::HeaderOptions &hOps, const OC::OCRepresentation &rep, int errorCode)
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    getDelayedCallback->stopThread();
+    getCallback(hOps, rep, errorCode);
 }
 
 bool Resource::operator==(const Resource& res) const

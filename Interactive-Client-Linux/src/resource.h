@@ -33,6 +33,8 @@
 #include <iotivity/resource/OCPlatform.h>
 #include <iotivity/resource/OCResource.h>
 
+#include "DelayedCallback.h"
+
 using namespace std;
 using namespace OC;
 
@@ -43,7 +45,28 @@ class Resource {
         OC::PostCallback postCallback;
         OC::PutCallback putCallback;
         OC::DeleteCallback deleteCallback;
-        
+        std::function<void(void)> getExpirationExternalCallback;
+        std::function<void(void)> postExpirationExternalCallback;
+        std::function<void(void)> putExpirationExternalCallback;
+        std::function<void(void)> deleteExpirationExternalCallback;
+        int getDelay=0;
+        int postDelay=0;
+        int putDelay=0;
+        int deleteDelay=0;
+        DelayedCallback *getDelayedCallback;
+        DelayedCallback *posttDelayedCallback;
+        DelayedCallback *puttDelayedCallback;
+        DelayedCallback *deleteDelayedCallback;
+        void getExpirationInternalCallback();
+        void postExpirationInternalCallback();
+        void putExpirationInternalCallback();
+        void deleteExpirationInternalCallback();
+
+        void onGetCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int);
+        void onPostCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int);
+        void onPutCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int);
+        void onDeleteCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int);
+
     public:
         Resource();
         Resource(std::shared_ptr<OC::OCResource>);
@@ -53,10 +76,10 @@ class Resource {
         bool execPUT();
         bool execDELETE();
 
-        void registerGETCallback(OC::GetCallback);
-        void registerPOSTCallback(OC::PostCallback);
-        void registerPUTCallback(OC::PutCallback);
-        void registerDELETECallback(OC::DeleteCallback);
+        void registerGETCallbacks(OC::GetCallback, std::function<void(void)>, int);
+        void registerPOSTCallbacks(OC::PostCallback, std::function<void(void)>, int);
+        void registerPUTCallbacks(OC::PutCallback, std::function<void(void)>, int);
+        void registerDELETECallbacks(OC::DeleteCallback, std::function<void(void)>, int);
 
         std::shared_ptr<OC::OCResource> getOCResourceObj();
         void setOCResourceObj(std::shared_ptr<OC::OCResource>);
