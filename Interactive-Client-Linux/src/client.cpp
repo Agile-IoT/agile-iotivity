@@ -10,7 +10,7 @@
  * @ingroup
  * @{
  *
- * @file        oic_client.cpp
+ * @file        client.cpp
  * @brief       This is a generic IoTivity Linux Client
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>

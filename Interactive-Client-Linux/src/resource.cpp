@@ -98,89 +98,7 @@ bool Resource::execPUT(std::map<std::string, boost::any> args)
         }
         
         QueryParamsMap queryParamsMap;
-        OCRepresentation rep;
-        
-        for(auto &param : args)
-        {
-            try /* booleans */
-            {
-                bool value = boost::any_cast<bool>(param.second);
-                rep.setValue(param.first, value);
-                cout << "type: bool name: " << param.first << " value: " << value << endl;
-                continue;
-            }
-            catch(boost::bad_any_cast &e)
-            {
-            }
-
-            try /* strings */
-            {
-                string value = boost::any_cast<string>(param.second);
-                rep.setValue(param.first, value);
-                cout << "type: string name: " << param.first << " value: " << value << endl;
-                continue;
-            }
-            catch(boost::bad_any_cast &e)
-            {
-            }
-            
-            try /* uint8_t */
-            {
-                uint8_t value = boost::any_cast<uint8_t>(param.second);
-                rep.setValue(param.first, value);
-                cout << "type: uint8_t name: " << param.first << " value: " << to_string(value) << endl;
-                continue;
-            }
-            catch(boost::bad_any_cast &e)
-            {
-            }
-
-            try /* int8_t */
-            {
-                int8_t value = boost::any_cast<int8_t>(param.second);
-                rep.setValue(param.first, value);
-                cout << "type: int8_t name: " << param.first << " value: " << value << endl;
-                continue;
-            }
-            catch(boost::bad_any_cast &e)
-            {
-            }
-
-            try /* uint16_t */
-            {
-                uint16_t value = boost::any_cast<uint16_t>(param.second);
-                rep.setValue(param.first, value);
-                cout << "type: uint16_t name: " << param.first << " value: " << value << endl;
-                continue;
-            }
-            catch(boost::bad_any_cast &e)
-            {
-            }
-
-            try /* int16_t */
-            {
-                int16_t value = boost::any_cast<int16_t>(param.second);
-                rep.setValue(param.first, value);
-                cout << "type: int16_t name: " << param.first << " value: " << value << endl;
-                continue;
-            }
-            catch(boost::bad_any_cast &e)
-            {
-            }
-
-            try /* int32_t */
-            {
-                int32_t value = boost::any_cast<int32_t>(param.second);
-                rep.setValue(param.first, value);
-                cout << "type: int32_t name: " << param.first << " value: " << value << endl;
-                continue;
-            }
-            catch(boost::bad_any_cast &e)
-            {
-            }
-
-            cout << "Cast failed! Key: " << param.first << " Value: " << endl;
-        }
+        OCRepresentation rep = generateOCRepresentation(args);
 
         putDelayedCallback = new DelayedCallback(putDelay, true, bind(&Resource::putExpirationInternalCallback, this));
         resource->put(rep, queryParamsMap, bind(&Resource::onPutCallback, this, placeholders::_1, placeholders::_2, placeholders::_3));
@@ -296,6 +214,111 @@ void Resource::onPutCallback(const OC::HeaderOptions &hOps, const OC::OCRepresen
 #endif
     putDelayedCallback->stopThread();
     putCallback(hOps, rep, errorCode);
+}
+
+OCRepresentation Resource::generateOCRepresentation(std::map<std::string, boost::any> args)
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    OCRepresentation rep;
+
+    for(auto &param : args)
+    {
+        try /* booleans */
+        {
+            bool value = boost::any_cast<bool>(param.second);
+            rep.setValue(param.first, value);
+#if PRINT_PRETTY_LOGS
+            cout << "type: bool name: " << param.first << " value: " << value << endl;
+#endif
+            continue;
+        }
+        catch(boost::bad_any_cast &e)
+        {
+        }
+
+        try /* strings */
+        {
+            string value = boost::any_cast<string>(param.second);
+            rep.setValue(param.first, value);
+#if PRINT_PRETTY_LOGS
+            cout << "type: string name: " << param.first << " value: " << value << endl;
+#endif
+            continue;
+        }
+        catch(boost::bad_any_cast &e)
+        {
+        }
+    
+        try /* uint8_t */
+        {
+            uint8_t value = boost::any_cast<uint8_t>(param.second);
+            rep.setValue(param.first, value);
+#if PRINT_PRETTY_LOGS
+            cout << "type: uint8_t name: " << param.first << " value: " << to_string(value) << endl;
+#endif
+            continue;
+        }
+        catch(boost::bad_any_cast &e)
+        {
+        }
+
+        try /* int8_t */
+        {
+            int8_t value = boost::any_cast<int8_t>(param.second);
+            rep.setValue(param.first, value);
+#if PRINT_PRETTY_LOGS
+            cout << "type: int8_t name: " << param.first << " value: " << value << endl;
+#endif
+            continue;
+        }
+        catch(boost::bad_any_cast &e)
+        {
+        }
+
+        try /* uint16_t */
+        {
+            uint16_t value = boost::any_cast<uint16_t>(param.second);
+            rep.setValue(param.first, value);
+#if PRINT_PRETTY_LOGS
+            cout << "type: uint16_t name: " << param.first << " value: " << value << endl;
+#endif
+            continue;
+        }
+        catch(boost::bad_any_cast &e)
+        {
+        }
+
+        try /* int16_t */
+        {
+            int16_t value = boost::any_cast<int16_t>(param.second);
+            rep.setValue(param.first, value);
+#if PRINT_PRETTY_LOGS
+            cout << "type: int16_t name: " << param.first << " value: " << value << endl;
+#endif
+            continue;
+        }
+        catch(boost::bad_any_cast &e)
+        {
+        }
+
+        try /* int32_t */
+        {
+            int32_t value = boost::any_cast<int32_t>(param.second);
+            rep.setValue(param.first, value);
+            cout << "type: int32_t name: " << param.first << " value: " << value << endl;
+            continue;
+        }
+        catch(boost::bad_any_cast &e)
+        {
+        }
+#if PRINT_PRETTY_LOGS
+        cout << "Cast failed! Key: " << param.first << endl;
+#endif
+    }
+
+    return rep;
 }
 
 bool Resource::operator==(const Resource& res) const

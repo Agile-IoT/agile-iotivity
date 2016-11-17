@@ -70,6 +70,8 @@ class Resource {
         void onPutCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int);
         void onDeleteCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int);
 
+        OCRepresentation generateOCRepresentation(std::map<std::string, boost::any>);
+
     public:
         Resource();
         Resource(std::shared_ptr<OC::OCResource>);

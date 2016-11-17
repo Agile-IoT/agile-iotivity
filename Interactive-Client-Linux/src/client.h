@@ -10,8 +10,8 @@
  * @ingroup
  * @{
  *
- * @file        oic_client.h
- * @brief       Header file for a OIC Client
+ * @file        client.h
+ * @brief       Header file of a generic IoTivity Linux Client
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
  *                              <m.antonini@create-net.org>
