@@ -38,6 +38,9 @@
 using namespace std;
 using namespace OC;
 
+const string Resource::INTERFACE_RW = "oic.if.rw";
+const string Resource::INTERFACE_R = "oic.if.r";
+
 Resource::Resource()
 {
 #if PRINT_PRETTY_LOGS
@@ -97,6 +100,12 @@ bool Resource::execPUT(std::map<std::string, boost::any> args)
              return false;
         }
         
+        if(isInterfacePresent(INTERFACE_R))
+        {
+             cout << "PUT cannot be done on a READABLE resource. Request suppressed." << endl;
+             return false;
+        }
+
         QueryParamsMap queryParamsMap;
         OCRepresentation rep = generateOCRepresentation(args);
 
@@ -319,6 +328,21 @@ OCRepresentation Resource::generateOCRepresentation(std::map<std::string, boost:
     }
 
     return rep;
+}
+
+bool Resource::isInterfacePresent(string interface)
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    for (auto & resourceInterface : resource->getResourceInterfaces())
+    {
+        if(interface == resourceInterface)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool Resource::operator==(const Resource& res) const

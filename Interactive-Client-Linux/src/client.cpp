@@ -336,9 +336,16 @@ void Client::interactResources()
                     break;
                 case OP_PUT:
                     onPutMutex.lock();
-                    res.registerPUTCallbacks(bind(&Client::onPutGeneric, this,placeholders::_1, placeholders::_2, placeholders::_3), bind(&Client::onPutTimeout, this), 5000);
-                    res.execPUT(loadAttributeMap());
-                    onPutMutex.lock();
+                    if(res.isInterfacePresent(Resource::INTERFACE_R))
+                    {
+                        printError("PUT cannot be done on a READABLE resource!");
+                    }
+                    else
+                    {
+                        res.registerPUTCallbacks(bind(&Client::onPutGeneric, this,placeholders::_1, placeholders::_2, placeholders::_3), bind(&Client::onPutTimeout, this), 5000);
+                        res.execPUT(loadAttributeMap());
+                        onPutMutex.lock();
+                    }
                     printMessage("Press any key to return to continue...");
                     readCharFromTTY(false);
                     onPutMutex.unlock();

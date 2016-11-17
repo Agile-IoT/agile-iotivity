@@ -73,6 +73,9 @@ class Resource {
         OCRepresentation generateOCRepresentation(std::map<std::string, boost::any>);
 
     public:
+        static const string INTERFACE_RW;
+        static const string INTERFACE_R;
+
         Resource();
         Resource(std::shared_ptr<OC::OCResource>);
 
@@ -85,6 +88,8 @@ class Resource {
         void registerPOSTCallbacks(OC::PostCallback, std::function<void(void)>, int); /* Not Implemented */
         void registerPUTCallbacks(OC::PutCallback, std::function<void(void)>, int);
         void registerDELETECallbacks(OC::DeleteCallback, std::function<void(void)>, int); /* Not Implemented */
+
+        bool isInterfacePresent(string);
 
         std::shared_ptr<OC::OCResource> getOCResourceObj();
         void setOCResourceObj(std::shared_ptr<OC::OCResource>);
