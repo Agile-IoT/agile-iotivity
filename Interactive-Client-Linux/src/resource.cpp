@@ -33,6 +33,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "boost/any.hpp"
+
 using namespace std;
 using namespace OC;
 
@@ -81,12 +83,109 @@ bool Resource::execPOST()
     cout << "Performing POST..." << endl;
 }
 
-bool Resource::execPUT()
+bool Resource::execPUT(std::map<std::string, boost::any> args)
 {
 #if PRINT_PRETTY_LOGS
     cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
     cout << "Performing PUT..." << endl;
+    if(resource)
+    {
+        if(putDelay < 0)
+        {
+             cout << "Delay is lower than 0. Request suppressed." << endl;
+             return false;
+        }
+        
+        QueryParamsMap queryParamsMap;
+        OCRepresentation rep;
+        
+        for(auto &param : args)
+        {
+            try /* booleans */
+            {
+                bool value = boost::any_cast<bool>(param.second);
+                rep.setValue(param.first, value);
+                cout << "type: bool name: " << param.first << " value: " << value << endl;
+                continue;
+            }
+            catch(boost::bad_any_cast &e)
+            {
+            }
+
+            try /* strings */
+            {
+                string value = boost::any_cast<string>(param.second);
+                rep.setValue(param.first, value);
+                cout << "type: string name: " << param.first << " value: " << value << endl;
+                continue;
+            }
+            catch(boost::bad_any_cast &e)
+            {
+            }
+            
+            try /* uint8_t */
+            {
+                uint8_t value = boost::any_cast<uint8_t>(param.second);
+                rep.setValue(param.first, value);
+                cout << "type: uint8_t name: " << param.first << " value: " << to_string(value) << endl;
+                continue;
+            }
+            catch(boost::bad_any_cast &e)
+            {
+            }
+
+            try /* int8_t */
+            {
+                int8_t value = boost::any_cast<int8_t>(param.second);
+                rep.setValue(param.first, value);
+                cout << "type: int8_t name: " << param.first << " value: " << value << endl;
+                continue;
+            }
+            catch(boost::bad_any_cast &e)
+            {
+            }
+
+            try /* uint16_t */
+            {
+                uint16_t value = boost::any_cast<uint16_t>(param.second);
+                rep.setValue(param.first, value);
+                cout << "type: uint16_t name: " << param.first << " value: " << value << endl;
+                continue;
+            }
+            catch(boost::bad_any_cast &e)
+            {
+            }
+
+            try /* int16_t */
+            {
+                int16_t value = boost::any_cast<int16_t>(param.second);
+                rep.setValue(param.first, value);
+                cout << "type: int16_t name: " << param.first << " value: " << value << endl;
+                continue;
+            }
+            catch(boost::bad_any_cast &e)
+            {
+            }
+
+            try /* int32_t */
+            {
+                int32_t value = boost::any_cast<int32_t>(param.second);
+                rep.setValue(param.first, value);
+                cout << "type: int32_t name: " << param.first << " value: " << value << endl;
+                continue;
+            }
+            catch(boost::bad_any_cast &e)
+            {
+            }
+
+            cout << "Cast failed! Key: " << param.first << " Value: " << endl;
+        }
+
+        putDelayedCallback = new DelayedCallback(putDelay, true, bind(&Resource::putExpirationInternalCallback, this));
+        resource->put(rep, queryParamsMap, bind(&Resource::onPutCallback, this, placeholders::_1, placeholders::_2, placeholders::_3));
+        return true;
+    }
 }
 
 bool Resource::execDELETE()
@@ -139,6 +238,16 @@ void Resource::registerGETCallbacks(OC::GetCallback cb, std::function<void()> ex
     getDelay = delay;
 }
 
+void Resource::registerPUTCallbacks(OC::GetCallback cb, std::function<void()> expCb, int delay)
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    putCallback = cb;
+    putExpirationExternalCallback = expCb;
+    putDelay = delay;
+}
+
 void Resource::getExpirationInternalCallback()
 {
 #if PRINT_PRETTY_LOGS
@@ -178,6 +287,15 @@ void Resource::onGetCallback(const OC::HeaderOptions &hOps, const OC::OCRepresen
 #endif
     getDelayedCallback->stopThread();
     getCallback(hOps, rep, errorCode);
+}
+
+void Resource::onPutCallback(const OC::HeaderOptions &hOps, const OC::OCRepresentation &rep, int errorCode)
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    putDelayedCallback->stopThread();
+    putCallback(hOps, rep, errorCode);
 }
 
 bool Resource::operator==(const Resource& res) const

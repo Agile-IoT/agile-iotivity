@@ -38,6 +38,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "boost/any.hpp"
 using namespace std;
 using namespace OC;
 
@@ -64,6 +65,7 @@ class Client {
         //Mutexes
         mutex onDiscoveryMutex;
         mutex onGetMutex;
+        mutex onPutMutex;
 
         OC::PlatformConfig *platformConfig;
         OC::FindCallback resDiscoveryCallback;
@@ -72,16 +74,20 @@ class Client {
         void onDiscovery(std::shared_ptr<OC::OCResource> resource);
         void main();
         char readCharFromTTY(bool showMessage=true);
+        std::map<string, boost::any> loadAttributeMap();
         void printResourceInfo(shared_ptr<OC::OCResource> resource);
         void onGetDevice(const OC::HeaderOptions &, const OC::OCRepresentation &, int );
         void onGetGeneric(const OC::HeaderOptions &, const OC::OCRepresentation &, int);
+        void onPutGeneric(const OC::HeaderOptions &, const OC::OCRepresentation &, int);
         void interactResources();
         void onGetTimeout(void);
+        void onPutTimeout(void);
 
     public:
         static Client *instance;
 
         static void printMessage(string);
+        static void printError(string);
         static Client* getInstance();
         void startClient(string);
         bool doDiscovery(int);

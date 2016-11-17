@@ -35,6 +35,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "boost/any.hpp"
+
 using namespace std;
 using namespace OC;
 
@@ -54,6 +56,13 @@ Client::Client()
 void Client::printMessage(string mex)
 {
     cout << "Client: " << mex << endl;
+}
+
+void Client::printError(string mex)
+{
+    cout << "\033[1;31m";
+    cout << "Error: " << mex;
+    cout << "\033[0m\n";
 }
 
 Client* Client::getInstance()
@@ -179,7 +188,7 @@ void Client::main()
 
         while(c<0 || c>4)
         {
-            printMessage("Option not valid!");
+            printError("Option not valid!");
             c = int(readCharFromTTY()) - 48;
         }
 
@@ -195,7 +204,7 @@ void Client::main()
                 }
                 else
                 {
-                    printMessage("Error during discovery...");
+                    printError("Error during discovery...");
                 }
                 cout << endl;
                 printMessage("Press any key to return to main menu...");
@@ -244,7 +253,7 @@ void Client::main()
                 break;
 
             default:
-                printMessage("Unknown option");
+                printError("Unknown option");
                 printMessage("Press any key to return to main menu...");
                 readCharFromTTY(false);
         }
@@ -305,7 +314,7 @@ void Client::interactResources()
 
             while(c<0 || c>4)
             {
-                cout << "Unknown choice!" << endl;
+                printError("Unknown choice");
                 c = int(readCharFromTTY())-48; 
             }
 
@@ -321,17 +330,21 @@ void Client::interactResources()
                     onGetMutex.unlock();
                     break;
                 case OP_POST:
-                    printMessage("POST Not Implemented yet!");
+                    printError("POST Not Implemented yet!");
                     printMessage("Press any key to return to continue...");
                     readCharFromTTY(false);
                     break;
                 case OP_PUT:
-                    printMessage("PUT Not Implemented yet!");
+                    onPutMutex.lock();
+                    res.registerPUTCallbacks(bind(&Client::onPutGeneric, this,placeholders::_1, placeholders::_2, placeholders::_3), bind(&Client::onPutTimeout, this), 5000);
+                    res.execPUT(loadAttributeMap());
+                    onPutMutex.lock();
                     printMessage("Press any key to return to continue...");
                     readCharFromTTY(false);
+                    onPutMutex.unlock();
                     break;
                 case OP_DELETE:
-                    printMessage("DELETE Not Implemented yet!");
+                    printError("DELETE Not Implemented yet!");
                     printMessage("Press any key to return to continue...");
                     readCharFromTTY(false);
                     break;
@@ -339,7 +352,7 @@ void Client::interactResources()
                     c++;
                     break;
                 default:
-                    cout << "Unknown choice!" << endl;
+                   printError("Unknown choice!");
             }
         } 
     }
@@ -347,8 +360,140 @@ void Client::interactResources()
     return;
 }
 
+std::map<string, boost::any> Client::loadAttributeMap()
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    std::map<string, boost::any> attributeMap;
+    string line;
+    printMessage("Now, you can define attributes for the request.");
+    printMessage("Datatype supported:");
+    printMessage("\t\tbool");
+    printMessage("\t\tstring");
+    printMessage("\t\tuint8, int8, uint16, int16, int32");
+    printMessage("syntax: <type> <name> <value>");
+    printMessage("Type ENTER to continue");
+    printMessage("e.g. bool state false");
+    printMessage("e.g. uint8 power 4");
+    printMessage("e.g. string something HelloWorld");
+    
+    while(1)
+    {
+        cout << "Attribute: ";
+        getline(cin, line);
+        if(line.size()==0) break;
+        string type = line.substr(0, line.find_first_of(" "));
+        line = line.substr(line.find_first_of(" ")+1);
+        string name = line.substr(0, line.find_first_of(" "));
+        line = line.substr(line.find_first_of(" ")+1);
+        string value = line.substr(0, line.find_first_of(" "));
+
+        if(type.size()==0 || name.size() == 0 || value.size() == 0)
+        {
+            printError("At least one parameter is empty");
+        }
+
+        if(type=="bool")
+        {
+            if(value == "true")
+            {
+               attributeMap[name] = true;
+            }
+            else if(value == "false")
+            {
+               attributeMap[name] = false;
+            }
+            else
+            {
+                printError("Value unknown. It can be true or false");
+            }
+        }
+        else if(type=="string")
+        {
+            attributeMap[name] = value;
+        }
+        else if(type=="uint8")
+        {
+            long int tmp = stol(value);
+            if(tmp < 0 || tmp >255)
+            {
+                printError(to_string(tmp) + " is a value out of range.");
+            }
+            else
+            {
+                uint8_t v = (uint8_t) tmp; 
+                attributeMap[name] = v;
+            }
+        }
+        else if(type=="int8")
+        {
+            long int tmp = stol(value);
+            if(tmp < -128 || tmp > 127)
+            {
+                printError(to_string(tmp) + " is a value out of range.");
+            }
+            else
+            {
+                int8_t v = (int8_t) tmp; 
+                attributeMap[name] = v;
+            }
+        }
+        else if(type=="uint16")
+        {
+            long int tmp = stol(value);
+            if(tmp < 0 || tmp > 65535)
+            {
+                printError(to_string(tmp) + " is a value out of range.");
+            }
+            else
+            {
+                int16_t v = (int16_t) tmp; 
+                attributeMap[name] = v;
+            }
+        }
+        else if(type=="int16")
+        {
+            long int tmp = stol(value);
+            if(tmp < -32768 || tmp > 32767)
+            {
+                printError(to_string(tmp) + " is a value out of range.");
+            }
+            else
+            {
+                int16_t v = (int16_t) tmp; 
+                attributeMap[name] = v;
+            }
+        }
+        else if(type=="int32")
+        {
+            long int tmp = stoll(value);
+            if(tmp < -2147483648 || tmp > 2147483647)
+            {
+                printError(to_string(tmp) + " is a value out of range.");
+            }
+            else
+            {
+                int32_t v = (int32_t) tmp; 
+                attributeMap[name] = v;
+            }
+        }
+        else
+        {
+            printError("Type Unknown");
+        }
+    }
+    
+    printMessage(to_string(attributeMap.size()) + " attribute(s) set");
+
+    return attributeMap;
+}
+
 char Client::readCharFromTTY(bool showMessage)
 {
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     struct termios old_tio, new_tio;
     unsigned char c;
 
@@ -376,6 +521,9 @@ char Client::readCharFromTTY(bool showMessage)
 
 void Client::printResourceInfo(shared_ptr<OC::OCResource> resource)
 {
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     cout << "Host: " << resource->host() << endl;
     cout << "URI: " << resource->uri() << endl;
 
@@ -394,6 +542,9 @@ void Client::printResourceInfo(shared_ptr<OC::OCResource> resource)
 
 void Client::onGetDevice(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode)
 {
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     if(errCode == OC_STACK_OK)
     {
         string name;
@@ -419,6 +570,9 @@ void Client::onGetDevice(const HeaderOptions &hOps, const OCRepresentation &rep,
 
 void Client::onGetGeneric(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode)
 {
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     if(errCode == OC_STACK_OK)
     {
         if(rep.getUri() == URI_DEVICE)
@@ -443,31 +597,70 @@ void Client::onGetGeneric(const HeaderOptions &hOps, const OCRepresentation &rep
 
 void Client::onGetTimeout()
 {
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     onGetMutex.unlock();
     printMessage("GET Timeout");
+}
+
+void Client::onPutGeneric(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode)
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    if(errCode == 4)
+    {
+        printMessage("PUT Successful");        
+    }
+    else
+    {
+        printMessage(string("ErrorCode ")+to_string(errCode));
+    }
+    onPutMutex.unlock();
+}
+
+void Client::onPutTimeout()
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    onPutMutex.unlock();
+    printMessage("PUT Timeout");
 }
 /************************************************************************************************/
 
 bool is_ipv6_address(const string& str)
 {
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     struct sockaddr_in6 sa;
     return inet_pton(AF_INET6, str.c_str(), &(sa.sin6_addr))!=0;
 }
 
 bool is_ipv4_address(const string& str)
 {
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     struct sockaddr_in sa;
     return inet_pton(AF_INET, str.c_str(), &(sa.sin_addr))!=0;
 }
 
 void print_usage(char* program_name)
 {
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     cout << "TODO Usage" << endl;
 }
 
 int main(int argc, char** argv)
 {
-
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     string addr;
 
     if(argc>1)

@@ -28,12 +28,15 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <map>
 
 #include <iotivity/resource/OCApi.h>
 #include <iotivity/resource/OCPlatform.h>
 #include <iotivity/resource/OCResource.h>
 
 #include "DelayedCallback.h"
+
+#include "boost/any.hpp"
 
 using namespace std;
 using namespace OC;
@@ -54,8 +57,8 @@ class Resource {
         int putDelay=0;
         int deleteDelay=0;
         DelayedCallback *getDelayedCallback;
-        DelayedCallback *posttDelayedCallback;
-        DelayedCallback *puttDelayedCallback;
+        DelayedCallback *postDelayedCallback;
+        DelayedCallback *putDelayedCallback;
         DelayedCallback *deleteDelayedCallback;
         void getExpirationInternalCallback();
         void postExpirationInternalCallback();
@@ -72,14 +75,14 @@ class Resource {
         Resource(std::shared_ptr<OC::OCResource>);
 
         bool execGET();
-        bool execPOST();
-        bool execPUT();
-        bool execDELETE();
+        bool execPOST(); /* Not Implemented */
+        bool execPUT(std::map<std::string, boost::any>);
+        bool execDELETE(); /* Not Implemented */
 
         void registerGETCallbacks(OC::GetCallback, std::function<void(void)>, int);
-        void registerPOSTCallbacks(OC::PostCallback, std::function<void(void)>, int);
+        void registerPOSTCallbacks(OC::PostCallback, std::function<void(void)>, int); /* Not Implemented */
         void registerPUTCallbacks(OC::PutCallback, std::function<void(void)>, int);
-        void registerDELETECallbacks(OC::DeleteCallback, std::function<void(void)>, int);
+        void registerDELETECallbacks(OC::DeleteCallback, std::function<void(void)>, int); /* Not Implemented */
 
         std::shared_ptr<OC::OCResource> getOCResourceObj();
         void setOCResourceObj(std::shared_ptr<OC::OCResource>);
