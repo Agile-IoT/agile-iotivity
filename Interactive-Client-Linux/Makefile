@@ -23,7 +23,7 @@ prep_tasks+=iotivity
 config_pkgconfig?=1
 usr_include_dir?=${PKG_CONFIG_SYSROOT_DIR}/usr/include
 iotivity_dir?=${CURDIR}/iotivity
-LIBS+=-loc -loc_logger -loctbstack
+LIBS+=-loc -loc_logger -loctbstack -lpthread
 
 #Includes
 CPPFLAGS+=\
