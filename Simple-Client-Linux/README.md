@@ -21,6 +21,7 @@ where
 	 - off: switch off the light (Default)
 	 - on: switch on the light
 	 - toggle: toggle the light
+
 An example is:
 ```
  $ bin/simple_client ff03::158 toggle
