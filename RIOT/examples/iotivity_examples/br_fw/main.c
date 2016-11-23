@@ -56,7 +56,6 @@ static uint8_t buffer2[MAX_PAYLOAD_SIZE];
 static msg_t _oic_fw_msg_queue[OIC_FW_QUEUE_SIZE];
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
-static kernel_pid_t mcast_thread;
 static kernel_pid_t interface_pid;
 
 char oic_forwarding_thread_stack[THREAD_STACKSIZE_DEFAULT];
@@ -67,12 +66,12 @@ uint8_t wk_addr[16] = { 0xff, 0x03, 0, 0, 0, 0, 0, 0,
 void handle_incoming_message(uint8_t *payload, int *size, uint8_t *addr,
                         uint8_t addr_len, uint16_t port)
 {
-  char* addr_str;
+  char* addr_str=NULL;
   uint8_t buffer[*size];
 
   memcpy(buffer, payload, *size);
 
-  ipv6_addr_to_str(addr_str, addr, addr_len);
+  ipv6_addr_to_str(addr_str, (ipv6_addr_t *)addr, addr_len);
   printf("forwarder: pck from ");
   PRINTipaddr(addr, port);
   printf("\n");
@@ -150,7 +149,7 @@ int main(void)
 
     interface_pid = interfaces[0];
 
-    kernel_pid_t mcast_thread = thread_create(oic_forwarding_thread_stack, sizeof(oic_forwarding_thread_stack),
+    thread_create(oic_forwarding_thread_stack, sizeof(oic_forwarding_thread_stack),
         THREAD_PRIORITY_MAIN, THREAD_CREATE_STACKTEST,  start_oic_forwarding_loop,
         NULL, "oic_fw_thread");
 
