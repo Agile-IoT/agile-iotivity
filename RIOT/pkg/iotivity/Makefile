@@ -1,6 +1,6 @@
 PKG_NAME=iotivity-constrained
 PKG_URL=https://gerrit.iotivity.org/gerrit/iotivity-constrained
-PKG_VERSION=ad5670ad4ad396079418644b9847c9db86a3d6a3
+PKG_VERSION=e9f43d484de1ac97b1e4fae8a9ebacd236dee2ac
 PKG_DIR=$(CURDIR)
 
 PKG_LIB=$(BINDIRBASE)/pkg/$(BOARD)/$(PKG_NAME)
