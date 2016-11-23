@@ -192,7 +192,7 @@ $ make term BOARD=samr21-xpro SERIAL=client_node_serial
 ```
 Client starts the discovery phase. Once it find a resource (with ResourceType **oic.r.light**), it registers as an observer on the resource, then it switches on its LED  and it finally starts with periodic PUT requests. The server LED will blink periodically.
 Client and Server terminal outputs are similar to the outputs in case of native target.
-###<a name="sc_sw_samr21"></a> Server and Client_Switch  - SAMR21-XPRO target
+###<a name="sc_sw_samr21"></a> Server and Client_Switch - SAMR21-XPRO target
 This deployment emulates a smart home scenario in which we have a SmartBulb (server) and a SmartSwitch (client_switch). It requires two SAMR21-XPRO nodes or similar.
 Connect your nodes, go to `/examples/iotivity-examples/server` and check the list of USB-connected nodes by typing:
 ```
@@ -204,6 +204,7 @@ The output will be similar to
 /sys/bus/usb/devices/2-1.4: Atmel Corp. EDBG CMSIS-DAP serial: 'ATML2127031800004321', tty(s): ttyACM1
 ```
 We will use Serial Numbers in order to identify the designed node during the compilation phase.
+
 Now, we compile the server
 ```
 $ make flash BOARD=samr21-xpro SERIAL=server_node_serial
@@ -213,7 +214,8 @@ then we open the serial connection
 $ make term BOARD=samr21-xpro SERIAL=server_node_serial
 ```
 The server starts and it is waiting for incoming requests.
-Now, we open a new terminal window, go to `/examples/iotivity-examples/client` and type
+
+Now, we open a new terminal window, go to `/examples/iotivity-examples/client_switch` and type
 ```
 $ make flash BOARD=samr21-xpro SERIAL=client_node_serial
 $ make term BOARD=samr21-xpro SERIAL=client_node_serial
@@ -221,9 +223,9 @@ $ make term BOARD=samr21-xpro SERIAL=client_node_serial
 Client performs the discovery phase. Once it is completed, client registers as an Observer of the resource, then it switches on its LED.
 Client is now ready to send a PUT request when the User Button is pressed. The server LED will change the status when the button is pressed. Terminal outputs are similar to outputs in previous examples.
 ##<a name="l2n_comm"></a>Linux-to-Nodes communications
-In this scenario, we will deploy an IoTivity server on a RIOT node and the IoTivity client will run on a Linux machine. This architecture requires the "enhanced" version of the Border Router [BR_FW](br_fw_ex). It requires two SAMR21-XPRO nodes or similar.
+In this scenario, we will deploy an IoTivity server on a RIOT node and the IoTivity client will run on a Linux machine. This architecture requires the "enhanced" version of the Border Router [BR_FW](br_fw). It requires two SAMR21-XPRO nodes or similar.
 
-###<a name="l2n_pre"></a>Preliminary shttps://github.com/RIOT-OS/RIOT/pull/5596tep
+###<a name="l2n_pre"></a>Preliminary step
 Connect your nodes, go to `/examples/iotivity-examples/server` and check the list of USB-connected nodes by typing:
 ```
 $ make list-ttys
@@ -275,6 +277,16 @@ The server starts the initialization phase, then it is ready for incoming reques
 ```
 $ ping6 <IPv6 server>
 ```
+The IPv6 address of the server can be found by typing in the Border Router console:
+```
+> routers
+```
+The output will be similar to
+```
+if  Router                          state      type
+---------------------------------------------------
+ 6  2001:db8::5859:1c2a:64c7:c48a   REACHABLE   REG
+```
 
 ###<a name="l2n_out"></a>Server Output
 Managing a GET request the output is like
@@ -300,8 +312,8 @@ Managing a PUT request the output is like
 ###<a name="l2n_tst"></a>Testing
 There are many different ways to test this scenario.
 
- - Tools: you can use [Copper(Cu)][7] or [coap-cli][8] to perform get request. The second one supports CBOR.
- - Iotivity Client: you can write an iotivity client that runs on Linux. [Here][9] there is a simple client that can be used as test client for this scenario.
+ - Tools: you can use [coap-cli][7] to perform get request.
+ - Iotivity Client: you can write an iotivity client that runs on Linux. [Here][8] and [Here][9] there are some sample clients that can be used to test this scenario.
 
 [1]: https://github.com/iotivity/iotivity-constrained/
 [2]: http://cbor.io/
@@ -309,6 +321,6 @@ There are many different ways to test this scenario.
 [4]: http://www.atmel.com/tools/ATSAMR21-XPRO.aspx
 [5]: https://github.com/RIOT-OS/RIOT/pull/5596
 [6]: https://github.com/RIOT-OS/RIOT/pull/5926
-[7]: http://people.inf.ethz.ch/mkovatsc/copper.php
-[8]: https://github.com/mcollina/coap-cli
-[9]: https://github.com/Agile-IoT/agile-iotivity/tree/master/Simple-Client-Linux
+[7]: https://github.com/mcollina/coap-cli
+[8]: https://github.com/Agile-IoT/agile-iotivity/tree/master/Simple-Client-Linux
+[9]: https://github.com/Agile-IoT/agile-iotivity/tree/master/Interactive-Client-Linux
