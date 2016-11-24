@@ -273,6 +273,7 @@ void Client::interactResources()
     int op;
     int c;
     int i;
+    char ch;
     Resource res;
 
     do
@@ -296,7 +297,12 @@ void Client::interactResources()
 
         cout << endl;
         cout << OPT_EXIT << " - Return to Main Menu" << endl;
-        c = int(readCharFromTTY())-48;
+        cout << "then press ENTER." << endl;
+        cout << "Choice: ";
+        cin >> c;
+        cin.clear();
+        while ((ch = getchar()) != '\n' && ch != EOF);
+        //c = int(readCharFromTTY())-48;
 
         if(c>0 && c < i)
         {
