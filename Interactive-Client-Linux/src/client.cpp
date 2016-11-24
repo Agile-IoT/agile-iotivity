@@ -660,8 +660,12 @@ void print_usage(char* program_name)
 #if PRINT_PRETTY_LOGS
     cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
-    cout << "TODO Usage" << endl;
+    cout << "This is an Interactive IoTivity Client" << endl;
+    cout << endl; 
+    cout << "Usage: " << program_name << " <destination>" << endl;
+    cout << "\t<destination>: It is the destination address of discovery. It can be a multicast or unicast address" << endl;
 }
+
 
 int main(int argc, char** argv)
 {
