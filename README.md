@@ -32,10 +32,10 @@ Inside the folder examples/iotivity-examples there are some examples to test the
 
 ##Linux Examples
 ###Simple Client
-The Simple-Client-Linux folder contains an IoTivity-based client written in C++ for Linux. It can be used as test client for RIOT-based scenarios.
+The [IoTivity/Simple-Client-Linux](IoTivity/Simple-Client-Linux) folder contains an IoTivity-based client written in C++ for Linux. It can be used as test client for RIOT-based scenarios.
 
 ###Interactive Client
-The Interactive-Client-Linux folder contains an interactive IoTivity-based client. It can perform resource discoveries and custom CRUDN requests with a simple terminal-based interface.
+The [IoTivity/Interactive-Client-Linux](IoTivity/Interactive-Client-Linux) folder contains an interactive IoTivity-based client. It can perform resource discoveries and custom CRUDN requests with a simple terminal-based interface.
 
 [RIOT-OS]: https://github.com/RIOT-OS/RIOT
 [IoTivity]: https://www.iotivity.org
