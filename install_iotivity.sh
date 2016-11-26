@@ -82,9 +82,8 @@ download_unzip() {
 
     cd iotivity-${IOTIVITY_VERS}
     if [ ! -d "extlibs/tinycbor/tinycbor" ] ; then
-        git clone https://github.com/01org/tinycbor.git extlibs/tinycbor/tinycbor -b 0.3.2
+        git clone https://github.com/01org/tinycbor.git extlibs/tinycbor/tinycbor -b v0.3.2
     fi
-    
 }
 
 compile() {
