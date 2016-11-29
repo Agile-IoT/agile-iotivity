@@ -77,4 +77,6 @@ State: ON
 
 ```
 
+*Note*: Delays for Discoveries and Requests are 10 and 3 seconds, respectively. They are hard-coded in the client code.
+
  [1]: https://github.com/Agile-IoT/agile-iotivity/tree/master/RIOT/examples/iotivity_examples#l2n_comm
