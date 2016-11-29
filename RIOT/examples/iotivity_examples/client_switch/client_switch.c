@@ -160,7 +160,7 @@ operate(void *data)
 #ifdef BUTTON_GPIO
     gpio_init_int(BUTTON_GPIO, GPIO_IN_PU, GPIO_RISING, (gpio_cb_t)button_callback, NULL);
 #endif
-    //oc_set_delayed_callback(NULL, &stop_observe, 10000);
+    oc_set_delayed_callback(NULL, &stop_observe, 10000);
     return DONE;
 }
 

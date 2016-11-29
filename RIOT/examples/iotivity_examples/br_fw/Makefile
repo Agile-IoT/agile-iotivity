@@ -85,9 +85,6 @@ DISABLE_MODULE += fib gnrc_rpl
 USEMODULE += prng_minstd
 endif
 
-#Disable Warnings as Errors
-WERROR=0
-
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 

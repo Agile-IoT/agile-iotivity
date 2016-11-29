@@ -1,6 +1,6 @@
 PKG_NAME=iotivity-constrained
-PKG_URL=https://gerrit.iotivity.org/gerrit/iotivity-constrained
-PKG_VERSION=e9f43d484de1ac97b1e4fae8a9ebacd236dee2ac
+PKG_URL=https://github.com/iotivity/iotivity-constrained
+PKG_VERSION=96b50da1762d016790ac7fa516d95a0252bb2f72
 PKG_DIR=$(CURDIR)
 
 PKG_LIB=$(BINDIRBASE)/pkg/$(BOARD)/$(PKG_NAME)
@@ -12,21 +12,18 @@ export PKG_DIR
 export PKG_LIB
 export PKG_NAME
 
-#TODO: fix this problem in code
-CFLAGS := $(filter-out -Werror=old-style-definition,$(CFLAGS))
-
 export RIOT_CFLAGS = ${CFLAGS} ${INCLUDES}
 
 all: git-download submodules-download copy_makefile
-	"$(MAKE)" -BC $(PKG_BUILDDIR) lib-iotivity.a
-	cp $(PKG_BUILDDIR)/lib-iotivity.a ${BINDIR}/iotivity.a
+	@"$(MAKE)" -BC $(PKG_BUILDDIR) lib-iotivity.a
+	@cp $(PKG_BUILDDIR)/lib-iotivity.a ${BINDIR}/iotivity.a
 
 copy_makefile:
 	@cp ./Makefile.tomove $(PKG_LIB)/Makefile
 
 
 submodules-download:
-	git -C $(PKG_LIB) submodule update --init
+	@git -C $(PKG_LIB) submodule update --init
 
 include $(RIOTBASE)/pkg/pkg.mk
 

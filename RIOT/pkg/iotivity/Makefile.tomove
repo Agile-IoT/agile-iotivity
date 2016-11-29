@@ -30,10 +30,10 @@ OBJ = $(SRC:.c=.o)
 
 
 lib-iotivity.a: ${OBJ}
-	${AR} rcs $@ ${OBJ}
+	@${AR} rcs $@ ${OBJ}
 
 $(OBJ): %.o: %.c
-	${CC} -o $@ ${RIOT_CFLAGS} ${IOTIVITY_CFLAGS} -c $<
+	@${CC} -o $@ ${RIOT_CFLAGS} ${IOTIVITY_CFLAGS} -c $<
 
 clean: clean_iotivity
 

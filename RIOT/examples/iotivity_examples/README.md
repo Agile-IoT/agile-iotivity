@@ -1,7 +1,7 @@
 IoTivity Examples
 ===============
 These examples implement some simple clients and a server to test the IoTivity package for RIOT-OS. The pkg is based on the [IoTivity-Constrained][1] library.
-All examples use the realm-local multicast address **ff03:158** instead the link-local multicast address **ff02::158**. Every payload is [CBOR][2] encoded.
+All examples use the realm-local multicast address **ff03:158** instead of the link-local multicast address **ff02::158**. Every payload is [CBOR][2] encoded.
 All examples have been tested on Native and SAMR21-XPRO.
 ##Index
  - Iotivity Examples
@@ -16,8 +16,8 @@ All examples have been tested on Native and SAMR21-XPRO.
      -  [Server and Client_Switch  - SAMR21-XPRO target](#sc_sw_samr21)
    - [Linux-to-Nodes Communications](#l2n_comm)
      - [Preliminary Step](#l2n_pre)
-     - [Start the Border Router](#l2n_br)
      - [Start the Server](#l2n_srv)
+     - [Start the Border Router](#l2n_br)
      - [Server output](#l2n_out)
      - [Testing](#l2n_tst)
 
@@ -190,7 +190,7 @@ Now,  open a new terminal window, go to `/examples/iotivity-examples/client` and
 $ make flash BOARD=samr21-xpro SERIAL=client_node_serial
 $ make term BOARD=samr21-xpro SERIAL=client_node_serial
 ```
-Client starts the discovery phase. Once it find a resource (with ResourceType **oic.r.light**), it registers as an observer on the resource, then it switches on its LED  and it finally starts with periodic PUT requests. The server LED will blink periodically.
+Client starts the discovery phase. Once it finds a resource (with ResourceType **oic.r.light**), it registers as an observer on the resource, then it switches on its LED and it finally starts with periodic PUT requests. The server LED will blink periodically.
 Client and Server terminal outputs are similar to the outputs in case of native target.
 ###<a name="sc_sw_samr21"></a> Server and Client_Switch - SAMR21-XPRO target
 This deployment emulates a smart home scenario in which we have a SmartBulb (server) and a SmartSwitch (client_switch). It requires two SAMR21-XPRO nodes or similar.
@@ -237,6 +237,17 @@ The output will be similar to
 ```
 We will use Serial Numbers in order to identify the designed node during the compilation phase.
 
+###<a name="l2n_srv"></a>Start the Server
+Open a terminal window, go to `/examples/iotivity-examples/server` and type
+```
+$ make flash BOARD=samr21-xpro SERIAL=server_node_serial
+```
+then we open the serial connection
+```
+$ make term BOARD=samr21-xpro SERIAL=server_node_serial
+```
+The server starts the initialization phase, then it is ready for incoming requests.
+
 ###<a name="l2n_br"></a>Start the Border Router
 Step 1) Open a terminal window in `/example/iotivity-examples/br_fw/` and type
 ```
@@ -255,7 +266,7 @@ Now the BR is ready. The network is configured as follow:
 - Serial Port: **/dev/ttyACM0**
 - Interface: **tap0**
 - Address Prefix: **2001:db8::\64**
-- Routing on tap0 of multicast packet with destination **ff03::158**
+- Routing on tap0 of multicast packets with destination **ff03::158**
 
 It is possible to configure the network with different parameters by invoking directly the initialization script instead of executing the Step 2:
 ```
@@ -264,16 +275,7 @@ $ sudo ./start_network_mcast.sh <serial-port> <tap-device> <IPv6-prefix> <IPv6-m
 ```
 then run the Step 3 with the proper changes.
 
-###<a name="l2n_srv"></a>Start the Server
-Open a terminal window, go to `/examples/iotivity-examples/server` and type
-```
-$ make flash BOARD=samr21-xpro SERIAL=server_node_serial
-```
-then we open the serial connection
-```
-$ make term BOARD=samr21-xpro SERIAL=server_node_serial
-```
-The server starts the initialization phase, then it is ready for incoming requests. We can check the reachability of the server by typing in another terminal window
+We can check the reachability of the server by typing in another terminal window
 ```
 $ ping6 <IPv6 server>
 ```
@@ -312,7 +314,7 @@ Managing a PUT request the output is like
 ###<a name="l2n_tst"></a>Testing
 There are many different ways to test this scenario.
 
- - Tools: you can use [coap-cli][7] to perform get request.
+ - Tools: you can use [coap-cbor-cli][7] to perform get request. Put -c as argument.
  - Iotivity Client: you can write an iotivity client that runs on Linux. [Here][8] and [Here][9] there are some sample clients that can be used to test this scenario.
 
 [1]: https://github.com/iotivity/iotivity-constrained/
@@ -321,6 +323,6 @@ There are many different ways to test this scenario.
 [4]: http://www.atmel.com/tools/ATSAMR21-XPRO.aspx
 [5]: https://github.com/RIOT-OS/RIOT/pull/5596
 [6]: https://github.com/RIOT-OS/RIOT/pull/5926
-[7]: https://github.com/mcollina/coap-cli
-[8]: https://github.com/Agile-IoT/agile-iotivity/tree/master/Simple-Client-Linux
-[9]: https://github.com/Agile-IoT/agile-iotivity/tree/master/Interactive-Client-Linux
+[7]: https://github.com/domabo/coap-cbor-cli
+[8]: https://github.com/Agile-IoT/agile-iotivity/tree/master/IoTivity/Simple-Client-Linux
+[9]: https://github.com/Agile-IoT/agile-iotivity/tree/master/IoTivity/Interactive-Client-Linux

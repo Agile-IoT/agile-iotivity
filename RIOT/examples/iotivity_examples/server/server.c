@@ -30,7 +30,6 @@ static int quit;
 static mutex_t mutex;
 static pthread_cond_t cv;
 static struct timespec ts;
-static oc_resource_t *res = NULL;
 static char _oc_main_stack[THREAD_STACKSIZE_MAIN];
 
 #define OC_QUEUE_SIZE     (8)

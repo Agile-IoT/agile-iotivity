@@ -72,9 +72,6 @@ endif
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
-#Disable Warnings as Errors
-WERROR=0
-
 include $(RIOTBASE)/Makefile.include
 
 %.o: %.c
