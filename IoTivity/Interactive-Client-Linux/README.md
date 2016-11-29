@@ -54,6 +54,7 @@ Client: NEW Resource Found: coap://[2001:db8::5859:1c2a:64c7:c48a]:56789/oic/d
 Client: NEW Resource Found: coap://[2001:db8::5859:1c2a:64c7:c48a]:56789/light/1
 Client: There are 3 resource(s) in cache
 ```
+*Note*: The Discovery delay is hard-coded set to 4 seconds.
 
 Once it is completed, and it has found at least one resource, it enters in the Main Menu:
 ```
@@ -90,6 +91,8 @@ Client: There are 4 resource(s) in cache
 Client: Press any key to return to main menu...
 ```
 If a resource is just discovered it is marked with the NEW label.
+
+*Note*: The Discovery delay is hard-coded set to 5 seconds.
 
 ##Print Resources information (From Cache)
 This functionality prints the information on cached (discovered) resources. It returns Host, URI, Types and Interfaces:
