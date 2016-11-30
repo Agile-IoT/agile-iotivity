@@ -46,7 +46,7 @@ static char _oc_main_stack[THREAD_STACKSIZE_MAIN];
 static void
 set_led_state(bool led_state)
 {
-    if(led_state) {
+    if (led_state) {
         LED0_ON;
     }
     else {
@@ -65,7 +65,7 @@ app_init(void)
 {
     oc_init_platform("RIOT-OS", NULL, NULL);
     oc_add_device("/oic/d", "oic.d.switch", "RIOT switch", "1.0", "1.0",
-                set_device_custom_property, NULL);
+                  set_device_custom_property, NULL);
 }
 
 static oc_event_callback_retval_t
@@ -82,7 +82,8 @@ put_light(oc_client_response_t *data)
     PRINT("client_oic: PUT_light:\n");
     if (data->code == OC_STATUS_CHANGED) {
         PRINT("client_oic: PUT response OK\n");
-    } else {
+    }
+    else {
         PRINT("client_oic: PUT response code %d\n", data->code);
     }
 }
@@ -95,14 +96,14 @@ observe_light(oc_client_response_t *data)
     while (rep != NULL) {
         PRINT("key %s, value ", oc_string(rep->name));
         switch (rep->type) {
-        case BOOL:
-            PRINT("%d\n", rep->value_boolean);
-            light_state = rep->value_boolean;
-            break;
-        default:
-            break;
+            case BOOL:
+                PRINT("%d\n", rep->value_boolean);
+                light_state = rep->value_boolean;
+                break;
+            default:
+                break;
         }
-    rep = rep->next;
+        rep = rep->next;
     }
 }
 
@@ -113,6 +114,7 @@ discovery(const char *di, const char *uri, oc_string_array_t types,
 {
     int i;
     int uri_len = strlen(uri);
+
     uri_len = (uri_len >= MAX_URI_LENGTH) ? MAX_URI_LENGTH - 1 : uri_len;
 
     for (i = 0; i < oc_string_array_get_allocated_size(types); i++) {
@@ -132,18 +134,21 @@ discovery(const char *di, const char *uri, oc_string_array_t types,
 }
 
 #ifdef BUTTON_GPIO
-void button_callback(void){
-   gpio_irq_disable(BUTTON_GPIO);
-   if (oc_init_put(light_1, &light_server, NULL, &put_light, HIGH_QOS, NULL)) {
+void button_callback(void)
+{
+    gpio_irq_disable(BUTTON_GPIO);
+    if (oc_init_put(light_1, &light_server, NULL, &put_light, HIGH_QOS, NULL)) {
         oc_rep_start_root_object();
         oc_rep_set_boolean(root, state, !light_state);
         oc_rep_end_root_object();
         if (oc_do_put()) {
             PRINT("client_oic: Sent PUT request\n");
-        } else {
+        }
+        else {
             PRINT("client_oic: Could not send PUT\n");
         }
-    } else {
+    }
+    else {
         PRINT("client_oic: Could not init PUT\n");
     }
     xtimer_usleep(140000);
@@ -198,9 +203,9 @@ oc_main_thread(void *arg)
 
     pthread_cond_init(&cv, NULL);
 
-    static const oc_handler_t handler = {.init = app_init,
-                                       .signal_event_loop = signal_event_loop,
-                                       .requests_entry = issue_requests };
+    static const oc_handler_t handler = { .init = app_init,
+                                          .signal_event_loop = signal_event_loop,
+                                          .requests_entry = issue_requests };
     if (oc_main_init(&handler) < 0) {
         PRINT("client_oic: failed to initialize stack\n");
         return NULL;
@@ -214,7 +219,8 @@ oc_main_thread(void *arg)
         mutex_lock(&mutex);
         if (next_event == 0) {
             pthread_cond_wait(&cv, &mutex);
-        } else if (oc_clock_time() < next_event) {
+        }
+        else if (oc_clock_time() < next_event) {
             ts.tv_sec = (next_event / OC_CLOCK_SECOND);
             ts.tv_nsec = (next_event % OC_CLOCK_SECOND) * 1.e09 / OC_CLOCK_SECOND;
             pthread_cond_timedwait(&cv, &mutex, &ts);
@@ -234,7 +240,7 @@ main(void)
     PRINT("client_oic: Waiting for address autoconfiguration...");
     xtimer_sleep(10);
     thread_create(_oc_main_stack, sizeof(_oc_main_stack), 2, 0, oc_main_thread,
-                NULL, "OCF event thread");
+                  NULL, "OCF event thread");
 
     fgetc(stdin);
 

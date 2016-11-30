@@ -4,12 +4,12 @@ These examples implement some simple clients and a server to test the IoTivity p
 All examples use the realm-local multicast address **ff03:158** instead of the link-local multicast address **ff02::158**. Every payload is [CBOR][2] encoded.
 All examples have been tested on Native and SAMR21-XPRO.
 ##Index
- - Iotivity Examples
+ - [Iotivity Examples](#examples)
    - [Server Example](#server_ex)
    - [Client Example](#client_ex)
    - [Client_Switch Example](#client_sw_ex)
    - [BR_FW Example](#br_fw_ex)
- - Scenarios
+ - [Scenarios](#scenarios)
    - [Node-to-Node Communications](#n2n_comm)
      -  [Server and Client (Periodic PUT) - native target](#sc_pput_native)
      -  [Server and Client (Periodic PUT) - SAMR21-XPRO target](#sc_pput_samr21)
@@ -20,6 +20,9 @@ All examples have been tested on Native and SAMR21-XPRO.
      - [Start the Border Router](#l2n_br)
      - [Server output](#l2n_out)
      - [Testing](#l2n_tst)
+ - [Good Practice](#good)
+
+#<a name="examples"></a>Examples
 
 ##<a name="server_ex"></a>Server Example
 This example implements an IoTivity Server that contains 4 resources.
@@ -40,10 +43,12 @@ This example implements a simple client. It is able to discover resources with R
 ##<a name="br_fw_ex"></a>BR_FW Example
 It is an "enhanced" version of the GNRC Border Router. It implements a simple forwarder (UDP server/client) for multicast requests with destination ff03::158 port 5683.
 
-#Scenarios
+#<a name="scenarios"></a>Scenarios
 It is possible to deploy 2 different scenarios with these examples.
+
 ##<a name="n2n_comm"></a>Node-to-Node Communications
 In this scenario, we will deploy an IoTivity Client and IoTivity Server on different nodes. We can choose two different clients for this scenario: client (periodic PUT) or client_switch (PUT sent on User Button pressed). The first one runs well both on native either on SAMR21-XPRO boards, the second one runs just on SAMR21-XPRO boards. Native target hasn't the button.
+
 ### <a name="sc_pput_native"></a>Server and Client (Periodic PUT) - native target
 Create taps interfaces (to which RIOT will connect). Go to `/dist/tools/tapsetup` and type
 ```
@@ -192,6 +197,7 @@ $ make term BOARD=samr21-xpro SERIAL=client_node_serial
 ```
 Client starts the discovery phase. Once it finds a resource (with ResourceType **oic.r.light**), it registers as an observer on the resource, then it switches on its LED and it finally starts with periodic PUT requests. The server LED will blink periodically.
 Client and Server terminal outputs are similar to the outputs in case of native target.
+
 ###<a name="sc_sw_samr21"></a> Server and Client_Switch - SAMR21-XPRO target
 This deployment emulates a smart home scenario in which we have a SmartBulb (server) and a SmartSwitch (client_switch). It requires two SAMR21-XPRO nodes or similar.
 Connect your nodes, go to `/examples/iotivity-examples/server` and check the list of USB-connected nodes by typing:
@@ -222,6 +228,7 @@ $ make term BOARD=samr21-xpro SERIAL=client_node_serial
 ```
 Client performs the discovery phase. Once it is completed, client registers as an Observer of the resource, then it switches on its LED.
 Client is now ready to send a PUT request when the User Button is pressed. The server LED will change the status when the button is pressed. Terminal outputs are similar to outputs in previous examples.
+
 ##<a name="l2n_comm"></a>Linux-to-Nodes communications
 In this scenario, we will deploy an IoTivity server on a RIOT node and the IoTivity client will run on a Linux machine. This architecture requires the "enhanced" version of the Border Router [BR_FW](br_fw). It requires two SAMR21-XPRO nodes or similar.
 
@@ -314,15 +321,16 @@ Managing a PUT request the output is like
 ###<a name="l2n_tst"></a>Testing
 There are many different ways to test this scenario.
 
- - Tools: you can use [coap-cbor-cli][7] to perform get request. Put -c as argument.
- - Iotivity Client: you can write an iotivity client that runs on Linux. [Here][8] and [Here][9] there are some sample clients that can be used to test this scenario.
+ - Tools: you can use [coap-cbor-cli][5] to perform get request. Put -c as argument.
+ - Iotivity Client: you can write an iotivity client that runs on Linux. [Here][6] and [Here][7] there are some sample clients that can be used to test this scenario.
+
+#<a name="good"></a>Good Practice
+Discoveries and Requests are usually fast, but a timeout delay of some seconds on responses can be useful. In these examples, delays are set to 1 second for discoveries and they can be increased. For requests coming from a linux-based client, timeout delays should be higher (e.g. 5-10 seconds for discoveries and 3 seconds for requests). They can be tuned depending on the application. The minimum value is around 1 second.
 
 [1]: https://github.com/iotivity/iotivity-constrained/
 [2]: http://cbor.io/
 [3]: https://openconnectivity.org/resources/specifications
 [4]: http://www.atmel.com/tools/ATSAMR21-XPRO.aspx
-[5]: https://github.com/RIOT-OS/RIOT/pull/5596
-[6]: https://github.com/RIOT-OS/RIOT/pull/5926
-[7]: https://github.com/domabo/coap-cbor-cli
-[8]: https://github.com/Agile-IoT/agile-iotivity/tree/master/IoTivity/Simple-Client-Linux
-[9]: https://github.com/Agile-IoT/agile-iotivity/tree/master/IoTivity/Interactive-Client-Linux
+[5]: https://github.com/domabo/coap-cbor-cli
+[6]: https://github.com/Agile-IoT/agile-iotivity/tree/master/IoTivity/Simple-Client-Linux
+[7]: https://github.com/Agile-IoT/agile-iotivity/tree/master/IoTivity/Interactive-Client-Linux

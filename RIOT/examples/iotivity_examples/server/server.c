@@ -44,7 +44,7 @@ app_init(void)
     oc_init_platform("RIOT-OS", NULL, NULL);
 
     oc_add_device("/oic/d", "oic.d.light", "RIOT's light", "1.0", "1.0", NULL,
-                    NULL);
+                  NULL);
 }
 
 
@@ -69,10 +69,10 @@ oc_main_thread(void *arg)
 
     pthread_cond_init(&cv, NULL);
 
-    static const oc_handler_t handler = {.init = app_init,
-                                         .signal_event_loop = signal_event_loop,
-                                         .register_resources =
-                                           register_resources};
+    static const oc_handler_t handler = { .init = app_init,
+                                          .signal_event_loop = signal_event_loop,
+                                          .register_resources =
+                                              register_resources };
 
     msg_init_queue(_oc_msg_queue, OC_QUEUE_SIZE);
 
@@ -81,7 +81,7 @@ oc_main_thread(void *arg)
         return NULL;
     }
 
-      /* print network addresses */
+    /* print network addresses */
     puts("server_oic: Configured network interfaces:");
     _netif_config(0, NULL);
 
@@ -93,7 +93,8 @@ oc_main_thread(void *arg)
         mutex_lock(&mutex);
         if (next_event == 0) {
             pthread_cond_wait(&cv, &mutex);
-        } else {
+        }
+        else {
             ts.tv_sec = (next_event / OC_CLOCK_SECOND);
             ts.tv_nsec = (next_event % OC_CLOCK_SECOND) * 1.e09 / OC_CLOCK_SECOND;
             pthread_cond_timedwait(&cv, &mutex, &ts);
@@ -113,7 +114,7 @@ main(void)
     xtimer_sleep(10);
 
     thread_create(_oc_main_stack, sizeof(_oc_main_stack), 6, 0, oc_main_thread,
-                NULL, "OCF event thread");
+                  NULL, "OCF event thread");
 
     fgetc(stdin);
 

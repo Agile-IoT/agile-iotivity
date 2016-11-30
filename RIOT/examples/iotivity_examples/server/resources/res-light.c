@@ -29,7 +29,7 @@ static bool res_light_state = false;
 static void
 res_light_set_led_state(bool light_state)
 {
-    if(light_state) {
+    if (light_state) {
         PRINT("server_oic: LED0 is ON\n");
         LED0_ON;
     }
@@ -46,13 +46,13 @@ res_light_get_handler(oc_request_t *request, oc_interface_mask_t interface, void
     PRINT("server_oic: GET request\n");
     oc_rep_start_root_object();
     switch (interface) {
-    case OC_IF_BASELINE:
-        oc_process_baseline_interface(request->resource);
-    case OC_IF_RW:
-        oc_rep_set_boolean(root, state, res_light_state);
-        break;
-    default:
-        break;
+        case OC_IF_BASELINE:
+            oc_process_baseline_interface(request->resource);
+        case OC_IF_RW:
+            oc_rep_set_boolean(root, state, res_light_state);
+            break;
+        default:
+            break;
     }
     oc_rep_end_root_object();
     oc_send_response(request, OC_STATUS_OK);
@@ -69,14 +69,14 @@ res_light_put_handler(oc_request_t *request, oc_interface_mask_t interface, void
     while (rep != NULL) {
         PRINT("server_oic: key: %s ", oc_string(rep->name));
         switch (rep->type) {
-        case BOOL:
-            state = rep->value_boolean;
-            PRINT("value: %d\n", state);
-            break;
-        default:
-            oc_send_response(request, OC_STATUS_BAD_REQUEST);
-            return;
-            break;
+            case BOOL:
+                state = rep->value_boolean;
+                PRINT("value: %d\n", state);
+                break;
+            default:
+                oc_send_response(request, OC_STATUS_BAD_REQUEST);
+                return;
+                break;
         }
         rep = rep->next;
     }
