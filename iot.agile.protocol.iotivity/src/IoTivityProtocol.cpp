@@ -10,7 +10,7 @@
  * @ingroup
  * @{
  *
- * @file        IoTivityProtocolImp.cpp
+ * @file        IoTivityProtocol.cpp
  * @brief       IoTivity protocol implementation for AGILE
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>

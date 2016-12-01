@@ -17,6 +17,7 @@ DEST_LIB_DIR?=${DESTDIR}${local_optdir}/${package}/
 vpath+=src
 VPATH+=src
 
+arch_deps?= $(shell gcc -dumpmachine)
 
 #TODO: workaround missing /usr/include/iotivity namespace
 prep_tasks+=iotivity
@@ -32,6 +33,11 @@ CPPFLAGS+=\
  -I${iotivity_dir}/resource/c_common \
  -I${iotivity_dir}/resource/oc_logger \
  -I${iotivity_dir}/resource/stack \
+ -I/usr/local/include/dbus-cxx-0.8 \
+ -I/usr/include/dbus-1.0 \
+ -I/usr/lib/${arch_deps}/dbus-1.0/include \
+ -I/usr/include/sigc++-2.0 \
+ -I/usr/lib/${arch_deps}/sigc++-2.0/include 
 
 CPPFLAGS+=-I.
 V=1

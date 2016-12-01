@@ -10,7 +10,7 @@
  * @ingroup
  * @{
  *
- * @file        IoTivityProtocolImp.h
+ * @file        IoTivityProtocol.h
  * @brief       Header file for IoTivity protocol implementation for AGILE
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
@@ -43,8 +43,14 @@
 #include <iotivity/resource/OCResource.h>
 
 #include "boost/any.hpp"
+
+#include <dbus-cxx.h>
+
 using namespace std;
 using namespace OC;
 
+class IoTivityProtocol {
+    
+};
 
 #endif
