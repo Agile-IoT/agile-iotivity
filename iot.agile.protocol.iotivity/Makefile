@@ -44,7 +44,7 @@ V=1
 
 CXXFLAGS+=-std=c++0x
 
-srcs?=$(wildcard ./src/*.cpp)
+srcs?=$(wildcard ./src/*.cpp ./src/common/*.cpp ./src/agile/*.cpp)
 objs?=${srcs:.cpp=.o}
 
 agile_iotivity?=${local_bindir}/agile_iotivity

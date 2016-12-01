@@ -18,21 +18,14 @@
  * @ingroup
  * @{
  *
- * @file        IoTivityProtocol.h
- * @brief       Header file for IoTivity protocol implementation for AGILE
+ * @file        utility.h
+ * @brief       Header file for Utility functions
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
  *                              <m.antonini@create-net.org>
  *
  * @}
  */
-
-#ifndef IOTIVITY_PROTOCOL_H_
-#define IOTIVITY_PROTOCOL_H_
-
-#define PRINT_PRETTY_LOGS 0
-
-#include "common/utility.h"
 
 #include <unistd.h>
 #include <ctime>
@@ -41,27 +34,13 @@
 #include <typeinfo>
 #include <iostream>
 #include <vector>
+#include <termios.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include <iotivity/resource/OCApi.h>
-#include <iotivity/resource/OCPlatform.h>
-#include <iotivity/resource/OCResource.h>
-
-#include "boost/any.hpp"
-
-#include <dbus-cxx.h>
-
 using namespace std;
-using namespace OC;
 
-class IoTivityProtocol {
-    private:
-    static const string AGILE_IOTIVITY_BUS_NAME;
-    static const string AGILE_IOTIVITY_BUS_PATH;
-    static const string AGILE_NEW;
-};
-
-#endif
+bool is_ipv6_address(const string&);
+bool is_ipv4_address(const string& str);
