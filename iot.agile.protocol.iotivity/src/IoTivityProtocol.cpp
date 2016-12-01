@@ -31,14 +31,33 @@
 
 using namespace std;
 using namespace OC;
+using namespace AGILE;
 
 string addr = "ff03::158"; //TODO: it should be read as argument
 
 //Attributes
+IoTivityProtocol *IoTivityProtocol::instance = nullptr;
+
 OCConnectivityType connectivityType(CT_ADAPTER_IP);
-const string IoTivityProtocol::AGILE_IOTIVITY_BUS_NAME = "iot.agile.protocol.iotivity";
-const string IoTivityProtocol::AGILE_IOTIVITY_BUS_PATH = "/iot/agile/protocol/iotivity";
+const string IoTivityProtocol::BUS_NAME = "iot.agile.protocol.iotivity";
+const string IoTivityProtocol::BUS_PATH = "/iot/agile/protocol/iotivity";
+const string IoTivityProtocol::PROTOCOL_NAME = "IoTivity";
+const string IoTivityProtocol::DRIVER_NAME = "iotivity";
 //End Attributes
+
+IoTivityProtocol* IoTivityProtocol::getInstance()
+{
+#if PRINT_PRETTY_LOGS
+    cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    if(!instance)
+    {
+        instance = new IoTivityProtocol();
+    }
+
+    return instance;
+}
+
 
 /************************************************************************************************/
 

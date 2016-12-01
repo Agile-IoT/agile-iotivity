@@ -13,3 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * @ingroup
+ * @{
+ *
+ * @file        constant.h
+ * @brief       Header file for AGILE constants file
+ *
+ * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
+ *                              <m.antonini@create-net.org>
+ *
+ * @}
+ */
+
+namespace AGILE {
+
+/* AGILE DBus Constants */
+    static const string AGILE_NEW_DEVICE_SIGNAL_PATH = "/iot/agile/NewDevice";
+    static const string AGILE_NEW_RECORD_SIGNAL_PATH = "/iot/agile/NewRecord";
+
+/* AGILE Device Constants */
+    static const string AGILE_DEVICE_CONNECTED = "CONNECTED";
+    static const string AGILE_DEVICE_DISCONNECTED = "DISCONNECTED";
+    static const string AGILE_DEVICE_AVAILABLE = "AVAILABLE";
+    static const string AGILE_DEVICE_UNAVAILABLE = "UNAVAILABLE";
+
+}

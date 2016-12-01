@@ -34,6 +34,8 @@
 
 #include "common/utility.h"
 
+#include "agile/constants.h"
+
 #include <unistd.h>
 #include <ctime>
 #include <string>
@@ -59,9 +61,36 @@ using namespace OC;
 
 class IoTivityProtocol {
     private:
-    static const string AGILE_IOTIVITY_BUS_NAME;
-    static const string AGILE_IOTIVITY_BUS_PATH;
-    static const string AGILE_NEW;
+
+    /**
+     * Bus name for AGILE IoTivity Protocol
+     */
+    static const string BUS_NAME;
+
+    /**
+     * Bus path for AGILE IoTivity Protocol
+     */
+    static const string BUS_PATH;
+
+    /**
+     * Protocol name
+     */
+    static const string PROTOCOL_NAME;
+
+    /**
+     * Protocol driver name
+     */
+    static const string DRIVER_NAME;
+
+    /**
+     * IoTivityProtocol must be a singleton
+     */
+    static IoTivityProtocol *instance;
+
+    public:
+    
+    IoTivityProtocol* getInstance();
+
 };
 
 #endif

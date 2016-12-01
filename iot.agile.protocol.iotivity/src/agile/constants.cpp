@@ -13,3 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * @ingroup
+ * @{
+ *
+ * @file        constant.cpp
+ * @brief       AGILE constants file
+ *
+ * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
+ *                              <m.antonini@create-net.org>
+ *
+ * @}
+ */
+
