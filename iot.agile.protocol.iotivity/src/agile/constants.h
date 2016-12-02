@@ -27,16 +27,18 @@
  * @}
  */
 
+#include <string>
+
 namespace AGILE {
 
 /* AGILE DBus Constants */
-    static const string AGILE_NEW_DEVICE_SIGNAL_PATH = "/iot/agile/NewDevice";
-    static const string AGILE_NEW_RECORD_SIGNAL_PATH = "/iot/agile/NewRecord";
+    static const std::string AGILE_NEW_DEVICE_SIGNAL_PATH = "/iot/agile/NewDevice";
+    static const std::string AGILE_NEW_RECORD_SIGNAL_PATH = "/iot/agile/NewRecord";
 
 /* AGILE Device Constants */
-    static const string AGILE_DEVICE_CONNECTED = "CONNECTED";
-    static const string AGILE_DEVICE_DISCONNECTED = "DISCONNECTED";
-    static const string AGILE_DEVICE_AVAILABLE = "AVAILABLE";
-    static const string AGILE_DEVICE_UNAVAILABLE = "UNAVAILABLE";
+    static const std::string AGILE_DEVICE_CONNECTED = "CONNECTED";
+    static const std::string AGILE_DEVICE_DISCONNECTED = "DISCONNECTED";
+    static const std::string AGILE_DEVICE_AVAILABLE = "AVAILABLE";
+    static const std::string AGILE_DEVICE_UNAVAILABLE = "UNAVAILABLE";
 
 }

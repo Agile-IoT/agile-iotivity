@@ -33,8 +33,10 @@
 #define PRINT_PRETTY_LOGS 0
 
 #include "common/utility.h"
+#include "common/Logger.h"
 
 #include "agile/constants.h"
+#include "agile/Protocol.h"
 
 #include <unistd.h>
 #include <ctime>
@@ -59,37 +61,19 @@
 using namespace std;
 using namespace OC;
 
-class IoTivityProtocol {
+class IoTivityProtocol : public AGILE::Protocol {
     private:
-
-    /**
-     * Bus name for AGILE IoTivity Protocol
-     */
-    static const string BUS_NAME;
-
-    /**
-     * Bus path for AGILE IoTivity Protocol
-     */
-    static const string BUS_PATH;
-
-    /**
-     * Protocol name
-     */
-    static const string PROTOCOL_NAME;
-
-    /**
-     * Protocol driver name
-     */
-    static const string DRIVER_NAME;
-
+    static const string TAG;
+    Logger* log;
     /**
      * IoTivityProtocol must be a singleton
      */
     static IoTivityProtocol *instance;
+    IoTivityProtocol();
 
     public:
     
-    IoTivityProtocol* getInstance();
+    static IoTivityProtocol* getInstance();
 
 };
 

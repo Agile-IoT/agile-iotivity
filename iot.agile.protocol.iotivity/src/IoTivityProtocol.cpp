@@ -37,13 +37,25 @@ string addr = "ff03::158"; //TODO: it should be read as argument
 
 //Attributes
 IoTivityProtocol *IoTivityProtocol::instance = nullptr;
-
+const string IoTivityProtocol::TAG = "IoTivityProtocol";
 OCConnectivityType connectivityType(CT_ADAPTER_IP);
-const string IoTivityProtocol::BUS_NAME = "iot.agile.protocol.iotivity";
-const string IoTivityProtocol::BUS_PATH = "/iot/agile/protocol/iotivity";
-const string IoTivityProtocol::PROTOCOL_NAME = "IoTivity";
-const string IoTivityProtocol::DRIVER_NAME = "iotivity";
 //End Attributes
+
+IoTivityProtocol::IoTivityProtocol() : AGILE::Protocol()
+{
+    BUS_NAME = "iot.agile.protocol.iotivity";
+    BUS_PATH = "/iot/agile/protocol/iotivity";
+    PROTOCOL_NAME = "IoTivity";
+    DRIVER_NAME = "iotivity";
+
+    log = new Logger(&std::cout, Logger::LEVEL_WARNING);
+    log->d(TAG, "Debug");
+    log->v(TAG, "Verbose");
+    log->i(TAG, "Informational");
+    log->w(TAG, "Warning");
+    log->e(TAG, "Error");
+    log->c(TAG, "Critical");
+}
 
 IoTivityProtocol* IoTivityProtocol::getInstance()
 {
@@ -76,8 +88,8 @@ int main(int argc, char** argv)
     cerr << "Function: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
     
-
-    cout << "HI!" << endl;
+    IoTivityProtocol *i = IoTivityProtocol::getInstance();
+    cout << i->BUS_NAME << endl;
     
     return 0;
 }
