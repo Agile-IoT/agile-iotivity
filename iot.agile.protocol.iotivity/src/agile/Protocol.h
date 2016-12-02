@@ -28,6 +28,13 @@
  */
 
 #include <string>
+#include <unistd.h>
+#include <ctime>
+#include <iostream>
+#include <functional>
+
+#include <gio/gunixfdlist.h>
+#include <gio/gio.h>
 
 using namespace std;
 
@@ -36,7 +43,69 @@ namespace AGILE {
 }
 
 class AGILE::Protocol {
+
     public:
+    /**
+     * Properties
+     */
+    static const string PROPERTY_STATUS;
+    static const string PROPERTY_DRIVER;
+    static const string PROPERTY_NAME;
+    static const string PROPERTY_DATA;
+    static const string PROPERTY_DEVICES;
+   
+    /**
+     * Methods
+     */
+    static const string METHOD_CONNECT;
+    static const string METHOD_DISCONNECT;
+    static const string METHOD_STARTDISCOVERY;
+    static const string METHOD_STOPDISCOVERY;
+    static const string METHOD_WRITE;
+    static const string METHOD_READ;
+    static const string METHOD_SUBSCRIBE;
+    static const string METHOD_UNSUBSCRIBE;
+
+    /**
+     * Protocol status
+     */
+    static const string PROTOCOL_STATUS_AVAILABLE;
+    static const string PROTOCOL_STATUS_UNAVAILABLE;
+    static const string PROTOCOL_STATUS_NOT_CONFIGURED;
+    static const string PROTOCOL_STATUS_DISABLED;
+    static const string PROTOCOL_STATUS_ENABLED;
+    static const string PROTOCOL_STATUS_FAILURE;
+
+    /**
+     * Protocol discovery status
+     */
+    static const string PROTOCOL_DISCOVERY_STATUS_RUNNING;
+    static const string PROTOCOL_DISCOVERY_STATUS_NONE;
+    static const string PROTOCOL_DISCOVERY_STATUS_FAILURE;
+
+    /**
+     * Errors
+     */
+    static const int PROTOCOL_DBUS_INIT_ERROR = 1;
+
+    private:
+    static const gchar PROTOCOL_INTROSPECTION[];
+    guint owner_id;
+    GMainLoop *mainloop;
+    GDBusNodeInfo *introspection_data = NULL;
+
+    static void onBusAcquired(GDBusConnection *, const gchar *, gpointer);
+    static void onNameAcquired(GDBusConnection *, const gchar *, gpointer);
+    static void onNameLost(GDBusConnection *, const gchar *, gpointer);
+
+    static void handleMethodCall(GDBusConnection *, const gchar *, const gchar *, const gchar *, const gchar *, GVariant *, GDBusMethodInvocation *, gpointer);
+    static GVariant* handleGetProperty(GDBusConnection *, const gchar *, const gchar *, const gchar *, const gchar *, GError **, gpointer);
+    static gboolean handleSetProperty(GDBusConnection *, const gchar *, const gchar *, const gchar *, const gchar *, GVariant *, GError **, gpointer);
+
+    static const GDBusInterfaceVTable interface_vtable;
+
+    public:
+    static Protocol *instance;
     /**
      * Bus name for AGILE Protocol
      */
@@ -58,5 +127,26 @@ class AGILE::Protocol {
     string DRIVER_NAME;
 
     Protocol();
+    ~Protocol();
+    int initBus();
+    void keepAliveProtocol();
+    
+    /**
+     * Methods should be implemented in child class
+     */
 
+    virtual void onBusAcquiredCb(GDBusConnection *, const gchar *, gpointer);
+    virtual void onNameAcquiredCb(GDBusConnection *, const gchar *, gpointer);
+    virtual void onNameLostCb(GDBusConnection *, const gchar *, gpointer);
+
+    //Methods
+    virtual void Connect(string);
+    virtual void Disconnect(string);
+    virtual void StartDiscovery();
+    virtual void StopDiscovery();
+    string DiscoveryStatus();
+ // ProtocolMessage Write(string, KeyValue);
+ // RecordObject Read(string, KeyValue);
+ // void Subscribe(string, KeyValue);
+ // RecordObject Unsubscribe(string, KeyValue);
 };

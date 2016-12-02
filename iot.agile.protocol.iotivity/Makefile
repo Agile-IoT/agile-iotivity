@@ -24,8 +24,9 @@ prep_tasks+=iotivity
 config_pkgconfig?=1
 usr_include_dir?=${PKG_CONFIG_SYSROOT_DIR}/usr/include
 iotivity_dir?=${CURDIR}/iotivity
-LIBS+=-loc -loc_logger -loctbstack -lpthread
+LIBS+=-loc -loc_logger -loctbstack -lpthread -ldbus-1 -lglib-2.0 -lgio-2.0 -lgobject-2.0
 
+LD_LIBRARY_PATHS?= -Wl,-rpath=/usr/local/lib
 #Includes
 CPPFLAGS+=\
  -I${iotivity_dir} \
@@ -33,11 +34,11 @@ CPPFLAGS+=\
  -I${iotivity_dir}/resource/c_common \
  -I${iotivity_dir}/resource/oc_logger \
  -I${iotivity_dir}/resource/stack \
- -I/usr/local/include/dbus-cxx-0.8 \
  -I/usr/include/dbus-1.0 \
  -I/usr/lib/${arch_deps}/dbus-1.0/include \
- -I/usr/include/sigc++-2.0 \
- -I/usr/lib/${arch_deps}/sigc++-2.0/include 
+ -I/usr/include/gio-unix-2.0 \
+ -I/usr/include/glib-2.0/ \
+ -I/usr/lib/${arch_deps}/glib-2.0/include/
 
 CPPFLAGS+=-I.
 V=1
@@ -68,7 +69,7 @@ remove_agile_iotivity:
 
 ${local_bindir}/agile_iotivity: ${objs}
 	@-mkdir -p ${@D}
-	${CXX} -o ${@} $^ ${LDFLAGS} ${LIBS}
+	${CXX} -o ${@} $^ ${LD_LIBRARY_PATHS} ${LIBS}
 
 clean:
 	rm -f ./*.o *~ ${objs} */*.o iotivity

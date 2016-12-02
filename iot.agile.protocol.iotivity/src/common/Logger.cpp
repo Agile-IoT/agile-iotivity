@@ -31,7 +31,8 @@
 
 Logger::Logger(std::ostream * stream, int lvl)
 {
-    print =  stream;
+    assert(stream != NULL || stream != nullptr); //Abort if stream is null
+    print = stream; 
     level = lvl;
 }
 
