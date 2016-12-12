@@ -43,6 +43,7 @@
 
 #include "DeviceOverview.h"
 #include "constants.h"
+#include "RecordObject.h"
 
 using namespace std;
 
