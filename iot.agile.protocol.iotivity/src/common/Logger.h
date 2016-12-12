@@ -27,6 +27,9 @@
  * @}
  */
 
+#ifndef __COMMON_LOGGER_H__
+#define __COMMON_LOGGER_H__
+
 #include <string>
 #include <iostream>
 #include <assert.h>
@@ -54,3 +57,5 @@ class Logger {
     void e(const std::string, const std::string);
     void c(const std::string, const std::string);
 };
+
+#endif

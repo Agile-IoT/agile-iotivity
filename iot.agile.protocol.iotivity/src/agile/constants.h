@@ -27,6 +27,9 @@
  * @}
  */
 
+#ifndef __AGILE_CONSTANTS_H__
+#define __AGILE_CONSTANTS_H__
+
 #include <string>
 
 namespace AGILE {
@@ -35,11 +38,6 @@ namespace AGILE {
     static const std::string AGILE_NEW_DEVICE_SIGNAL_PATH = "/iot/agile/NewDevice";
     static const std::string AGILE_NEW_RECORD_SIGNAL_PATH = "/iot/agile/NewRecord";
     static const std::string AGILE_PROTOCOL_INTERFACE = "iot.agile.Protocol";
-
-/* AGILE Device Constants */
-    static const std::string AGILE_DEVICE_CONNECTED = "CONNECTED";
-    static const std::string AGILE_DEVICE_DISCONNECTED = "DISCONNECTED";
-    static const std::string AGILE_DEVICE_AVAILABLE = "AVAILABLE";
-    static const std::string AGILE_DEVICE_UNAVAILABLE = "UNAVAILABLE";
-
 }
+
+#endif

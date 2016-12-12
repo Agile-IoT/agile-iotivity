@@ -27,6 +27,9 @@
  * @}
  */
 
+#ifndef __COMMON_UTILITY_H__
+#define __COMMON_UTILITY_H__
+
 #include <unistd.h>
 #include <ctime>
 #include <string>
@@ -44,3 +47,5 @@ using namespace std;
 
 bool is_ipv6_address(const string&);
 bool is_ipv4_address(const string& str);
+
+#endif

@@ -26,6 +26,10 @@
  *
  * @}
  */
+
+#ifndef __COMMON_DELAYEDCALLBACK_H__
+#define __COMMON_DELAYEDCALLBACK_H__
+
 #include <functional>
 #include <chrono>
 #include <future>
@@ -39,3 +43,5 @@ public:
     DelayedCallback(int after, bool async, std::function<void(void)> task);
     void stopThread();
 };
+
+#endif

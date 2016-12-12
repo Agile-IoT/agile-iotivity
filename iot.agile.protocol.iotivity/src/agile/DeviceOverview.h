@@ -28,6 +28,9 @@
  * @}
  */
 
+#ifndef __AGILE_DEVICEOVERVIEW_H__
+#define __AGILE_DEVICEOVERVIEW_H__
+
 #include <string>
 #include <unistd.h>
 #include <ctime>
@@ -47,13 +50,13 @@ class AGILE::DeviceOverview {
     static const string STATUS_AVAILABLE;
     static const string STATUS_UNAVAILABLE;
 
+    static bool isValidStatus(string);
+
     private:
     string name;
     string protocol;
     string id;
     string status;
-
-    static bool isValidStatus(string);
 
     public:
     DeviceOverview();
@@ -66,6 +69,9 @@ class AGILE::DeviceOverview {
     string getId() const;
     string getStatus() const;
 
+    void setName(string);
+
     bool operator==(const AGILE::DeviceOverview& dev) const;
 };
 
+#endif

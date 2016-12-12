@@ -26,6 +26,10 @@
  *
  * @}
  */
+
+#ifndef __COMMON_PERIODICCALLBACK_H__
+#define __COMMON_PERIODICCALLBACK_H__
+
 #include <functional>
 #include <chrono>
 #include <future>
@@ -40,3 +44,5 @@ public:
     ~PeriodicCallback();
     void stopThread();
 };
+
+#endif

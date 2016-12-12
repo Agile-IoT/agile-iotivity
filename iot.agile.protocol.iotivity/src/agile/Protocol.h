@@ -27,14 +27,22 @@
  * @}
  */
 
+#ifndef __AGILE_PROTOCOL_H__
+#define __AGILE_PROTOCOL_H__
+
 #include <string>
 #include <unistd.h>
 #include <ctime>
 #include <iostream>
 #include <functional>
+#include <vector>
+#include <algorithm>
 
 #include <gio/gunixfdlist.h>
 #include <gio/gio.h>
+
+#include "DeviceOverview.h"
+#include "constants.h"
 
 using namespace std;
 
@@ -67,6 +75,11 @@ class AGILE::Protocol {
     static const string METHOD_UNSUBSCRIBE;
 
     /**
+     * Signals
+     */
+    static const string SIGNAL_FOUNDNEWDEVICE;
+
+    /**
      * Protocol status
      */
     static const string PROTOCOL_STATUS_AVAILABLE;
@@ -89,10 +102,12 @@ class AGILE::Protocol {
     static const int PROTOCOL_DBUS_INIT_ERROR = 1;
 
     private:
+    std::vector<AGILE::DeviceOverview> devices;
     static const gchar PROTOCOL_INTROSPECTION[];
     guint owner_id;
     GMainLoop *mainloop;
     GDBusNodeInfo *introspection_data = NULL;
+    GDBusConnection *connection = NULL;
 
     static void onBusAcquired(GDBusConnection *, const gchar *, gpointer);
     static void onNameAcquired(GDBusConnection *, const gchar *, gpointer);
@@ -130,6 +145,18 @@ class AGILE::Protocol {
     ~Protocol();
     int initBus();
     void keepAliveProtocol();
+    void saveGDBusConnection(GDBusConnection *);
+
+    //Devices list manipulation functions
+    bool isNewDevice(AGILE::DeviceOverview *);
+    bool addDevice(AGILE::DeviceOverview *);
+    bool updateDevice(AGILE::DeviceOverview *);
+    bool removeDevice(AGILE::DeviceOverview *);
+    AGILE::DeviceOverview* getDeviceFromId(string);
+    AGILE::DeviceOverview* getDeviceAt(int);
+    int getDeviceListSize();
+    bool emitFoundNewDeviceSignal(AGILE::DeviceOverview *);
+    
     
     /**
      * Methods should be implemented in child class
@@ -138,6 +165,9 @@ class AGILE::Protocol {
     virtual void onBusAcquiredCb(GDBusConnection *, const gchar *, gpointer);
     virtual void onNameAcquiredCb(GDBusConnection *, const gchar *, gpointer);
     virtual void onNameLostCb(GDBusConnection *, const gchar *, gpointer);
+
+    virtual void onUnknownMethod(string);
+    virtual void onUnknownProperty(string);
 
     //Methods
     virtual void Connect(string);
@@ -150,3 +180,5 @@ class AGILE::Protocol {
  // void Subscribe(string, KeyValue);
  // RecordObject Unsubscribe(string, KeyValue);
 };
+
+#endif

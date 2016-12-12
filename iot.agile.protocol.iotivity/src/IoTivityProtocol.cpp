@@ -107,6 +107,16 @@ void IoTivityProtocol::onNameLostCb(GDBusConnection *conn, const gchar *name, gp
     exit(1);
 }
 
+void IoTivityProtocol::onUnknownMethod(string method)
+{
+    log->e(TAG, "Method " + method + " is Unknown!");
+}
+
+void IoTivityProtocol::onUnknownProperty(string property)
+{
+    log->e(TAG, "Property " + property + " is Unknown!");
+}
+
 void IoTivityProtocol::Connect(string deviceId)
 {
     log->e(TAG, "Connect not implemented yet! DevID: " + deviceId);
@@ -131,6 +141,8 @@ void IoTivityProtocol::StartDiscovery()
 
 void IoTivityProtocol::StopDiscovery()
 {
+    onDiscoveryMutex.unlock();
+
     log->v(TAG, "StopDiscovery invoked");
     if(!discoveryPeriodicCallback)
     {
@@ -162,7 +174,31 @@ void IoTivityProtocol::doDiscovery()
 
 void IoTivityProtocol::onDiscovery(std::shared_ptr<OC::OCResource> resource)
 {
+    onDiscoveryMutex.lock();
+
     log->v(TAG, "Resource Discovered");
+
+    string name = "IoTivity Node";
+    string id = resource->host();
+    AGILE::DeviceOverview *dev = new AGILE::DeviceOverview(name, PROTOCOL_NAME, id);
+
+    if(addDevice(dev)){ //If the device is new, it is added in the device list
+        log->i(TAG, "New device discovered! ID: " + dev->getId());
+        bool res = emitFoundNewDeviceSignal(dev);
+        if(res)
+        {
+            log->d(TAG, "NewDeviceFound signal emitted!");
+        }
+        else
+        {
+            log->e(TAG, "Error during NewDeviceFound signal emission");
+        }
+    }
+    else {
+        log->v(TAG, "Device with ID " + dev->getId() + " is already known");
+    }
+
+    onDiscoveryMutex.unlock();
 }
 /************************************************************************************************/
 
@@ -174,6 +210,7 @@ void print_usage(char* program_name)
 
 int main(int argc, char** argv)
 {
+    //At the moment it supports only IPv6-based discoveries
     IoTivityProtocol::getInstance()->startProtocol("ff03::158");
     return 0;
 }

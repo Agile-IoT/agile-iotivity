@@ -45,6 +45,7 @@ const string AGILE::Protocol::METHOD_WRITE = "Write";
 const string AGILE::Protocol::METHOD_READ = "Read";
 const string AGILE::Protocol::METHOD_SUBSCRIBE = "Subscribe";
 const string AGILE::Protocol::METHOD_UNSUBSCRIBE = "Unsubscribe";
+const string AGILE::Protocol::SIGNAL_FOUNDNEWDEVICE = "FoundNewDeviceSignal";
 const string AGILE::Protocol::PROTOCOL_STATUS_AVAILABLE = "AVAILABLE";
 const string AGILE::Protocol::PROTOCOL_STATUS_UNAVAILABLE = "UNAVAILABLE";
 const string AGILE::Protocol::PROTOCOL_STATUS_NOT_CONFIGURED = "NOT_CONFIGURED";
@@ -58,14 +59,18 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "<node name='/iot/agile/Protocol'>"
     "  <interface name='iot.agile.Protocol'>"
     "  <method name='Connect'>"
+    "  <annotation name='org.freedesktop.DBus.Description' value='Setup connection and initialize protocol connection for the given device' />"
     "    <arg name='deviceId' type='s' direction='in'/>"
     "  </method>"
     "  <method name='Disconnect'>"
+    "    <annotation name='org.freedesktop.DBus.Description' value='Safely disconnect the device from the protocol adapter' />"
     "    <arg name='deviceId' type='s' direction='in'/>"
     "  </method>"
     "  <method name='StartDiscovery'>"
+    "    <annotation name='org.freedesktop.DBus.Description' value='Start device discovery' />"
     "  </method>"
     "  <method name='StopDiscovery'>"
+    "    <annotation name='org.freedesktop.DBus.Description' value='Stop device discovery' />"
     "  </method>"
 /*    "  <method name='Write'>"
     "    <arg name='deviceId' type='s' direction='in'/>"
@@ -89,15 +94,15 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
 */    "  <property name='Status' type='s' access='read' />"
     "  <property name='Driver' type='s' access='read' />"
     "  <property name='Name' type='s' access='read' />"
-    "  <property name='Data' type='{sssssd}' access='read' />"
+    "  <property name='Devices' type='a(ssss)' access='read' />"
 /*    "<signal name='DataChanged'>"
     "  <arg name='Data' type='{sssssd}' />"
     "</signal>"
-    "  <property name='Devices' type='{sss(i)}' access='read' />"
-    "<signal name='DevicesChanged'>"
-    "  <arg name='Devices' type='{sss(i)}' />"
+    "  <property name='Data' type='{sss(i)}' access='read' />"
+ */   "<signal name='FoundNewDeviceSignal'>"
+    "  <arg name='Device' type='(ssss)' />"
     "</signal>"
-*/    "  </interface>"
+    "  </interface>"
     "</node>";
 
 const GDBusInterfaceVTable AGILE::Protocol::interface_vtable =
@@ -142,6 +147,11 @@ int AGILE::Protocol::initBus()
     return 0;
 }
 
+void AGILE::Protocol::saveGDBusConnection(GDBusConnection *conn)
+{
+    connection = conn;
+}
+
 void AGILE::Protocol::onBusAcquired(GDBusConnection *conn, const gchar *name, gpointer user_data)
 {
     guint registration_id;
@@ -153,6 +163,8 @@ void AGILE::Protocol::onBusAcquired(GDBusConnection *conn, const gchar *name, gp
                                                        NULL,  /* user_data */
                                                        NULL,  /* user_data_free_func */
                                                        NULL); /* GError** */
+
+    instance->saveGDBusConnection(conn);
     instance->onBusAcquiredCb(conn, name, user_data);
 }
 
@@ -166,6 +178,16 @@ void AGILE::Protocol::onNameLost(GDBusConnection *conn, const gchar *name, gpoin
     instance->onNameLostCb(conn, name, user_data);
 }
 
+void AGILE::Protocol::onUnknownMethod(string method)
+{
+    std::cout << "onUnknownMethod not implemented! Arg: " << method << std::endl;
+}
+
+void AGILE::Protocol::onUnknownProperty(string property)
+{
+    std::cout << "onUnknownProperty not implemented! Arg: " << property << std::endl;
+}
+
 void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar *sender, const gchar *object_path, const gchar *interface_name, const gchar *method_name, GVariant *parameters, GDBusMethodInvocation *invocation, gpointer user_data)
 {
     //METHOD CONNECT
@@ -174,30 +196,37 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
         const gchar *deviceId;
         g_variant_get (parameters, "(&s)", &deviceId);
         instance->Connect(string(deviceId));
+        g_dbus_method_invocation_return_value(invocation, NULL);
     }
     //METHOD DISCONNECT
-    if(g_strcmp0(method_name, METHOD_DISCONNECT.c_str()) == 0)
+    else if(g_strcmp0(method_name, METHOD_DISCONNECT.c_str()) == 0)
     {
         const gchar *deviceId;
         g_variant_get (parameters, "(&s)", &deviceId);
         instance->Disconnect(string(deviceId));
+        g_dbus_method_invocation_return_value(invocation, NULL);
     }
     //METHOD START DISCOVERY
-    if(g_strcmp0(method_name, METHOD_STARTDISCOVERY.c_str()) == 0)
+    else if(g_strcmp0(method_name, METHOD_STARTDISCOVERY.c_str()) == 0)
     {
         instance->StartDiscovery();
+        g_dbus_method_invocation_return_value(invocation, NULL);
     }
     //METHOD STOP DISCOVERY
     else if(g_strcmp0(method_name, METHOD_STOPDISCOVERY.c_str()) == 0)
     {
         instance->StopDiscovery();
+        g_dbus_method_invocation_return_value(invocation, NULL);
+    }
+    else
+    {
+        instance->onUnknownMethod(method_name);
     }
 }
 
 GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const gchar *sender, const gchar *obj_path, const gchar *interface_name, const gchar *property_name, GError **error, gpointer user_data)
 {
     GVariant * ret;
-    cout << property_name << endl;
     ret = NULL;
 
     //PROPERTY PROTOCOL NAME
@@ -215,7 +244,23 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     {
         ret = g_variant_new_string(PROTOCOL_STATUS_AVAILABLE.c_str());
     }
-
+    //PROPERTY DATA
+    else if(g_strcmp0(property_name, PROPERTY_DEVICES.c_str()) == 0)
+    {
+        GVariantBuilder *builder = g_variant_builder_new(G_VARIANT_TYPE("a(ssss)"));
+        for(int i=0; i<instance->getDeviceListSize(); i++) {
+           AGILE::DeviceOverview *d = instance->getDeviceAt(i);
+           g_variant_builder_add(builder, "(ssss)", d->getName().c_str(),
+               d->getProtocol().c_str(), d->getId().c_str(), d->getStatus().c_str());
+        }
+        ret = g_variant_new("a(ssss)", builder);
+        g_variant_builder_unref(builder);        
+    }
+    //PROPERTY UNKNOWN
+    else
+    {
+        instance->onUnknownProperty(property_name);
+    }
     return ret;
 }
 
@@ -231,6 +276,102 @@ void AGILE::Protocol::keepAliveProtocol()
     g_dbus_node_info_unref(introspection_data);
 
     return;
+}
+
+bool AGILE::Protocol::emitFoundNewDeviceSignal(AGILE::DeviceOverview *dev)
+{
+    GError *local_error;
+    GVariant * device_variant;
+
+    local_error = NULL;
+
+    device_variant = g_variant_new("(ssss)", dev->getName().c_str(), dev->getProtocol().c_str(),
+        dev->getId().c_str(), dev->getStatus().c_str());
+
+    g_dbus_connection_emit_signal(connection,
+                                  NULL,
+                                  BUS_PATH.c_str(),
+                                  AGILE::AGILE_PROTOCOL_INTERFACE.c_str(), 
+                                  SIGNAL_FOUNDNEWDEVICE.c_str(),
+                                  device_variant,
+                                  &local_error);
+
+    if(local_error == NULL)
+    {
+       return true;
+    }
+
+    return false;
+}
+
+bool AGILE::Protocol::isNewDevice(AGILE::DeviceOverview *dev)
+{
+    return (std::find(devices.begin(), devices.end(), *dev) == devices.end());
+}
+
+bool AGILE::Protocol::addDevice(AGILE::DeviceOverview *dev)
+{
+    if(isNewDevice(dev)) {
+        devices.push_back(*dev);
+        return true;
+    }
+    return false;
+}
+
+bool AGILE::Protocol::updateDevice(AGILE::DeviceOverview *dev)
+{
+    if(!isNewDevice(dev)) {
+        for(int i=0; i<devices.size(); i++) {
+            if(devices.at(i) == *dev)
+            {
+                devices.at(i) = *dev;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool AGILE::Protocol::removeDevice(AGILE::DeviceOverview *dev)
+{
+    if(!isNewDevice(dev)) {
+        for(int i=0; i<devices.size(); i++) {
+            if(devices.at(i) == *dev)
+            {
+                devices.erase(devices.begin()+i);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+AGILE::DeviceOverview* AGILE::Protocol::getDeviceFromId(string id)
+{
+    AGILE::DeviceOverview* t = new AGILE::DeviceOverview("", PROTOCOL_NAME, id);
+    if(!isNewDevice(t)) {
+        for(int i=0; i<devices.size(); i++) {
+            if(devices.at(i) == *t)
+            {
+                return &devices.at(i);
+            }
+        }
+    }
+    return NULL;
+}
+
+AGILE::DeviceOverview* AGILE::Protocol::getDeviceAt(int pos)
+{
+    if(pos>=0 || pos<devices.size())
+    {
+        return &devices.at(pos);
+    }
+    return NULL;
+}
+
+int AGILE::Protocol::getDeviceListSize()
+{
+    return devices.size();
 }
 
 string AGILE::Protocol::DiscoveryStatus()

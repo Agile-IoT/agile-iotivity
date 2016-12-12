@@ -98,6 +98,11 @@ string AGILE::DeviceOverview::getStatus() const
     return status;
 }
 
+void AGILE::DeviceOverview::setName(string name)
+{
+    this->name = name;
+}
+
 bool AGILE::DeviceOverview::operator==(const AGILE::DeviceOverview & dev) const
 {
     const AGILE::DeviceOverview t = *this;

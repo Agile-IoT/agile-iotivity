@@ -27,8 +27,8 @@
  * @}
  */
 
-#ifndef IOTIVITY_PROTOCOL_H_
-#define IOTIVITY_PROTOCOL_H_
+#ifndef __IOTIVITY_PROTOCOL_H__
+#define __IOTIVITY_PROTOCOL_H__
 
 #include "common/utility.h"
 #include "common/Logger.h"
@@ -36,6 +36,7 @@
 
 #include "agile/constants.h"
 #include "agile/Protocol.h"
+#include "agile/DeviceOverview.h"
 
 #include <unistd.h>
 #include <ctime>
@@ -60,40 +61,43 @@ using namespace OC;
 
 class IoTivityProtocol : public AGILE::Protocol {
     private:
-        string destinationAddress = "127.0.0.1";
-        static const string TAG;
-        static const int DISCOVERY_DELAY = 2;
-        Logger* log;
+    string destinationAddress = "127.0.0.1";
+    static const string TAG;
+    static const int DISCOVERY_DELAY = 2;
+    Logger* log;
 
-        PeriodicCallback *discoveryPeriodicCallback = nullptr;
+    PeriodicCallback *discoveryPeriodicCallback = nullptr;
 
-        OC::PlatformConfig *platformConfig;
-        /**
-         * IoTivityProtocol must be a singleton
-         */
-        //static IoTivityProtocol *instance;
-        IoTivityProtocol();
+    OC::PlatformConfig *platformConfig;
+    IoTivityProtocol();
+
+    mutex onDiscoveryMutex;
 
     public:
     
-        static IoTivityProtocol* getInstance();
-        void startProtocol(string);
+    static IoTivityProtocol* getInstance();
+    void startProtocol(string);
 
-        //DBus init callbacks
-        void onBusAcquiredCb(GDBusConnection *, const gchar *, gpointer);
-        void onNameAcquiredCb(GDBusConnection *, const gchar *, gpointer);
-        void onNameLostCb(GDBusConnection *, const gchar *, gpointer);
+    //DBus init callbacks
+    void onBusAcquiredCb(GDBusConnection *, const gchar *, gpointer);
+    void onNameAcquiredCb(GDBusConnection *, const gchar *, gpointer);
+    void onNameLostCb(GDBusConnection *, const gchar *, gpointer);
 
-        //APIs
-        void Connect(string);
-        void Disconnect(string);
-        void StartDiscovery();
-        void StopDiscovery();
+    //error callbacks
+    void onUnknownMethod(string);
+    void onUnknownProperty(string);
+
+    //APIs
+    void Connect(string);
+    void Disconnect(string);
+    void StartDiscovery();
+    void StopDiscovery();
   
-        string DiscoveryStatus();
+    string DiscoveryStatus();
 
-        void doDiscovery();
-        void onDiscovery(std::shared_ptr<OC::OCResource>);
+    //IoTivity callbacks
+    void doDiscovery();
+    void onDiscovery(std::shared_ptr<OC::OCResource>);
 };
 
 #endif
