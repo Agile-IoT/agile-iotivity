@@ -51,7 +51,7 @@ AGILE::RecordObject::RecordObject(string deviceId, string componentId, string va
     this->lastUpdate = std::time(0);
 }
 
-AGILE::RecordObject::RecordObject(string deviceId, string componentId, string value, string unit, string format, long int lastUpdate)
+AGILE::RecordObject::RecordObject(string deviceId, string componentId, string value, string unit, string format, int32_t lastUpdate)
 {
     this->deviceId = deviceId;
     this->componentId = componentId;

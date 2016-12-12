@@ -50,11 +50,11 @@ class AGILE::RecordObject {
     string value;
     string unit;
     string format;
-    long int lastUpdate;
+    int32_t lastUpdate;
 
     RecordObject();
     RecordObject(string, string, string, string, string);
-    RecordObject(string, string, string, string, string, long int);
+    RecordObject(string, string, string, string, string, int32_t);
 
     void updateLastUpdateToNow();
 };

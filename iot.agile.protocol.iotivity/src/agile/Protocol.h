@@ -104,6 +104,7 @@ class AGILE::Protocol {
 
     private:
     std::vector<AGILE::DeviceOverview> devices;
+    AGILE::RecordObject *data;
     static const gchar PROTOCOL_INTROSPECTION[];
     guint owner_id;
     GMainLoop *mainloop;
@@ -158,6 +159,8 @@ class AGILE::Protocol {
     int getDeviceListSize();
     bool emitFoundNewDeviceSignal(AGILE::DeviceOverview *);
     
+    //RecordObjectManipulation
+    AGILE::RecordObject* getLastRecordObject();
     
     /**
      * Methods should be implemented in child class

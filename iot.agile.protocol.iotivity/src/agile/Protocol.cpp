@@ -95,6 +95,7 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "  <property name='Driver' type='s' access='read' />"
     "  <property name='Name' type='s' access='read' />"
     "  <property name='Devices' type='a(ssss)' access='read' />"
+    "  <property name='Data' type='(sssssi)' access='read' />"
 /*    "<signal name='DataChanged'>"
     "  <arg name='Data' type='{sssssd}' />"
     "</signal>"
@@ -118,6 +119,8 @@ AGILE::Protocol::Protocol()
     BUS_PATH = "Unknown";
     PROTOCOL_NAME = "Unknown";
     DRIVER_NAME = "Unknown";
+
+    data = new AGILE::RecordObject();
 }
 
 // TODO: implement it
@@ -244,7 +247,7 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     {
         ret = g_variant_new_string(PROTOCOL_STATUS_AVAILABLE.c_str());
     }
-    //PROPERTY DATA
+    //PROPERTY DEVICES
     else if(g_strcmp0(property_name, PROPERTY_DEVICES.c_str()) == 0)
     {
         GVariantBuilder *builder = g_variant_builder_new(G_VARIANT_TYPE("a(ssss)"));
@@ -255,6 +258,12 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
         }
         ret = g_variant_new("a(ssss)", builder);
         g_variant_builder_unref(builder);        
+    }
+    //PROPERTY DATA
+    else if(g_strcmp0(property_name, PROPERTY_DATA.c_str()) == 0)
+    {
+        AGILE::RecordObject* data = instance->getLastRecordObject();
+        ret = g_variant_new("(sssssi)", data->deviceId.c_str(), data->componentId.c_str(), data->value.c_str(), data->unit.c_str(), data->format.c_str(), data->lastUpdate);     
     }
     //PROPERTY UNKNOWN
     else
@@ -372,6 +381,11 @@ AGILE::DeviceOverview* AGILE::Protocol::getDeviceAt(int pos)
 int AGILE::Protocol::getDeviceListSize()
 {
     return devices.size();
+}
+
+AGILE::RecordObject* AGILE::Protocol::getLastRecordObject()
+{
+    return data;
 }
 
 string AGILE::Protocol::DiscoveryStatus()
