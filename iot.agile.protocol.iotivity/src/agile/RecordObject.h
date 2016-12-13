@@ -57,6 +57,8 @@ class AGILE::RecordObject {
     RecordObject(string, string, string, string, string, int32_t);
 
     void updateLastUpdateToNow();
+
+    bool operator==(const AGILE::RecordObject&) const;
 };
 
 #endif

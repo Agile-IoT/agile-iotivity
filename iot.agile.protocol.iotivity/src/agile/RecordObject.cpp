@@ -65,3 +65,11 @@ void AGILE::RecordObject::updateLastUpdateToNow()
 {
     this->lastUpdate = std::time(0);
 }
+
+bool AGILE::RecordObject::operator==(const AGILE::RecordObject & ro) const
+{
+    const AGILE::RecordObject t = *this;
+    return (t.deviceId == ro.deviceId && t.componentId == ro.componentId &&
+            t.value == ro.value && t.unit == ro.unit &&
+            t.format == ro.format && t.lastUpdate == ro.lastUpdate);
+}
