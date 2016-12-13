@@ -37,6 +37,7 @@
 #include <functional>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 #include <gio/gunixfdlist.h>
 #include <gio/gio.h>
@@ -161,7 +162,8 @@ class AGILE::Protocol {
     
     //RecordObjectManipulation
     AGILE::RecordObject* getLastRecordObject();
-    
+    void storeRecordObject(AGILE::RecordObject *);
+
     /**
      * Methods should be implemented in child class
      */
@@ -180,7 +182,7 @@ class AGILE::Protocol {
     virtual void StopDiscovery();
     string DiscoveryStatus();
  // ProtocolMessage Write(string, KeyValue);
- // RecordObject Read(string, KeyValue);
+    virtual AGILE::RecordObject* Read(string, GVariant*);
  // void Subscribe(string, KeyValue);
  // RecordObject Unsubscribe(string, KeyValue);
 };

@@ -33,6 +33,7 @@
 #include "common/utility.h"
 #include "common/Logger.h"
 #include "common/PeriodicCallback.h"
+#include "common/DelayedCallback.h"
 
 #include "agile/constants.h"
 #include "agile/Protocol.h"
@@ -60,18 +61,26 @@ using namespace std;
 using namespace OC;
 
 class IoTivityProtocol : public AGILE::Protocol {
+    typedef std::shared_ptr<OC::OCResource> Resource;
     private:
     string destinationAddress = "127.0.0.1";
     static const string TAG;
+    static const string KEY_URI;
     static const int DISCOVERY_DELAY = 2;
+    static const int READ_TIMEOUT = 5;
     Logger* log;
+
+    std::vector<Resource> resources;
 
     PeriodicCallback *discoveryPeriodicCallback = nullptr;
 
     OC::PlatformConfig *platformConfig;
     IoTivityProtocol();
 
+    DelayedCallback *readDelayedCallback;
+
     mutex onDiscoveryMutex;
+    mutex onReadMutex;
 
     public:
     
@@ -92,12 +101,18 @@ class IoTivityProtocol : public AGILE::Protocol {
     void Disconnect(string);
     void StartDiscovery();
     void StopDiscovery();
+    AGILE::RecordObject* Read(string, GVariant*);
   
     string DiscoveryStatus();
 
     //IoTivity callbacks
     void doDiscovery();
-    void onDiscovery(std::shared_ptr<OC::OCResource>);
+    void onDiscovery(Resource);
+
+    void onReadCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int );
+    void onReadTimeout(string, string);
 };
+
+
 
 #endif

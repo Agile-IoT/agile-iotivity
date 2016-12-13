@@ -34,6 +34,7 @@ using namespace OC;
 
 //Attributes
 const string IoTivityProtocol::TAG = "IoTivityProtocol";
+const string IoTivityProtocol::KEY_URI = "URI";
 OCConnectivityType connectivityType(CT_ADAPTER_IP);
 //End Attributes
 
@@ -156,6 +157,56 @@ void IoTivityProtocol::StopDiscovery()
     log->d(TAG, "DiscoveryPeriodicCallback removed");
 }
 
+AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments)
+{
+    gchar *value_uri;
+
+    log->v(TAG, "Read invoked");
+    log->d(TAG, "DeviceID: " + deviceId);
+
+    if(g_variant_type_equal(g_variant_get_type(arguments), "a{ss}"))
+    {
+        if(g_variant_lookup(arguments, KEY_URI.c_str(), "&s", &value_uri))
+        {
+            log->d(TAG, "Key URI is present");
+            log->d(TAG, "URI: " + string(value_uri));
+            onReadMutex.lock();
+            log->d(TAG, "onReadMutex LOCKED");
+
+            
+            readDelayedCallback = new DelayedCallback(READ_TIMEOUT*1000, true, bind(&IoTivityProtocol::onReadTimeout, this, deviceId, string(value_uri)));
+
+            onReadMutex.lock();
+            onReadMutex.unlock();
+            log->d(TAG, "onReadMutex UNLOCKED");
+            return new AGILE::RecordObject(deviceId, string(value_uri), "", "", "");
+        }
+        else
+        {
+            log->e(TAG, "Key URI is absent, Read ignored...");
+        }
+    }
+    else
+    {
+        log->e(TAG, "Arguments: " + string(g_variant_print(arguments, TRUE)));
+        log->e(TAG, "Arguments Variant has an UNEXPECTED signature: " + string(g_variant_get_type_string(arguments)));
+    }
+
+    return new AGILE::RecordObject();
+}
+
+void IoTivityProtocol::onReadCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode)
+{
+}
+
+void IoTivityProtocol::onReadTimeout(string deviceId, string URI)
+{
+    log->w(TAG, "Read Timeout");
+    log->w(TAG, "deviceId: " + deviceId);
+    log->w(TAG, "URI: " + URI);
+    onReadMutex.unlock();
+}
+
 string IoTivityProtocol::DiscoveryStatus()
 {
     if(discoveryPeriodicCallback) return PROTOCOL_DISCOVERY_STATUS_RUNNING;
@@ -172,7 +223,7 @@ void IoTivityProtocol::doDiscovery()
                              OC::QualityOfService::HighQos);
 }
 
-void IoTivityProtocol::onDiscovery(std::shared_ptr<OC::OCResource> resource)
+void IoTivityProtocol::onDiscovery(Resource resource)
 {
     onDiscoveryMutex.lock();
 

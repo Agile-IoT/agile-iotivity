@@ -76,13 +76,13 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "    <arg name='deviceId' type='s' direction='in'/>"
     "    <arg name='arguments' type='v' direction='in'/>"
     "    <arg name='return' type='{ss}' direction='out'/>"
-    "  </method>"
+    "  </method>" */
     "  <method name='Read'>"
     "    <arg name='deviceId' type='s' direction='in'/>"
     "    <arg name='arguments' type='v' direction='in'/>"
-    "    <arg name='return' type='{sssssd}' direction='out'/>"
+    "    <arg name='return' type='(sssssd)' direction='out'/>"
     "  </method>"
-    "  <method name='Subscribe'>"
+/*    "  <method name='Subscribe'>"
     "    <arg name='deviceId' type='s' direction='in'/>"
     "    <arg name='arguments' type='v' direction='in'/>"
     "  </method>"
@@ -95,11 +95,10 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "  <property name='Driver' type='s' access='read' />"
     "  <property name='Name' type='s' access='read' />"
     "  <property name='Devices' type='a(ssss)' access='read' />"
-    "  <property name='Data' type='(sssssi)' access='read' />"
+    "  <property name='Data' type='(sssssd)' access='read' />"
 /*    "<signal name='DataChanged'>"
     "  <arg name='Data' type='{sssssd}' />"
     "</signal>"
-    "  <property name='Data' type='{sss(i)}' access='read' />"
  */   "<signal name='FoundNewDeviceSignal'>"
     "  <arg name='Device' type='(ssss)' />"
     "</signal>"
@@ -193,13 +192,14 @@ void AGILE::Protocol::onUnknownProperty(string property)
 
 void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar *sender, const gchar *object_path, const gchar *interface_name, const gchar *method_name, GVariant *parameters, GDBusMethodInvocation *invocation, gpointer user_data)
 {
+    GVariant * out;
+    out = NULL;
     //METHOD CONNECT
     if(g_strcmp0(method_name, METHOD_CONNECT.c_str()) == 0)
     {
         const gchar *deviceId;
         g_variant_get (parameters, "(&s)", &deviceId);
         instance->Connect(string(deviceId));
-        g_dbus_method_invocation_return_value(invocation, NULL);
     }
     //METHOD DISCONNECT
     else if(g_strcmp0(method_name, METHOD_DISCONNECT.c_str()) == 0)
@@ -207,24 +207,35 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
         const gchar *deviceId;
         g_variant_get (parameters, "(&s)", &deviceId);
         instance->Disconnect(string(deviceId));
-        g_dbus_method_invocation_return_value(invocation, NULL);
     }
     //METHOD START DISCOVERY
     else if(g_strcmp0(method_name, METHOD_STARTDISCOVERY.c_str()) == 0)
     {
         instance->StartDiscovery();
-        g_dbus_method_invocation_return_value(invocation, NULL);
     }
     //METHOD STOP DISCOVERY
     else if(g_strcmp0(method_name, METHOD_STOPDISCOVERY.c_str()) == 0)
     {
         instance->StopDiscovery();
-        g_dbus_method_invocation_return_value(invocation, NULL);
+    }
+    //METHOD READ
+    else if(g_strcmp0(method_name, METHOD_READ.c_str()) == 0)
+    {
+        const gchar *deviceId;
+        const gchar *test;
+        GVariant *arguments;
+        g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
+        //TODO: maybe I have to pass a map/dict instead of a variant
+        RecordObject *data = instance->Read(string(deviceId), arguments);
+        out = g_variant_new("((sssssd))", data->deviceId.c_str(), data->componentId.c_str(), data->value.c_str(), data->unit.c_str(), data->format.c_str(), data->lastUpdate);
+        instance->storeRecordObject(data);
     }
     else
     {
         instance->onUnknownMethod(method_name);
     }
+
+    g_dbus_method_invocation_return_value(invocation, out);
 }
 
 GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const gchar *sender, const gchar *obj_path, const gchar *interface_name, const gchar *property_name, GError **error, gpointer user_data)
@@ -263,7 +274,7 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     else if(g_strcmp0(property_name, PROPERTY_DATA.c_str()) == 0)
     {
         AGILE::RecordObject* data = instance->getLastRecordObject();
-        ret = g_variant_new("(sssssi)", data->deviceId.c_str(), data->componentId.c_str(), data->value.c_str(), data->unit.c_str(), data->format.c_str(), data->lastUpdate);     
+        ret = g_variant_new("(sssssd)", data->deviceId.c_str(), data->componentId.c_str(), data->value.c_str(), data->unit.c_str(), data->format.c_str(), data->lastUpdate);     
     }
     //PROPERTY UNKNOWN
     else
@@ -388,6 +399,12 @@ AGILE::RecordObject* AGILE::Protocol::getLastRecordObject()
     return data;
 }
 
+void AGILE::Protocol::storeRecordObject(AGILE::RecordObject* ro)
+{
+    delete data;
+    data = ro;
+}
+
 string AGILE::Protocol::DiscoveryStatus()
 {
     return PROTOCOL_DISCOVERY_STATUS_NONE;
@@ -411,6 +428,12 @@ void AGILE::Protocol::StartDiscovery()
 void AGILE::Protocol::StopDiscovery()
 {
     std::cout << "StopDiscovery not implemented!" << std::endl;
+}
+
+AGILE::RecordObject* AGILE::Protocol::Read(string deviceId, GVariant* arguments)
+{
+    std::cout << "Read not Implemented." << std::endl;
+    return new RecordObject();
 }
 
 void AGILE::Protocol::onBusAcquiredCb(GDBusConnection *conn, const gchar *name, gpointer user_data)
