@@ -56,6 +56,12 @@ const string AGILE::Protocol::PROTOCOL_STATUS_FAILURE = "FAILURE";
 const string AGILE::Protocol::PROTOCOL_DISCOVERY_STATUS_RUNNING = "RUNNING";
 const string AGILE::Protocol::PROTOCOL_DISCOVERY_STATUS_NONE = "NONE";
 const string AGILE::Protocol::PROTOCOL_DISCOVERY_STATUS_FAILURE = "FAILURE";
+const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_DONE = "DONE";
+const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_NOTIMPLEMENTED = "NOTIMPLEMENTED";
+const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_ARGSNOTVALID = "ARGSNOTVALID";
+const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_SIGARGSNOTVALID = "SIGARGSNOTVALID";
+const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_GENERICERROR = "ERROR";
+const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_TIMEOUT = "TIMEOUT";
 const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "<node name='/iot/agile/Protocol'>"
     "  <interface name='iot.agile.Protocol'>"
@@ -73,11 +79,11 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "  <method name='StopDiscovery'>"
     "    <annotation name='org.freedesktop.DBus.Description' value='Stop device discovery' />"
     "  </method>"
-/*    "  <method name='Write'>"
+    "  <method name='Write'>"
     "    <arg name='deviceId' type='s' direction='in'/>"
     "    <arg name='arguments' type='v' direction='in'/>"
-    "    <arg name='return' type='{ss}' direction='out'/>"
-    "  </method>" */
+    "    <arg name='return' type='s' direction='out'/>"
+    "  </method>"
     "  <method name='Read'>"
     "    <arg name='deviceId' type='s' direction='in'/>"
     "    <arg name='arguments' type='v' direction='in'/>"
@@ -226,12 +232,20 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
     else if(g_strcmp0(method_name, METHOD_READ.c_str()) == 0)
     {
         const gchar *deviceId;
-        const gchar *test;
         GVariant *arguments;
         g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
         RecordObject *data = instance->Read(string(deviceId), arguments);
         out = g_variant_new("((sssssd))", data->deviceId.c_str(), data->componentId.c_str(), data->value.c_str(), data->unit.c_str(), data->format.c_str(), data->lastUpdate);
         delete data;
+    }
+    //METHOD WRITE
+    else if(g_strcmp0(method_name, METHOD_WRITE.c_str()) == 0)
+    {
+        const gchar *deviceId;
+        GVariant *arguments;
+        g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
+        string ret = instance->Write(string(deviceId), arguments);
+        out = g_variant_new("(s)", ret.c_str());
     }
     else
     {
@@ -451,6 +465,12 @@ AGILE::RecordObject* AGILE::Protocol::Read(string deviceId, GVariant* arguments)
 {
     std::cout << "Read not Implemented." << std::endl;
     return new RecordObject();
+}
+
+string AGILE::Protocol::Write(string deviceId, GVariant* arguments)
+{
+    std::cout << "Write not Implemented." << std::endl;
+    return PROTOCOL_WRITE_STATUS_NOTIMPLEMENTED;
 }
 
 void AGILE::Protocol::onBusAcquiredCb(GDBusConnection *conn, const gchar *name, gpointer user_data)

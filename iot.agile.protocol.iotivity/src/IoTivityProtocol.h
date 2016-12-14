@@ -67,8 +67,10 @@ class IoTivityProtocol : public AGILE::Protocol {
     string destinationAddress = "127.0.0.1";
     static const string TAG;
     static const string KEY_URI;
+    static const string KEY_PAYLOAD;
     static const int DISCOVERY_DELAY = 2;
     static const int READ_TIMEOUT = 5;
+    static const int WRITE_TIMEOUT = 5;
     Logger* log;
 
     std::vector<Resource> resources;
@@ -79,9 +81,11 @@ class IoTivityProtocol : public AGILE::Protocol {
     IoTivityProtocol();
 
     DelayedCallback *readDelayedCallback;
+    DelayedCallback *writeDelayedCallback;
 
     mutex onDiscoveryMutex;
     mutex onReadMutex;
+    mutex onWriteMutex;
 
     public:
     
@@ -103,15 +107,16 @@ class IoTivityProtocol : public AGILE::Protocol {
     void StartDiscovery();
     void StopDiscovery();
     AGILE::RecordObject* Read(string, GVariant*);
-  
-    string DiscoveryStatus();
+    string Write(string, GVariant*);
 
     //IoTivity callbacks
     void doDiscovery();
     void onDiscovery(std::shared_ptr<OC::OCResource>);
 
-    void onReadCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, string *);
+    void onReadCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, string *, DelayedCallback *);
     void onReadTimeout(string, string);
+
+    void onWriteTimeout(string, string, string);
 };
 
 
