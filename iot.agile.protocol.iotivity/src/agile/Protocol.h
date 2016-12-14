@@ -63,6 +63,7 @@ class AGILE::Protocol {
     static const string PROPERTY_NAME;
     static const string PROPERTY_DATA;
     static const string PROPERTY_DEVICES;
+    static const string PROPERTY_DISCOVERYSTATUS;
    
     /**
      * Methods
@@ -101,6 +102,7 @@ class AGILE::Protocol {
     /**
      * Errors
      */
+    static const int PROTOCOL_DBUS_INIT_NOERR = 0;
     static const int PROTOCOL_DBUS_INIT_ERROR = 1;
 
     private:
@@ -111,6 +113,7 @@ class AGILE::Protocol {
     GMainLoop *mainloop;
     GDBusNodeInfo *introspection_data = NULL;
     GDBusConnection *connection = NULL;
+    string discoveryStatus = PROTOCOL_DISCOVERY_STATUS_NONE;
 
     static void onBusAcquired(GDBusConnection *, const gchar *, gpointer);
     static void onNameAcquired(GDBusConnection *, const gchar *, gpointer);
@@ -163,6 +166,10 @@ class AGILE::Protocol {
     //RecordObjectManipulation
     AGILE::RecordObject* getLastRecordObject();
     void storeRecordObject(AGILE::RecordObject *);
+
+    //DiscoveryStatus Manipulation
+    void setDiscoveryStatus(string);
+    string getDiscoveryStatus();
 
     /**
      * Methods should be implemented in child class

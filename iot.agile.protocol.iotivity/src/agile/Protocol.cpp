@@ -37,6 +37,7 @@ const string AGILE::Protocol::PROPERTY_DRIVER = "Driver";
 const string AGILE::Protocol::PROPERTY_NAME = "Name";
 const string AGILE::Protocol::PROPERTY_DATA = "Data";
 const string AGILE::Protocol::PROPERTY_DEVICES = "Devices";
+const string AGILE::Protocol::PROPERTY_DISCOVERYSTATUS = "DiscoveryStatus";
 const string AGILE::Protocol::METHOD_CONNECT = "Connect";
 const string AGILE::Protocol::METHOD_DISCONNECT = "Disconnect";
 const string AGILE::Protocol::METHOD_STARTDISCOVERY = "StartDiscovery";
@@ -96,6 +97,7 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "  <property name='Name' type='s' access='read' />"
     "  <property name='Devices' type='a(ssss)' access='read' />"
     "  <property name='Data' type='(sssssd)' access='read' />"
+    "  <property name='DiscoveryStatus' type='s' access='read' />"
 /*    "<signal name='DataChanged'>"
     "  <arg name='Data' type='{sssssd}' />"
     "</signal>"
@@ -146,7 +148,7 @@ int AGILE::Protocol::initBus()
 
     mainloop = g_main_loop_new (NULL, FALSE);
 
-    return 0;
+    return PROTOCOL_DBUS_INIT_NOERR;
 }
 
 void AGILE::Protocol::saveGDBusConnection(GDBusConnection *conn)
@@ -212,11 +214,13 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
     else if(g_strcmp0(method_name, METHOD_STARTDISCOVERY.c_str()) == 0)
     {
         instance->StartDiscovery();
+        instance->setDiscoveryStatus(PROTOCOL_DISCOVERY_STATUS_RUNNING);
     }
     //METHOD STOP DISCOVERY
     else if(g_strcmp0(method_name, METHOD_STOPDISCOVERY.c_str()) == 0)
     {
         instance->StopDiscovery();
+        instance->setDiscoveryStatus(PROTOCOL_DISCOVERY_STATUS_NONE);
     }
     //METHOD READ
     else if(g_strcmp0(method_name, METHOD_READ.c_str()) == 0)
@@ -274,6 +278,11 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     {
         AGILE::RecordObject* data = instance->getLastRecordObject();
         ret = g_variant_new("(sssssd)", data->deviceId.c_str(), data->componentId.c_str(), data->value.c_str(), data->unit.c_str(), data->format.c_str(), data->lastUpdate);     
+    }
+    //PROPERTY DISCOVERY STATUS
+    else if(g_strcmp0(property_name, PROPERTY_DISCOVERYSTATUS.c_str()) == 0)
+    {
+        ret = g_variant_new_string(instance->getDiscoveryStatus().c_str());
     }
     //PROPERTY UNKNOWN
     else
@@ -403,9 +412,19 @@ void AGILE::Protocol::storeRecordObject(AGILE::RecordObject* ro)
     *data = *ro;
 }
 
-string AGILE::Protocol::DiscoveryStatus()
+void AGILE::Protocol::setDiscoveryStatus(string status)
 {
-    return PROTOCOL_DISCOVERY_STATUS_NONE;
+    if(status == PROTOCOL_DISCOVERY_STATUS_RUNNING ||
+       status == PROTOCOL_DISCOVERY_STATUS_NONE ||
+       status == PROTOCOL_DISCOVERY_STATUS_FAILURE)
+    {
+        discoveryStatus = status;
+    }
+}
+
+string AGILE::Protocol::getDiscoveryStatus()
+{
+    return discoveryStatus;
 }
 
 void AGILE::Protocol::Connect(string deviceId)
