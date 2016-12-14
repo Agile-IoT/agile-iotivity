@@ -173,7 +173,8 @@ AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments
             onReadMutex.lock();
             log->d(TAG, "onReadMutex LOCKED");
 
-            
+            //TODO: inviare la get controllando che l'uri sia noto
+            //TODO: lanciare signal dati updated
             readDelayedCallback = new DelayedCallback(READ_TIMEOUT*1000, true, bind(&IoTivityProtocol::onReadTimeout, this, deviceId, string(value_uri)));
 
             onReadMutex.lock();
@@ -223,7 +224,7 @@ void IoTivityProtocol::doDiscovery()
                              OC::QualityOfService::HighQos);
 }
 
-void IoTivityProtocol::onDiscovery(Resource resource)
+void IoTivityProtocol::onDiscovery(std::shared_ptr<OC::OCResource> resource)
 {
     onDiscoveryMutex.lock();
 
@@ -248,6 +249,19 @@ void IoTivityProtocol::onDiscovery(Resource resource)
     else {
         log->v(TAG, "Device with ID " + dev->getId() + " is already known");
     }
+
+    Resource *res = new Resource(resource);
+
+    if(std::find(resources.begin(), resources.end(), *res) != resources.end())
+    {
+        log->d(TAG, "Resource already discovered");
+    }
+    else
+    {
+        log->v(TAG, "New resource discovered " + resource->host() + resource->uri());
+        resources.push_back(*res);
+    }
+
 
     onDiscoveryMutex.unlock();
 }

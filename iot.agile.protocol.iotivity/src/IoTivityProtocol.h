@@ -57,11 +57,12 @@
 
 #include "boost/any.hpp"
 
+#include "Resource.h"
+
 using namespace std;
 using namespace OC;
 
 class IoTivityProtocol : public AGILE::Protocol {
-    typedef std::shared_ptr<OC::OCResource> Resource;
     private:
     string destinationAddress = "127.0.0.1";
     static const string TAG;
@@ -107,7 +108,7 @@ class IoTivityProtocol : public AGILE::Protocol {
 
     //IoTivity callbacks
     void doDiscovery();
-    void onDiscovery(Resource);
+    void onDiscovery(std::shared_ptr<OC::OCResource>);
 
     void onReadCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int );
     void onReadTimeout(string, string);
