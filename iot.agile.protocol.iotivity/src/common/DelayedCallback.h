@@ -39,8 +39,10 @@ class DelayedCallback
 {
 private:
     volatile bool continueThread = true;
+    bool fired = false;
 public:
     DelayedCallback(int after, bool async, std::function<void(void)> task);
+    bool isFired();
     void stopThread();
 };
 

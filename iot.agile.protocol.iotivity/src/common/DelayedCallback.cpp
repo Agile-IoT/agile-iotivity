@@ -45,7 +45,11 @@ DelayedCallback::DelayedCallback(int after, bool async, std::function<void(void)
                 std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 i++;
             }
-            if(continueThread) task();
+            if(continueThread) 
+            {
+                fired = true;
+                task();
+            }
         }).detach();
     }
     else
@@ -58,4 +62,9 @@ DelayedCallback::DelayedCallback(int after, bool async, std::function<void(void)
 void DelayedCallback::stopThread()
 {
     continueThread = false;
+}
+
+bool DelayedCallback::isFired()
+{
+    return fired;
 }
