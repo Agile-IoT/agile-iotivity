@@ -110,7 +110,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     void doDiscovery();
     void onDiscovery(std::shared_ptr<OC::OCResource>);
 
-    void onReadCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int );
+    void onReadCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, string *);
     void onReadTimeout(string, string);
 };
 

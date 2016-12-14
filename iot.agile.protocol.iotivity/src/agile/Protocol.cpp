@@ -225,10 +225,9 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
         const gchar *test;
         GVariant *arguments;
         g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
-        //TODO: maybe I have to pass a map/dict instead of a variant
         RecordObject *data = instance->Read(string(deviceId), arguments);
         out = g_variant_new("((sssssd))", data->deviceId.c_str(), data->componentId.c_str(), data->value.c_str(), data->unit.c_str(), data->format.c_str(), data->lastUpdate);
-        instance->storeRecordObject(data);
+        delete data;
     }
     else
     {
@@ -401,8 +400,7 @@ AGILE::RecordObject* AGILE::Protocol::getLastRecordObject()
 
 void AGILE::Protocol::storeRecordObject(AGILE::RecordObject* ro)
 {
-    delete data;
-    data = ro;
+    *data = *ro;
 }
 
 string AGILE::Protocol::DiscoveryStatus()

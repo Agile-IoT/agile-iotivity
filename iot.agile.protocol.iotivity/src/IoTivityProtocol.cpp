@@ -160,6 +160,7 @@ void IoTivityProtocol::StopDiscovery()
 AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments)
 {
     gchar *value_uri;
+    Resource *r = NULL;
 
     log->v(TAG, "Read invoked");
     log->d(TAG, "DeviceID: " + deviceId);
@@ -173,14 +174,35 @@ AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments
             onReadMutex.lock();
             log->d(TAG, "onReadMutex LOCKED");
 
-            //TODO: inviare la get controllando che l'uri sia noto
-            //TODO: lanciare signal dati updated
-            readDelayedCallback = new DelayedCallback(READ_TIMEOUT*1000, true, bind(&IoTivityProtocol::onReadTimeout, this, deviceId, string(value_uri)));
+            for(auto w : resources)
+            {
+                if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
+                {
+                    log->d(TAG, "Resource found in cache");
+                    r = &w;
+                    break;
+                }
+            }
 
-            onReadMutex.lock();
+            if(r != NULL)
+            {
+                QueryParamsMap qpm;
+                string output = "";
+                r->resource->get(qpm, bind(&IoTivityProtocol::onReadCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, &output));
+
+                readDelayedCallback = new DelayedCallback(READ_TIMEOUT*1000, true, bind(&IoTivityProtocol::onReadTimeout, this, deviceId, string(value_uri)));
+
+                onReadMutex.lock();
+                log->v(TAG, "Read Payload: " + output);
+                onReadMutex.unlock();
+                log->d(TAG, "onReadMutex UNLOCKED");
+                AGILE::RecordObject * ro = new AGILE::RecordObject(deviceId, string(value_uri), output, "json", "json");
+                storeRecordObject(ro);
+                return ro;
+            }
             onReadMutex.unlock();
             log->d(TAG, "onReadMutex UNLOCKED");
-            return new AGILE::RecordObject(deviceId, string(value_uri), "", "", "");
+            log->w(TAG, "Resource NOT found, Read ignored...");
         }
         else
         {
@@ -196,8 +218,33 @@ AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments
     return new AGILE::RecordObject();
 }
 
-void IoTivityProtocol::onReadCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode)
+void IoTivityProtocol::onReadCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode, string *output)
 {
+    string json = "{";
+
+    log->v(TAG, "onReadCallback invoked");
+    readDelayedCallback->stopThread();
+
+    if(errCode == OC_STACK_OK)
+    {
+        int i = 0;
+        for (auto & elem : rep.getValues())
+        {
+            json += "\"" + elem.first + "\": \"" + rep.getValueToString(elem.first) + "\"";
+            i++;
+            if(i < rep.getValues().size())
+            {
+                json += ", ";
+            }
+        }
+    }
+    else
+    {
+        json += "\"error\": " + std::to_string(errCode);
+    }
+    json += "}";
+    *output = json;
+    onReadMutex.unlock();
 }
 
 void IoTivityProtocol::onReadTimeout(string deviceId, string URI)
