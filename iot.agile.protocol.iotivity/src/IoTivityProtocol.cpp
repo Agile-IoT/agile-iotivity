@@ -164,14 +164,14 @@ AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments
     Resource *r = NULL;
 
     log->v(TAG, "Read invoked");
-    log->d(TAG, "DeviceID: " + deviceId);
+    log->v(TAG, "DeviceID: " + deviceId);
 
     if(g_variant_type_equal(g_variant_get_type(arguments), "a{ss}"))
     {
         if(g_variant_lookup(arguments, KEY_URI.c_str(), "&s", &value_uri))
         {
             log->d(TAG, "Key URI is present");
-            log->d(TAG, "URI: " + string(value_uri));
+            log->v(TAG, "URI: " + string(value_uri));
             onReadMutex.lock();
             log->d(TAG, "onReadMutex LOCKED");
 
@@ -316,7 +316,7 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
     Resource *r = nullptr;
 
     log->v(TAG, "Write invoked");
-    log->d(TAG, "DeviceID: " + deviceId);
+    log->v(TAG, "DeviceID: " + deviceId);
 
     if(g_variant_type_equal(g_variant_get_type(arguments), "a{ss}"))
     {
@@ -324,8 +324,8 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
            g_variant_lookup(arguments, KEY_PAYLOAD.c_str(), "&s", &value_payload))
         {
             log->d(TAG, "Keys URI and payload are present");
-            log->d(TAG, "URI: " + string(value_uri));
-            log->d(TAG, "Payload: " + string(value_payload));
+            log->v(TAG, "URI: " + string(value_uri));
+            log->v(TAG, "Payload: " + string(value_payload));
             onWriteMutex.lock();
 
             for(Resource w : resources)
@@ -368,7 +368,7 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
         }
         else
         {
-            log->e(TAG, "Key URI and/or payload is/are absent, Read ignored...");
+            log->e(TAG, "Key URI and/or payload is/are absent, Write ignored...");
         }
         return PROTOCOL_WRITE_STATUS_ARGSNOTVALID;
     }
@@ -463,6 +463,60 @@ void IoTivityProtocol::onWriteTimeout(string deviceId, string URI, string payloa
     log->w(TAG, "URI: " + URI);
     log->w(TAG, "Payload: " + payload);
     onWriteMutex.unlock();
+}
+
+void IoTivityProtocol::Subscribe(string deviceId, GVariant* arguments)
+{
+    gchar *value_uri;
+    Resource *r = NULL;
+
+    log->v(TAG, "Subscribe invoked");
+    log->v(TAG, "DeviceID: " + deviceId);
+
+    if(g_variant_type_equal(g_variant_get_type(arguments), "a{ss}"))
+    {
+        if(g_variant_lookup(arguments, KEY_URI.c_str(), "&s", &value_uri))
+        {
+            log->d(TAG, "Key URI is present");
+            log->v(TAG, "URI: " + string(value_uri));
+            onSubscribeMutex.lock();
+            log->d(TAG, "onSubscribeMutex LOCKED");
+
+            for(auto w : resources)
+            {
+                if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
+                {
+                    log->d(TAG, "Resource found in cache");
+                    r = new Resource(w.resource);
+                    break;
+                }
+            }
+
+            if(r != NULL)
+            {                
+
+                //TODO: Subscription should be done here
+
+                //onSubscribeMutex.lock();
+                
+                onSubscribeMutex.unlock();
+                log->d(TAG, "onSubscribeMutex UNLOCKED");
+                return;
+            }
+            onSubscribeMutex.unlock();
+            log->d(TAG, "onSubscribeMutex UNLOCKED");
+            log->w(TAG, "Resource NOT found, Subscribe ignored...");
+        }
+        else
+        {
+            log->e(TAG, "Key URI is absent, Subscribe ignored...");
+        }
+    }
+    else
+    {
+        log->e(TAG, "Arguments: " + string(g_variant_print(arguments, TRUE)));
+        log->e(TAG, "Arguments Variant has an UNEXPECTED signature: " + string(g_variant_get_type_string(arguments)));
+    }
 }
 
 void IoTivityProtocol::doDiscovery()

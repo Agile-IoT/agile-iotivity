@@ -89,11 +89,11 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "    <arg name='arguments' type='v' direction='in'/>"
     "    <arg name='return' type='(sssssd)' direction='out'/>"
     "  </method>"
-/*    "  <method name='Subscribe'>"
+    "  <method name='Subscribe'>"
     "    <arg name='deviceId' type='s' direction='in'/>"
     "    <arg name='arguments' type='v' direction='in'/>"
     "  </method>"
-    "  <method name='Unsubscribe'>"
+/*    "  <method name='Unsubscribe'>"
     "    <arg name='deviceId' type='s' direction='in'/>"
     "    <arg name='arguments' type='v' direction='in'/>"
     "    <arg name='return' type='{sssssd}' direction='out'/>"
@@ -246,6 +246,14 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
         g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
         string ret = instance->Write(string(deviceId), arguments);
         out = g_variant_new("(s)", ret.c_str());
+    }
+    //METHOD SUBSCRIBE
+    else if(g_strcmp0(method_name, METHOD_SUBSCRIBE.c_str()) == 0)
+    {
+        const gchar *deviceId;
+        GVariant *arguments;
+        g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
+        instance->Subscribe(string(deviceId), arguments);
     }
     else
     {
@@ -471,6 +479,11 @@ string AGILE::Protocol::Write(string deviceId, GVariant* arguments)
 {
     std::cout << "Write not Implemented." << std::endl;
     return PROTOCOL_WRITE_STATUS_NOTIMPLEMENTED;
+}
+
+void AGILE::Protocol::Subscribe(string deviceId, GVariant* arguments)
+{
+    std::cout << "Subscribe not Implemented." << std::endl;
 }
 
 void AGILE::Protocol::onBusAcquiredCb(GDBusConnection *conn, const gchar *name, gpointer user_data)

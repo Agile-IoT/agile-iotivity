@@ -199,7 +199,7 @@ class AGILE::Protocol {
     virtual void StopDiscovery();
     virtual string Write(string, GVariant*);
     virtual AGILE::RecordObject* Read(string, GVariant*);
- // void Subscribe(string, KeyValue);
+    virtual void Subscribe(string, GVariant*);
  // RecordObject Unsubscribe(string, KeyValue);
 };
 
