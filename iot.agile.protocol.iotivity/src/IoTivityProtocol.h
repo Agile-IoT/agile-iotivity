@@ -58,10 +58,14 @@
 #include "boost/any.hpp"
 #include "boost/lexical_cast.hpp"
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
 #include "Resource.h"
 
 using namespace std;
 using namespace OC;
+using namespace boost::property_tree;
 
 class IoTivityProtocol : public AGILE::Protocol {
     private:
@@ -92,6 +96,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     
     static IoTivityProtocol* getInstance();
     void startProtocol(string);
+    OC::OCRepresentation generateRepresentationFromJSON(string);
 
     //DBus init callbacks
     void onBusAcquiredCb(GDBusConnection *, const gchar *, gpointer);
@@ -117,6 +122,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     void onReadCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, string *, DelayedCallback *);
     void onReadTimeout(string, string);
 
+    void onWriteCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, DelayedCallback* );
     void onWriteTimeout(string, string, string);
 };
 

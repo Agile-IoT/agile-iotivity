@@ -180,7 +180,7 @@ AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments
                 if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
                 {
                     log->d(TAG, "Resource found in cache");
-                    r = &w;
+                    r = new Resource(w.resource);
                     break;
                 }
             }
@@ -203,6 +203,7 @@ AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments
                     log->v(TAG, "Read Payload: " + output);
                     ro = new AGILE::RecordObject(deviceId, string(value_uri), output, "json", "json");
                     storeRecordObject(ro);
+                    delete r;
                 }
                 onReadMutex.unlock();
                 log->d(TAG, "onReadMutex UNLOCKED");
@@ -312,7 +313,7 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
 {
     gchar *value_uri;
     gchar *value_payload;
-    Resource *r = NULL;
+    Resource *r = nullptr;
 
     log->v(TAG, "Write invoked");
     log->d(TAG, "DeviceID: " + deviceId);
@@ -327,25 +328,30 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
             log->d(TAG, "Payload: " + string(value_payload));
             onWriteMutex.lock();
 
-            for(auto w : resources)
+            for(Resource w : resources)
             {
                 if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
                 {
                     log->d(TAG, "Resource found in cache");
-                    r = &w;
+                    r = new Resource(w.resource);
                     break;
                 }
             }
 
-            if(r != NULL)
+            if(r != nullptr)
             {
-                //TODO: parse payload and perform put
+                OC::OCRepresentation rep = generateRepresentationFromJSON(string(value_payload));
+                QueryParamsMap queryParamsMap;
 
                 writeDelayedCallback = new DelayedCallback(WRITE_TIMEOUT*1000, true, bind(&IoTivityProtocol::onWriteTimeout, this, deviceId, string(value_uri), string(value_payload)));
+
+                r->resource->put(rep, queryParamsMap, bind(&IoTivityProtocol::onWriteCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, writeDelayedCallback));
 
                 log->d(TAG, "onWriteMutex LOCKED");
                 onWriteMutex.lock();
                 onWriteMutex.unlock();
+
+                delete r;
 
                 if(writeDelayedCallback->isFired())
                 {
@@ -374,6 +380,80 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
     }
 
     return PROTOCOL_WRITE_STATUS_GENERICERROR;
+}
+
+OC::OCRepresentation IoTivityProtocol::generateRepresentationFromJSON(string json)
+{
+    OC::OCRepresentation *rep = new OC::OCRepresentation();
+    std::istringstream str(json);
+    ptree root;
+    read_json(str, root);
+
+    for (ptree::const_iterator it = root.begin(); it != root.end(); ++it) {
+        try /* booleans */
+        {
+            rep->setValue(it->first, it->second.get_value<bool>());
+            log->d(TAG, "(Boolean) " + it->first + ": " + it->second.get_value<std::string>());
+            continue;
+        }
+        catch(boost::property_tree::ptree_bad_data &e)
+        {
+        }
+
+        try /* integers */
+        {
+            rep->setValue(it->first, it->second.get_value<int>());
+            log->d(TAG, "(Integer) " + it->first + ": " + it->second.get_value<std::string>());
+            continue;
+        }
+        catch(boost::property_tree::ptree_bad_data &e)
+        {
+        }
+
+        try /* doubles */
+        {
+            rep->setValue(it->first, it->second.get_value<double>());
+            log->d(TAG, "(Double) " + it->first + ": " + it->second.get_value<std::string>());
+            continue;
+        }
+        catch(boost::property_tree::ptree_bad_data &e)
+        {
+        }
+
+        try /* strings */
+        {
+            rep->setValue(it->first, it->second.get_value<std::string>());
+            log->d(TAG, "(String) " + it->first + ": " + it->second.get_value<std::string>());
+            continue;
+        }
+        catch(boost::property_tree::ptree_bad_data &e)
+        {
+        }
+
+        log->w(TAG, "Key " + it->first + " has an UNKNOWN type");
+    }
+
+    return *rep;
+}
+
+void IoTivityProtocol::onWriteCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode, DelayedCallback* timeoutDelayedCallback)
+{
+    if(!timeoutDelayedCallback->isFired())
+    {
+        timeoutDelayedCallback->stopThread();
+    }
+    else
+    {
+        return;
+    }
+
+    log->v(TAG, "onWriteCallback invoked");
+
+    if(errCode == OC_STACK_OK)
+    {
+        
+    }
+    onWriteMutex.unlock();
 }
 
 void IoTivityProtocol::onWriteTimeout(string deviceId, string URI, string payload)
