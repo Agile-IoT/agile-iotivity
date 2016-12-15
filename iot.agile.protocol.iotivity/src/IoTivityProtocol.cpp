@@ -245,9 +245,45 @@ void IoTivityProtocol::onReadCallback(const HeaderOptions &hOps, const OCReprese
     if(errCode == OC_STACK_OK)
     {
         int i = 0;
-        for (auto & elem : rep.getValues())
+        string tmp;
+
+        for(auto& val : rep)
         {
-            json += "\"" + elem.first + "\": \"" + rep.getValueToString(elem.first) + "\"";
+            tmp = "";
+            switch(val.type())
+            {
+                case AttributeType::Integer:
+                    tmp = to_string(static_cast<int>(val));
+                    json += "\"" + val.attrname() + "\": " + tmp;
+                    break;
+                case AttributeType::Double:
+                    tmp = boost::lexical_cast<std::string>(val.getValue<double>());
+                    json += "\"" + val.attrname() + "\": " + tmp;
+                    break;
+                case AttributeType::Boolean:
+                    tmp = (val.getValue<bool>() ? "true" : "false");
+                    json += "\"" + val.attrname() + "\": " + tmp;
+                    break;
+                case AttributeType::String:
+                    json += "\"" + val.attrname() + "\": \"" + val.getValue<string>() + "\"";
+                    break;
+                case AttributeType::Null:
+                    log->w(TAG, "Null. Type NOT implemented yet");
+                    break;
+                case AttributeType::OCRepresentation:
+                    log->w(TAG, "OCRepresentation. Type NOT implemented yet");
+                    break;
+                case AttributeType::Vector:
+                    log->w(TAG, "Vector. Type NOT implemented yet");
+                    break;
+                case AttributeType::Binary:
+                    log->w(TAG, "Binary. Type NOT implemented yet");
+                    break;
+                default:
+                    log->w(TAG, "Type Unknown... I skip it");
+                    break;
+            }
+
             i++;
             if(i < rep.getValues().size())
             {

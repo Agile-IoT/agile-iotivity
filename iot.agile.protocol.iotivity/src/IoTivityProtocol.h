@@ -56,6 +56,7 @@
 #include <iotivity/resource/OCResource.h>
 
 #include "boost/any.hpp"
+#include "boost/lexical_cast.hpp"
 
 #include "Resource.h"
 
