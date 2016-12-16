@@ -85,9 +85,6 @@ class IoTivityProtocol : public AGILE::Protocol {
     OC::PlatformConfig *platformConfig;
     IoTivityProtocol();
 
-    DelayedCallback *readDelayedCallback;
-    DelayedCallback *writeDelayedCallback;
-
     mutex onDiscoveryMutex;
     mutex onReadMutex;
     mutex onWriteMutex;
@@ -122,10 +119,13 @@ class IoTivityProtocol : public AGILE::Protocol {
     void onDiscovery(std::shared_ptr<OC::OCResource>);
 
     void onReadCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, string *, DelayedCallback *);
-    void onReadTimeout(string, string);
+    void onReadTimeout(Resource *);
 
-    void onWriteCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, DelayedCallback *, string, string, string, bool*);
-    void onWriteTimeout(string, string, string);
+    void onWriteCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, DelayedCallback *, Resource *, string, bool*);
+    void onWriteTimeout(Resource *, string);
+
+    void onObserveCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, const int&, Resource *);
+    void onObserveTimeout(Resource *);
 };
 
 

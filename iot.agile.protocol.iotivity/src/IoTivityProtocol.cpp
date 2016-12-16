@@ -190,7 +190,7 @@ AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments
                 QueryParamsMap qpm;
                 AGILE::RecordObject *ro;
                 string output = "";
-                readDelayedCallback = new DelayedCallback(READ_TIMEOUT*1000, true, bind(&IoTivityProtocol::onReadTimeout, this, deviceId, string(value_uri)));
+                DelayedCallback *readDelayedCallback = new DelayedCallback(READ_TIMEOUT*1000, true, bind(&IoTivityProtocol::onReadTimeout, this, r));
                 r->resource->get(qpm, bind(&IoTivityProtocol::onReadCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, &output, readDelayedCallback));
 
                 onReadMutex.lock();
@@ -301,11 +301,11 @@ void IoTivityProtocol::onReadCallback(const HeaderOptions &hOps, const OCReprese
     onReadMutex.unlock();
 }
 
-void IoTivityProtocol::onReadTimeout(string deviceId, string URI)
+void IoTivityProtocol::onReadTimeout(Resource *r)
 {
     log->w(TAG, "Read Timeout");
-    log->w(TAG, "deviceId: " + deviceId);
-    log->w(TAG, "URI: " + URI);
+    log->w(TAG, "deviceId: " + r->resource->host());
+    log->w(TAG, "URI: " + r->resource->uri());
     onReadMutex.unlock();
 }
 
@@ -344,9 +344,9 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
                 QueryParamsMap queryParamsMap;
                 bool writeDone = false;
 
-                writeDelayedCallback = new DelayedCallback(WRITE_TIMEOUT*1000, true, bind(&IoTivityProtocol::onWriteTimeout, this, deviceId, string(value_uri), string(value_payload)));
+                DelayedCallback *writeDelayedCallback = new DelayedCallback(WRITE_TIMEOUT*1000, true, bind(&IoTivityProtocol::onWriteTimeout, this, r, string(value_payload)));
 
-                r->resource->put(rep, queryParamsMap, bind(&IoTivityProtocol::onWriteCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, writeDelayedCallback, deviceId, string(value_uri), string(value_payload), &writeDone));
+                r->resource->put(rep, queryParamsMap, bind(&IoTivityProtocol::onWriteCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, writeDelayedCallback, r, string(value_payload), &writeDone));
 
                 log->d(TAG, "onWriteMutex LOCKED");
                 onWriteMutex.lock();
@@ -369,8 +369,6 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
                 {
                     return PROTOCOL_WRITE_STATUS_FAILED;
                 }
-
-
             }
             onWriteMutex.unlock();
             log->d(TAG, "onWriteMutex UNLOCKED");
@@ -447,7 +445,7 @@ OC::OCRepresentation IoTivityProtocol::generateRepresentationFromJSON(string jso
     return *rep;
 }
 
-void IoTivityProtocol::onWriteCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode, DelayedCallback* timeoutDelayedCallback, string deviceId, string URI, string payload, bool* done)
+void IoTivityProtocol::onWriteCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode, DelayedCallback* timeoutDelayedCallback, Resource *r, string payload, bool* done)
 {
     if(!timeoutDelayedCallback->isFired())
     {
@@ -473,8 +471,8 @@ void IoTivityProtocol::onWriteCallback(const HeaderOptions &hOps, const OCRepres
     else if(errCode == OC_STACK_ERROR)
     {
         log->w(TAG, "Write Failed!");
-        log->w(TAG, "deviceId: " + deviceId);
-        log->w(TAG, "URI: " + URI);
+        log->w(TAG, "deviceId: " + r->resource->host());
+        log->w(TAG, "URI: " + r->resource->uri());
         log->w(TAG, "Payload: " + payload);
         *done = false;
     }    
@@ -486,11 +484,11 @@ void IoTivityProtocol::onWriteCallback(const HeaderOptions &hOps, const OCRepres
     onWriteMutex.unlock();
 }
 
-void IoTivityProtocol::onWriteTimeout(string deviceId, string URI, string payload)
+void IoTivityProtocol::onWriteTimeout(Resource *r, string payload)
 {
     log->w(TAG, "Write Timeout");
-    log->w(TAG, "deviceId: " + deviceId);
-    log->w(TAG, "URI: " + URI);
+    log->w(TAG, "deviceId: " + r->resource->host());
+    log->w(TAG, "URI: " + r->resource->uri());
     log->w(TAG, "Payload: " + payload);
     onWriteMutex.unlock();
 }
@@ -523,11 +521,28 @@ void IoTivityProtocol::Subscribe(string deviceId, GVariant* arguments)
             }
 
             if(r != NULL)
-            {                
-
-                //TODO: Subscription should be done here
-
-                //onSubscribeMutex.lock();
+            {
+                if(r->resource->isObservable())
+                {
+                    QueryParamsMap qpm;
+                    OCStackResult ret = OC_STACK_OK;
+                    try
+                    {
+                        ret = r->resource->observe(ObserveType::Observe, qpm, bind(&IoTivityProtocol::onObserveCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4, r));
+                    }
+                    catch(OC::OCException &e)
+                    {
+                        log->w(TAG, "This resource might be already observed");
+                        log->w(TAG, "DeviceID: " + deviceId);
+                        log->w(TAG, "URI: " + string(value_uri));
+                    }
+                }
+                else
+                {
+                    log->w(TAG, "Resource NOT observable");
+                    log->w(TAG, "DeviceID: " + deviceId);
+                    log->w(TAG, "URI: " + string(value_uri));
+                }               
                 
                 onSubscribeMutex.unlock();
                 log->d(TAG, "onSubscribeMutex UNLOCKED");
@@ -547,6 +562,89 @@ void IoTivityProtocol::Subscribe(string deviceId, GVariant* arguments)
         log->e(TAG, "Arguments: " + string(g_variant_print(arguments, TRUE)));
         log->e(TAG, "Arguments Variant has an UNEXPECTED signature: " + string(g_variant_get_type_string(arguments)));
     }
+}
+
+void IoTivityProtocol::onObserveCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode, const int& sequenceNumber, Resource *r)
+{
+    int k =0;
+    mutex onNotificationMutex;
+    string json = "{";
+
+    log->v(TAG, "onObserveCallback invoked");
+
+    onNotificationMutex.lock();
+
+    if(errCode == OC_STACK_OK)
+    {
+        int i = 0;
+        string tmp;
+
+        for(auto& val : rep)
+        {
+            tmp = "";
+            switch(val.type())
+            {
+                case AttributeType::Integer:
+                    tmp = to_string(static_cast<int>(val));
+                    json += "\"" + val.attrname() + "\": " + tmp;
+                    break;
+                case AttributeType::Double:
+                    tmp = boost::lexical_cast<std::string>(val.getValue<double>());
+                    json += "\"" + val.attrname() + "\": " + tmp;
+                    break;
+                case AttributeType::Boolean:
+                    tmp = (val.getValue<bool>() ? "true" : "false");
+                    json += "\"" + val.attrname() + "\": " + tmp;
+                    break;
+                case AttributeType::String:
+                    json += "\"" + val.attrname() + "\": \"" + val.getValue<string>() + "\"";
+                    break;
+                case AttributeType::Null:
+                    log->w(TAG, "Null. Type NOT implemented yet");
+                    break;
+                case AttributeType::OCRepresentation:
+                    log->w(TAG, "OCRepresentation. Type NOT implemented yet");
+                    break;
+                case AttributeType::Vector:
+                    log->w(TAG, "Vector. Type NOT implemented yet");
+                    break;
+                case AttributeType::Binary:
+                    log->w(TAG, "Binary. Type NOT implemented yet");
+                    break;
+                default:
+                    log->w(TAG, "Type Unknown... I skip it");
+                    break;
+            }
+
+            i++;
+            if(i < rep.getValues().size())
+            {
+                json += ", ";
+            }
+        }
+    }
+    else
+    {
+        json += "\"error\": " + std::to_string(errCode);
+    }
+    json += "}";
+
+    log->v(TAG, "deviceId: " + string(r->resource->host()));
+    log->v(TAG, "URI: " + string(r->resource->uri()));
+    log->v(TAG, "SequenceNumber: " + to_string(sequenceNumber));
+    log->v(TAG, "Payload: " + json);
+
+    //TODO: firing signal data changed
+
+    onNotificationMutex.unlock();
+}
+
+void IoTivityProtocol::onObserveTimeout(Resource *r)
+{
+    log->w(TAG, "Observe Timeout");
+    log->w(TAG, "deviceId: " + r->resource->host());
+    log->w(TAG, "URI: " + r->resource->uri());
+    onSubscribeMutex.unlock();
 }
 
 void IoTivityProtocol::doDiscovery()
