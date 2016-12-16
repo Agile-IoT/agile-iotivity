@@ -197,12 +197,17 @@ AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments
                 if(readDelayedCallback->isFired())
                 {
                     ro = new AGILE::RecordObject(deviceId, string(value_uri), "timeout", "", "");
+                    manageTimeout(r);
                 }
                 else
                 {
                     log->v(TAG, "Read Payload: " + output);
                     ro = new AGILE::RecordObject(deviceId, string(value_uri), output, "json", "json");
                     storeRecordObject(ro);
+
+                    IoTivityDevice *iotd = (IoTivityDevice *) getDeviceFromId(r->resource->host());
+                    iotd->resetTimeoutCounter();
+
                     delete r;
                 }
                 onReadMutex.unlock();
@@ -352,12 +357,17 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
                 onWriteMutex.lock();
                 onWriteMutex.unlock();
 
-                delete r;
-
                 if(writeDelayedCallback->isFired())
                 {
+                    manageTimeout(r);
+                    delete r;
                     return PROTOCOL_WRITE_STATUS_TIMEOUT;
                 }
+
+                IoTivityDevice *iotd = (IoTivityDevice *) getDeviceFromId(r->resource->host());
+                iotd->resetTimeoutCounter();
+
+                delete r;
 
                 log->d(TAG, "onWriteMutex UNLOCKED");
 
@@ -572,6 +582,7 @@ void IoTivityProtocol::onObserveCallback(const HeaderOptions &hOps, const OCRepr
     log->v(TAG, "onObserveCallback invoked");
 
     onNotificationMutex.lock();
+    log->d(TAG, "onNotificationMutex LOCKED");
 
     if(errCode == OC_STACK_OK)
     {
@@ -635,9 +646,17 @@ void IoTivityProtocol::onObserveCallback(const HeaderOptions &hOps, const OCRepr
 
     AGILE::RecordObject *ro = new AGILE::RecordObject(string(r->resource->host()), string(r->resource->uri()), json, "json", "json");
 
-    emitNewRecordSignal(ro);
+    if(emitNewRecordSignal(ro))
+    {
+        log->d(TAG, "NewRecordSignal emitted");
+    }
+    else
+    {
+        log->e(TAG, "NewRecordSignal CANNOT be emitted");
+    }
 
     onNotificationMutex.unlock();
+    log->d(TAG, "onNotificationMutex UNLOCKED");
 }
 
 void IoTivityProtocol::onObserveTimeout(Resource *r)
@@ -716,6 +735,18 @@ void IoTivityProtocol::Unsubscribe(string deviceId, GVariant* arguments)
     }
 }
 
+void IoTivityProtocol::manageTimeout(Resource *r)
+{
+    IoTivityDevice *tmp = (IoTivityDevice *) getDeviceFromId(r->resource->host());
+    tmp->increaseTimeoutCounter();
+
+    if(tmp->getTimeoutCounter() >= TIMEOUT_THRESHOLD)
+    {
+        log->w(TAG, "Device with Id " + tmp->getId() + " has reached the timeout threshold!");
+        // TODO: the exact behaviour on TIMEOUT has not been defined
+    }
+}
+
 void IoTivityProtocol::doDiscovery()
 {
     log->v(TAG, "Performing discovery...");
@@ -763,7 +794,6 @@ void IoTivityProtocol::onDiscovery(std::shared_ptr<OC::OCResource> resource)
         log->v(TAG, "New resource discovered " + resource->host() + resource->uri());
         resources.push_back(*res);
     }
-
 
     onDiscoveryMutex.unlock();
 }

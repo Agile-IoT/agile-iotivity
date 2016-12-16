@@ -77,6 +77,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     static const int DISCOVERY_DELAY = 2;
     static const int READ_TIMEOUT = 5;
     static const int WRITE_TIMEOUT = 5;
+    static const int TIMEOUT_THRESHOLD = 3;
     Logger* log;
 
     std::vector<Resource> resources;
@@ -85,6 +86,8 @@ class IoTivityProtocol : public AGILE::Protocol {
 
     OC::PlatformConfig *platformConfig;
     IoTivityProtocol();
+
+    void manageTimeout(Resource *);
 
     mutex onDiscoveryMutex;
     mutex onReadMutex;
@@ -130,7 +133,5 @@ class IoTivityProtocol : public AGILE::Protocol {
     void onObserveCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, const int&, Resource *);
     void onObserveTimeout(Resource *);
 };
-
-
 
 #endif
