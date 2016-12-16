@@ -47,6 +47,7 @@ const string AGILE::Protocol::METHOD_READ = "Read";
 const string AGILE::Protocol::METHOD_SUBSCRIBE = "Subscribe";
 const string AGILE::Protocol::METHOD_UNSUBSCRIBE = "Unsubscribe";
 const string AGILE::Protocol::SIGNAL_FOUNDNEWDEVICE = "FoundNewDeviceSignal";
+const string AGILE::Protocol::SIGNAL_NEWRECORD = "NewRecordSignal";
 const string AGILE::Protocol::PROTOCOL_STATUS_AVAILABLE = "AVAILABLE";
 const string AGILE::Protocol::PROTOCOL_STATUS_UNAVAILABLE = "UNAVAILABLE";
 const string AGILE::Protocol::PROTOCOL_STATUS_NOT_CONFIGURED = "NOT_CONFIGURED";
@@ -104,10 +105,10 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "  <property name='Devices' type='a(ssss)' access='read' />"
     "  <property name='Data' type='(sssssd)' access='read' />"
     "  <property name='DiscoveryStatus' type='s' access='read' />"
-/*    "<signal name='DataChanged'>"
-    "  <arg name='Data' type='{sssssd}' />"
+    "<signal name='NewRecordSignal'>"
+    "  <arg name='Data' type='(sssssd)' />"
     "</signal>"
- */   "<signal name='FoundNewDeviceSignal'>"
+    "<signal name='FoundNewDeviceSignal'>"
     "  <arg name='Device' type='(ssss)' />"
     "</signal>"
     "  </interface>"
@@ -440,6 +441,33 @@ AGILE::RecordObject* AGILE::Protocol::getLastRecordObject()
 void AGILE::Protocol::storeRecordObject(AGILE::RecordObject* ro)
 {
     *data = *ro;
+}
+
+bool AGILE::Protocol::emitNewRecordSignal(AGILE::RecordObject *ro)
+{
+    GError *local_error;
+    GVariant * record_variant;
+
+    local_error = NULL;
+
+    record_variant = g_variant_new("((sssssd))", ro->deviceId.c_str(), ro->componentId.c_str(), ro->value.c_str(), ro->unit.c_str(), ro->format.c_str(), ro->lastUpdate);
+
+    g_dbus_connection_emit_signal(connection,
+                                  NULL,
+                                  BUS_PATH.c_str(),
+                                  AGILE::AGILE_PROTOCOL_INTERFACE.c_str(), 
+                                  SIGNAL_NEWRECORD.c_str(),
+                                  record_variant,
+                                  &local_error);
+
+    storeRecordObject(ro);
+
+    if(local_error == NULL)
+    {
+       return true;
+    }
+
+    return false;
 }
 
 void AGILE::Protocol::setDiscoveryStatus(string status)

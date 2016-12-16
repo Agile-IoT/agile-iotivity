@@ -633,7 +633,9 @@ void IoTivityProtocol::onObserveCallback(const HeaderOptions &hOps, const OCRepr
     log->v(TAG, "SequenceNumber: " + to_string(sequenceNumber));
     log->v(TAG, "Payload: " + json);
 
-    //TODO: firing signal data changed
+    AGILE::RecordObject *ro = new AGILE::RecordObject(string(r->resource->host()), string(r->resource->uri()), json, "json", "json");
+
+    emitNewRecordSignal(ro);
 
     onNotificationMutex.unlock();
 }
