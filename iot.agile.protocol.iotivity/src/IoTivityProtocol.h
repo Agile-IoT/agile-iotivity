@@ -124,7 +124,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     void onReadCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, string *, DelayedCallback *);
     void onReadTimeout(string, string);
 
-    void onWriteCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, DelayedCallback* );
+    void onWriteCallback(const OC::HeaderOptions &, const OC::OCRepresentation &, int, DelayedCallback *, string, string, string, bool*);
     void onWriteTimeout(string, string, string);
 };
 

@@ -62,6 +62,7 @@ const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_ARGSNOTVALID = "ARGSNOTVALID
 const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_SIGARGSNOTVALID = "SIGARGSNOTVALID";
 const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_GENERICERROR = "ERROR";
 const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_TIMEOUT = "TIMEOUT";
+const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_FAILED = "FAILED";
 const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "<node name='/iot/agile/Protocol'>"
     "  <interface name='iot.agile.Protocol'>"

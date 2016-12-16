@@ -114,6 +114,7 @@ class AGILE::Protocol {
     static const string PROTOCOL_WRITE_STATUS_SIGARGSNOTVALID;
     static const string PROTOCOL_WRITE_STATUS_GENERICERROR;
     static const string PROTOCOL_WRITE_STATUS_TIMEOUT;
+    static const string PROTOCOL_WRITE_STATUS_FAILED;
 
     private:
     std::vector<AGILE::DeviceOverview> devices;

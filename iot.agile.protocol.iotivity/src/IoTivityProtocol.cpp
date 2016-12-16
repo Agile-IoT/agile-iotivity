@@ -342,10 +342,11 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
             {
                 OC::OCRepresentation rep = generateRepresentationFromJSON(string(value_payload));
                 QueryParamsMap queryParamsMap;
+                bool writeDone = false;
 
                 writeDelayedCallback = new DelayedCallback(WRITE_TIMEOUT*1000, true, bind(&IoTivityProtocol::onWriteTimeout, this, deviceId, string(value_uri), string(value_payload)));
 
-                r->resource->put(rep, queryParamsMap, bind(&IoTivityProtocol::onWriteCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, writeDelayedCallback));
+                r->resource->put(rep, queryParamsMap, bind(&IoTivityProtocol::onWriteCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, writeDelayedCallback, deviceId, string(value_uri), string(value_payload), &writeDone));
 
                 log->d(TAG, "onWriteMutex LOCKED");
                 onWriteMutex.lock();
@@ -359,7 +360,17 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
                 }
 
                 log->d(TAG, "onWriteMutex UNLOCKED");
-                return PROTOCOL_WRITE_STATUS_DONE;
+
+                if(writeDone)
+                {
+                    return PROTOCOL_WRITE_STATUS_DONE;
+                }
+                else
+                {
+                    return PROTOCOL_WRITE_STATUS_FAILED;
+                }
+
+
             }
             onWriteMutex.unlock();
             log->d(TAG, "onWriteMutex UNLOCKED");
@@ -436,7 +447,7 @@ OC::OCRepresentation IoTivityProtocol::generateRepresentationFromJSON(string jso
     return *rep;
 }
 
-void IoTivityProtocol::onWriteCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode, DelayedCallback* timeoutDelayedCallback)
+void IoTivityProtocol::onWriteCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode, DelayedCallback* timeoutDelayedCallback, string deviceId, string URI, string payload, bool* done)
 {
     if(!timeoutDelayedCallback->isFired())
     {
@@ -451,7 +462,26 @@ void IoTivityProtocol::onWriteCallback(const HeaderOptions &hOps, const OCRepres
 
     if(errCode == OC_STACK_OK)
     {
-        
+        log->v(TAG, "Stack ok");
+        *done = true;
+    }
+    else if(errCode == OC_STACK_RESOURCE_CHANGED)
+    {
+        log->v(TAG, "Write successful");
+        *done = true;
+    }
+    else if(errCode == OC_STACK_ERROR)
+    {
+        log->w(TAG, "Write Failed!");
+        log->w(TAG, "deviceId: " + deviceId);
+        log->w(TAG, "URI: " + URI);
+        log->w(TAG, "Payload: " + payload);
+        *done = false;
+    }    
+    else
+    {
+        log->w(TAG, "Write error code Unknown: " + to_string(errCode));
+        *done = false;
     }
     onWriteMutex.unlock();
 }
