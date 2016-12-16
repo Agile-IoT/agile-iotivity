@@ -89,6 +89,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     mutex onReadMutex;
     mutex onWriteMutex;
     mutex onSubscribeMutex;
+    mutex onUnsubscribeMutex;
 
     public:
     
@@ -113,6 +114,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     AGILE::RecordObject* Read(string, GVariant*);
     string Write(string, GVariant*);
     void Subscribe(string, GVariant*);
+    void Unsubscribe(string, GVariant*);
 
     //IoTivity callbacks
     void doDiscovery();

@@ -94,12 +94,11 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "    <arg name='deviceId' type='s' direction='in'/>"
     "    <arg name='arguments' type='v' direction='in'/>"
     "  </method>"
-/*    "  <method name='Unsubscribe'>"
+    "  <method name='Unsubscribe'>"
     "    <arg name='deviceId' type='s' direction='in'/>"
     "    <arg name='arguments' type='v' direction='in'/>"
-    "    <arg name='return' type='{sssssd}' direction='out'/>"
     "  </method>"
-*/    "  <property name='Status' type='s' access='read' />"
+    "  <property name='Status' type='s' access='read' />"
     "  <property name='Driver' type='s' access='read' />"
     "  <property name='Name' type='s' access='read' />"
     "  <property name='Devices' type='a(ssss)' access='read' />"
@@ -255,6 +254,14 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
         GVariant *arguments;
         g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
         instance->Subscribe(string(deviceId), arguments);
+    }
+    //METHOD UNSUBSCRIBE
+    else if(g_strcmp0(method_name, METHOD_UNSUBSCRIBE.c_str()) == 0)
+    {
+        const gchar *deviceId;
+        GVariant *arguments;
+        g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
+        instance->Unsubscribe(string(deviceId), arguments);
     }
     else
     {
@@ -485,6 +492,11 @@ string AGILE::Protocol::Write(string deviceId, GVariant* arguments)
 void AGILE::Protocol::Subscribe(string deviceId, GVariant* arguments)
 {
     std::cout << "Subscribe not Implemented." << std::endl;
+}
+
+void AGILE::Protocol::Unsubscribe(string deviceId, GVariant* arguments)
+{
+    std::cout << "Unsubscribe not Implemented." << std::endl;
 }
 
 void AGILE::Protocol::onBusAcquiredCb(GDBusConnection *conn, const gchar *name, gpointer user_data)
