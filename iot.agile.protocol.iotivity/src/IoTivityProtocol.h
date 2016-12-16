@@ -62,6 +62,7 @@
 #include <boost/property_tree/json_parser.hpp>
 
 #include "Resource.h"
+#include "IoTivityDevice.h"
 
 using namespace std;
 using namespace OC;

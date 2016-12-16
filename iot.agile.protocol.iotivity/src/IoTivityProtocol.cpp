@@ -734,7 +734,7 @@ void IoTivityProtocol::onDiscovery(std::shared_ptr<OC::OCResource> resource)
 
     string name = "IoTivity Node";
     string id = resource->host();
-    AGILE::DeviceOverview *dev = new AGILE::DeviceOverview(name, PROTOCOL_NAME, id);
+    IoTivityDevice *dev = new IoTivityDevice(name, PROTOCOL_NAME, id);
 
     if(addDevice(dev)){ //If the device is new, it is added in the device list
         log->i(TAG, "New device discovered! ID: " + dev->getId());
