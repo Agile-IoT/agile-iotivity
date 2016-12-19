@@ -1,3 +1,6 @@
+deps
+/iot.agile.protocol.iotivity/iotivity
+/iot.agile.protocol.iotivity/model.cpp
 # Object files
 *.o
 # Documentation artifacts
