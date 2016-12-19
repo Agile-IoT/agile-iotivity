@@ -34,15 +34,21 @@
 #include <chrono>
 #include <future>
 #include <cstdio>
+#include <pthread.h>
+#include <iostream>
+#include <unistd.h>
 
 class PeriodicCallback
 {
 private:
-    volatile bool continueThread = true;
+    pthread_t thread;
+    int threadId;
+    bool fired = false;
 public:
     PeriodicCallback(int after, bool pre, std::function<void(void)> task);
     ~PeriodicCallback();
-    void stopThread();
+    void *threadFunction(int after, bool pre, std::function<void(void)> task);
+    bool stopThread();
 };
 
 #endif

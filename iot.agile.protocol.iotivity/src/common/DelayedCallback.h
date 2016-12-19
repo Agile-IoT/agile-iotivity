@@ -34,16 +34,21 @@
 #include <chrono>
 #include <future>
 #include <cstdio>
+#include <pthread.h>
+#include <iostream>
+#include <unistd.h>
 
 class DelayedCallback
 {
 private:
-    volatile bool continueThread = true;
+    pthread_t thread;
+    int threadId;
     bool fired = false;
 public:
     DelayedCallback(int after, bool async, std::function<void(void)> task);
+    void *threadFunction(int after, std::function<void(void)> task);
     bool isFired();
-    void stopThread();
+    bool stopThread();
 };
 
 #endif

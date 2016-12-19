@@ -27,30 +27,29 @@
  * @}
  */
 
-#include <functional>
-#include <chrono>
-#include <future>
-#include <cstdio>
 #include "DelayedCallback.h"
+
+struct wrap {
+    DelayedCallback *instance;
+    std::function<void(void)> task;
+    int delay;
+
+    wrap(DelayedCallback *dCb, std::function<void(void)> func, int d) :
+        instance(dCb), task(func), delay(d) {}
+};
+
+extern "C" void* delayed_thread_main_func(void *f)
+{
+    std::auto_ptr< wrap > w( static_cast< wrap* >( f ) );
+    w->instance->threadFunction(w->delay, w->task);
+}
 
 DelayedCallback::DelayedCallback(int after, bool async, std::function<void(void)> task)
 {
-
     if (async)
     {
-        continueThread = true;
-        std::thread([this, after, task]() {
-            int i = 0;
-            while(continueThread && i<after) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                i++;
-            }
-            if(continueThread) 
-            {
-                fired = true;
-                task();
-            }
-        }).detach();
+       wrap *w = new wrap(this, task, after);
+       threadId = pthread_create(&thread, NULL, delayed_thread_main_func, w);
     }
     else
     {
@@ -59,9 +58,26 @@ DelayedCallback::DelayedCallback(int after, bool async, std::function<void(void)
     }
 }
 
-void DelayedCallback::stopThread()
+void *DelayedCallback::threadFunction(int after, std::function<void(void)> task)
 {
-    continueThread = false;
+    int i = 0;
+    while(i<after) {
+        usleep(1000);
+        i++;
+    }
+
+    fired = true;
+    task();
+    pthread_exit(0);
+}
+
+bool DelayedCallback::stopThread()
+{
+    int *ret;
+    pthread_cancel(thread);
+    pthread_join(thread, (void **) &ret);
+    if(ret == PTHREAD_CANCELED) return true;
+    return false;
 }
 
 bool DelayedCallback::isFired()
