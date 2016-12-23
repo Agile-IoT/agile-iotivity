@@ -347,8 +347,8 @@ bool AGILE::Protocol::emitFoundNewDeviceSignal(AGILE::DeviceOverview *dev)
 
     local_error = NULL;
 
-    device_variant = g_variant_new("(ssss)", dev->getName().c_str(), dev->getProtocol().c_str(),
-        dev->getId().c_str(), dev->getStatus().c_str());
+    device_variant = g_variant_new("(ssssd)", dev->getName().c_str(), dev->getProtocol().c_str(),
+        dev->getId().c_str(), dev->getStatus().c_str(), dev->getLastSeen());
 
     g_dbus_connection_emit_signal(connection,
                                   NULL,
