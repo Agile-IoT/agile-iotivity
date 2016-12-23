@@ -57,17 +57,23 @@ class AGILE::DeviceOverview {
     string protocol;
     string id;
     string status;
+    double lastSeen;
 
     public:
     DeviceOverview();
     DeviceOverview(string, string, string);
+    DeviceOverview(string, string, string, double);
     DeviceOverview(string, string, string, string);
+    DeviceOverview(string, string, string, string, double);
     ~DeviceOverview();
 
     string getName() const;
     string getProtocol() const;
     string getId() const;
     string getStatus() const;
+    double getLastSeen() const;
+
+    void setLastSeen2Now();
 
     void setName(string);
 

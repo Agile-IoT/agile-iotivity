@@ -298,13 +298,13 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     //PROPERTY DEVICES
     else if(g_strcmp0(property_name, PROPERTY_DEVICES.c_str()) == 0)
     {
-        GVariantBuilder *builder = g_variant_builder_new(G_VARIANT_TYPE("a(ssss)"));
+        GVariantBuilder *builder = g_variant_builder_new(G_VARIANT_TYPE("a(ssssd)"));
         for(int i=0; i<instance->getDeviceListSize(); i++) {
            AGILE::DeviceOverview *d = instance->getDeviceAt(i);
-           g_variant_builder_add(builder, "(ssss)", d->getName().c_str(),
-               d->getProtocol().c_str(), d->getId().c_str(), d->getStatus().c_str());
+           g_variant_builder_add(builder, "(ssssd)", d->getName().c_str(),
+               d->getProtocol().c_str(), d->getId().c_str(), d->getStatus().c_str(), d->getLastSeen());
         }
-        ret = g_variant_new("a(ssss)", builder);
+        ret = g_variant_new("a(ssssd)", builder);
         g_variant_builder_unref(builder);        
     }
     //PROPERTY DATA

@@ -41,6 +41,7 @@ AGILE::DeviceOverview::DeviceOverview()
     this->protocol = "Unknown";
     this->id = "Unknown";
     this->status = STATUS_UNAVAILABLE;
+    this->lastSeen = 0;
 }
 
 AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id)
@@ -49,6 +50,7 @@ AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id)
     this->protocol = protocol;
     this->id = id;
     this->status = STATUS_AVAILABLE;
+    setLastSeen2Now();
 }
 
 AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id, string status)
@@ -64,7 +66,34 @@ AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id, s
     {
         this->status = STATUS_UNAVAILABLE;
     }
+    setLastSeen2Now();
 }
+
+AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id, double lastSeen)
+{
+    this->name = name;
+    this->protocol = protocol;
+    this->id = id;
+    this->status = STATUS_AVAILABLE;
+    this->lastSeen = lastSeen;
+}
+
+AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id, string status, double lastSeen)
+{
+    this->name = name;
+    this->protocol = protocol;
+    this->id = id;
+    if(isValidStatus(status))
+    {
+        this->status = status;
+    }
+    else
+    {
+        this->status = STATUS_UNAVAILABLE;
+    }
+    this->lastSeen = lastSeen;
+}
+
 
 AGILE::DeviceOverview::~DeviceOverview()
 {
@@ -98,9 +127,19 @@ string AGILE::DeviceOverview::getStatus() const
     return status;
 }
 
+double AGILE::DeviceOverview::getLastSeen() const
+{
+    return lastSeen;
+}
+
 void AGILE::DeviceOverview::setName(string name)
 {
     this->name = name;
+}
+
+void AGILE::DeviceOverview::setLastSeen2Now()
+{
+    this->lastSeen = std::time(0);
 }
 
 bool AGILE::DeviceOverview::operator==(const AGILE::DeviceOverview & dev) const
