@@ -33,9 +33,9 @@
 
 AGILE::Protocol *AGILE::Protocol::instance = nullptr;
 const string AGILE::Protocol::PROPERTY_STATUS = "Status";
-const string AGILE::Protocol::PROPERTY_DRIVER = "Driver";
+const string AGILE::Protocol::PROPERTY_ID = "Id";
 const string AGILE::Protocol::PROPERTY_NAME = "Name";
-const string AGILE::Protocol::PROPERTY_DATA = "Data";
+const string AGILE::Protocol::PROPERTY_IMPLEMENTATIONID = "ImplementationId";
 const string AGILE::Protocol::PROPERTY_DEVICES = "Devices";
 const string AGILE::Protocol::PROPERTY_DISCOVERYSTATUS = "DiscoveryStatus";
 const string AGILE::Protocol::METHOD_CONNECT = "Connect";
@@ -129,7 +129,8 @@ AGILE::Protocol::Protocol()
     BUS_NAME = "Unknown";
     BUS_PATH = "Unknown";
     PROTOCOL_NAME = "Unknown";
-    DRIVER_NAME = "Unknown";
+    PROTOCOL_ID = "Unknown";
+    PROTOCOL_IMPLEMENTATIONID = "Unknown";
 
     data = new AGILE::RecordObject();
 }
@@ -285,12 +286,12 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     {
         ret = g_variant_new_string(instance->PROTOCOL_NAME.c_str());
     }
-    //PROPERTY DRIVER NAME
-    else if(g_strcmp0(property_name, PROPERTY_DRIVER.c_str()) == 0)
+    //PROPERTY UNIQUE ID
+    else if(g_strcmp0(property_name, PROPERTY_ID.c_str()) == 0)
     {
-        ret = g_variant_new_string(instance->DRIVER_NAME.c_str());
+        ret = g_variant_new_string(instance->PROTOCOL_ID.c_str());
     }
-    //PROPERTY DRIVER NAME
+    //PROPERTY STATUS NAME
     else if(g_strcmp0(property_name, PROPERTY_STATUS.c_str()) == 0)
     {
         ret = g_variant_new_string(PROTOCOL_STATUS_AVAILABLE.c_str());
@@ -307,11 +308,10 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
         ret = g_variant_new("a(ssssd)", builder);
         g_variant_builder_unref(builder);        
     }
-    //PROPERTY DATA
-    else if(g_strcmp0(property_name, PROPERTY_DATA.c_str()) == 0)
+    //PROPERTY IMPLEMENTATION ID
+    else if(g_strcmp0(property_name, PROPERTY_IMPLEMENTATIONID.c_str()) == 0)
     {
-        AGILE::RecordObject* data = instance->getLastRecordObject();
-        ret = g_variant_new("(sssssd)", data->deviceId.c_str(), data->componentId.c_str(), data->value.c_str(), data->unit.c_str(), data->format.c_str(), data->lastUpdate);     
+        ret = g_variant_new_string(instance->PROTOCOL_IMPLEMENTATIONID.c_str());
     }
     //PROPERTY DISCOVERY STATUS
     else if(g_strcmp0(property_name, PROPERTY_DISCOVERYSTATUS.c_str()) == 0)

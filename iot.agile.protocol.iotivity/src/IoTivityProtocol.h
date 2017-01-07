@@ -40,6 +40,7 @@
 #include "agile/DeviceOverview.h"
 
 #include <unistd.h>
+#include <cstdlib>
 #include <ctime>
 #include <string>
 #include <algorithm>

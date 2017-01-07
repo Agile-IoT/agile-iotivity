@@ -59,9 +59,9 @@ class AGILE::Protocol {
      * Properties
      */
     static const string PROPERTY_STATUS;
-    static const string PROPERTY_DRIVER;
+    static const string PROPERTY_ID;
     static const string PROPERTY_NAME;
-    static const string PROPERTY_DATA;
+    static const string PROPERTY_IMPLEMENTATIONID;
     static const string PROPERTY_DEVICES;
     static const string PROPERTY_DISCOVERYSTATUS;
    
@@ -155,9 +155,15 @@ class AGILE::Protocol {
     string PROTOCOL_NAME;
 
     /**
-     * Protocol driver name
+     * Protocol unique ID
      */
-    string DRIVER_NAME;
+    string PROTOCOL_ID;
+
+    /**
+     * Protocol Implementation ID
+     */
+    string PROTOCOL_IMPLEMENTATIONID;
+
 
     Protocol();
     ~Protocol();

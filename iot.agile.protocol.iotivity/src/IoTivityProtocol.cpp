@@ -41,10 +41,13 @@ OCConnectivityType connectivityType(CT_ADAPTER_IP);
 
 IoTivityProtocol::IoTivityProtocol() : AGILE::Protocol()
 {
+    srand(time(NULL));
+
     BUS_NAME = "iot.agile.protocol.iotivity";
     BUS_PATH = "/iot/agile/protocol/iotivity";
     PROTOCOL_NAME = "IoTivity";
-    DRIVER_NAME = "iotivity";
+    PROTOCOL_ID = "iotivity-" + to_string(rand()%65536);
+    PROTOCOL_IMPLEMENTATIONID = "IoTivity-V1.2.0";
 
     log = new Logger(&std::cout, Logger::LEVEL_DEBUG);
 
