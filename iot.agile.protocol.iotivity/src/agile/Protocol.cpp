@@ -38,6 +38,7 @@ const string AGILE::Protocol::PROPERTY_NAME = "Name";
 const string AGILE::Protocol::PROPERTY_IMPLEMENTATIONID = "ImplementationId";
 const string AGILE::Protocol::PROPERTY_DEVICES = "Devices";
 const string AGILE::Protocol::PROPERTY_DISCOVERYSTATUS = "DiscoveryStatus";
+const string AGILE::Protocol::PROPERTY_CAPABILITIES = "Capabilities";
 const string AGILE::Protocol::METHOD_CONNECT = "Connect";
 const string AGILE::Protocol::METHOD_DISCONNECT = "Disconnect";
 const string AGILE::Protocol::METHOD_STARTDISCOVERY = "StartDiscovery";
@@ -291,7 +292,7 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     {
         ret = g_variant_new_string(instance->PROTOCOL_ID.c_str());
     }
-    //PROPERTY STATUS NAME
+    //PROPERTY STATUS
     else if(g_strcmp0(property_name, PROPERTY_STATUS.c_str()) == 0)
     {
         ret = g_variant_new_string(PROTOCOL_STATUS_AVAILABLE.c_str());
@@ -317,6 +318,14 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     else if(g_strcmp0(property_name, PROPERTY_DISCOVERYSTATUS.c_str()) == 0)
     {
         ret = g_variant_new_string(instance->getDiscoveryStatus().c_str());
+    }
+    //PROPERTY CAPABILITIES
+    else if(g_strcmp0(property_name, PROPERTY_CAPABILITIES.c_str()) == 0)
+    {
+        //TODO: RESERVED FOR FUTURE USE
+        GVariantBuilder *builder = g_variant_builder_new(G_VARIANT_TYPE("a(sv)"));
+        ret = g_variant_new("a(sv)", builder);
+        g_variant_builder_unref(builder);
     }
     //PROPERTY UNKNOWN
     else

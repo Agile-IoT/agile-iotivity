@@ -64,6 +64,7 @@ class AGILE::Protocol {
     static const string PROPERTY_IMPLEMENTATIONID;
     static const string PROPERTY_DEVICES;
     static const string PROPERTY_DISCOVERYSTATUS;
+    static const string PROPERTY_CAPABILITIES;
    
     /**
      * Methods
