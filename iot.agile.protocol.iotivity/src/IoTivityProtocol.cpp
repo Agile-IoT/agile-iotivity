@@ -132,16 +132,16 @@ void IoTivityProtocol::Disconnect(string deviceId)
     log->e(TAG, "Disconnect not implemented yet DevID: " + deviceId);
 }
 
-void IoTivityProtocol::StartDiscovery()
+void IoTivityProtocol::StartDiscovery(int duration)
 {
-    log->v(TAG, "StartDiscovery invoked");
+    log->v(TAG, "StartDiscovery invoked! Duration: " + to_string(duration) + " seconds");
     if(discoveryPeriodicCallback)
     {
         log->w(TAG, "Discovery is already started");
         return;
     }
     discoveryPeriodicCallback = new PeriodicCallback(DISCOVERY_DELAY*1000, false, bind(&IoTivityProtocol::doDiscovery, this));
-    //TODO: discovery should be done every 15-60 secs
+    stopDiscoveryDelayedCallback = new DelayedCallback(duration*1000, true, bind(&IoTivityProtocol::StopDiscovery, this));
 }
 
 void IoTivityProtocol::StopDiscovery()
@@ -154,6 +154,14 @@ void IoTivityProtocol::StopDiscovery()
         log->w(TAG, "StopDiscovery invoked when discovery is not running");
         return;
     }
+
+    if(!stopDiscoveryDelayedCallback->isFired())
+    {
+        stopDiscoveryDelayedCallback->stopThread();
+    }
+
+    delete stopDiscoveryDelayedCallback;
+
     discoveryPeriodicCallback->stopThread();
     std::this_thread::sleep_for(std::chrono::milliseconds(2));
     delete discoveryPeriodicCallback;

@@ -205,7 +205,7 @@ class AGILE::Protocol {
     //Methods
     virtual void Connect(string);
     virtual void Disconnect(string);
-    virtual void StartDiscovery();
+    virtual void StartDiscovery(int);
     virtual void StopDiscovery();
     virtual string Write(string, GVariant*);
     virtual AGILE::RecordObject* Read(string, GVariant*);

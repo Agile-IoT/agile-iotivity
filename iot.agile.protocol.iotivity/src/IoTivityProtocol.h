@@ -84,6 +84,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     std::vector<Resource> resources;
 
     PeriodicCallback *discoveryPeriodicCallback = nullptr;
+    DelayedCallback *stopDiscoveryDelayedCallback = nullptr;
 
     OC::PlatformConfig *platformConfig;
     IoTivityProtocol();
@@ -114,7 +115,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     //APIs
     void Connect(string);
     void Disconnect(string);
-    void StartDiscovery();
+    void StartDiscovery(int);
     void StopDiscovery();
     AGILE::RecordObject* Read(string, GVariant*);
     string Write(string, GVariant*);

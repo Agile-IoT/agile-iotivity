@@ -225,7 +225,9 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
     //METHOD START DISCOVERY
     else if(g_strcmp0(method_name, METHOD_STARTDISCOVERY.c_str()) == 0)
     {
-        instance->StartDiscovery();
+        int duration;
+        g_variant_get (parameters, "(i)", &duration);
+        instance->StartDiscovery(duration);
         instance->setDiscoveryStatus(PROTOCOL_DISCOVERY_STATUS_RUNNING);
     }
     //METHOD STOP DISCOVERY
@@ -322,7 +324,7 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     //PROPERTY CAPABILITIES
     else if(g_strcmp0(property_name, PROPERTY_CAPABILITIES.c_str()) == 0)
     {
-        //TODO: RESERVED FOR FUTURE USE
+        //TODO: RESERVED FOR FUTURE USE (Now it returns an empty array)
         GVariantBuilder *builder = g_variant_builder_new(G_VARIANT_TYPE("a(sv)"));
         ret = g_variant_new("a(sv)", builder);
         g_variant_builder_unref(builder);
@@ -507,9 +509,9 @@ void AGILE::Protocol::Disconnect(string deviceId)
     std::cout << "Disconnect not implemented! Arg: " << deviceId << std::endl;
 }
 
-void AGILE::Protocol::StartDiscovery()
+void AGILE::Protocol::StartDiscovery(int duration)
 {
-    std::cout << "StartDiscovery not implemented!" << std::endl;
+    std::cout << "StartDiscovery not implemented! Duration: " << duration <<std::endl;
 }
 
 void AGILE::Protocol::StopDiscovery()
