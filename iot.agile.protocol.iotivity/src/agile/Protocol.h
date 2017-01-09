@@ -139,6 +139,7 @@ class AGILE::Protocol {
     static gboolean handleSetProperty(GDBusConnection *, const gchar *, const gchar *, const gchar *, const gchar *, GVariant *, GError **, gpointer);
 
     static const GDBusInterfaceVTable interface_vtable;
+    static void parseComponentAddr(GVariantIter *, map<string, GVariant*> *, GVariantBuilder **);
 
     public:
     static Protocol *instance;

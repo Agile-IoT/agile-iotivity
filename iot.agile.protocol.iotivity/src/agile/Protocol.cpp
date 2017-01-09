@@ -241,29 +241,19 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
     {
         const gchar *deviceId;
         GVariantIter *iterator;
-        GVariantBuilder *compAddr;
-        GVariant *value;
-        const gchar *key;
+        GVariantBuilder *compAddrBuilder;
 
         std::map<string, GVariant *> componentAddr;
         componentAddr.clear();
 
         g_variant_get (parameters, "(&sa(sv))", &deviceId, &iterator);
-        compAddr = g_variant_builder_new(G_VARIANT_TYPE("a(sv)"));
-        //Extraction component address from dbus to map
-        while(g_variant_iter_loop(iterator, "(&sv)", &key, &value))
-        {
-            componentAddr.insert({string(key), g_variant_deep_copy(value)});
-             g_variant_builder_add(compAddr, "(sv)", string(key).c_str(), g_variant_deep_copy(value));
-        }
-        g_variant_iter_free(iterator);
-        //passare la mappa al metodo read vero e ritornare un payload object
-        //RecordObject *data = instance->Read(string(deviceId), arguments);
+        parseComponentAddr(iterator, &componentAddr, &compAddrBuilder);
+
         PayloadObject *data = instance->Read(string(deviceId), componentAddr);
-        out = g_variant_new("((sa(sv)vd))", data->deviceId.c_str(), compAddr , data->payload, data->lastUpdate);
-        //delete data;
-        // deallocare i variant?
-        g_variant_builder_unref(compAddr);
+        out = g_variant_new("((sa(sv)vd))", data->deviceId.c_str(), compAddrBuilder, g_variant_deep_copy(data->payload), data->lastUpdate);
+
+        delete data;
+        g_variant_builder_unref(compAddrBuilder);
     }
     //METHOD WRITE
     else if(g_strcmp0(method_name, METHOD_WRITE.c_str()) == 0)
@@ -474,6 +464,22 @@ AGILE::RecordObject* AGILE::Protocol::getLastRecordObject()
 void AGILE::Protocol::storeRecordObject(AGILE::RecordObject* ro)
 {
     *data = *ro;
+}
+
+void AGILE::Protocol::parseComponentAddr(GVariantIter *iter, map<string, GVariant*> *caMap, GVariantBuilder **caBuilder)
+{
+    GVariant *value;
+    const gchar *key;
+
+    *caBuilder = g_variant_builder_new(G_VARIANT_TYPE("a(sv)"));
+
+    //Extraction component address from dbus to map
+    while(g_variant_iter_loop(iter, "(&sv)", &key, &value))
+    {
+        caMap->insert({string(key), g_variant_deep_copy(value)});
+        g_variant_builder_add(*caBuilder, "(sv)", string(key).c_str(), g_variant_deep_copy(value));
+    }
+    g_variant_iter_free(iter);
 }
 
 bool AGILE::Protocol::emitNewRecordSignal(AGILE::RecordObject *ro)
