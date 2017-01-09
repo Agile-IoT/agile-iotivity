@@ -35,7 +35,7 @@ AGILE::PayloadObject::PayloadObject()
 {
     this->deviceId = "Unknown";
     this->componentAddr.clear();
-    this->payload = NULL;
+    this->payload = g_variant_new_string("Unknown");
     this->lastUpdate = 0;
 }
 

@@ -169,78 +169,69 @@ void IoTivityProtocol::StopDiscovery()
     log->d(TAG, "DiscoveryPeriodicCallback removed");
 }
 
-AGILE::RecordObject* IoTivityProtocol::Read(string deviceId, GVariant* arguments)
+AGILE::PayloadObject* IoTivityProtocol::Read(string deviceId, std::map<string, GVariant *> componentAddr)
 {
     gchar *value_uri;
     Resource *r = NULL;
 
     log->v(TAG, "Read invoked");
     log->v(TAG, "DeviceID: " + deviceId);
-
-    if(g_variant_type_equal(g_variant_get_type(arguments), "a{ss}"))
+    if(componentAddr.find(KEY_URI) != componentAddr.end())
     {
-        if(g_variant_lookup(arguments, KEY_URI.c_str(), "&s", &value_uri))
+        log->d(TAG, "Key URI is present");
+        g_variant_get(componentAddr[KEY_URI], "&s", &value_uri);
+        log->v(TAG, "URI: " + string(value_uri));
+        onReadMutex.lock();
+        log->d(TAG, "onReadMutex LOCKED");
+
+        for(auto w : resources)
         {
-            log->d(TAG, "Key URI is present");
-            log->v(TAG, "URI: " + string(value_uri));
-            onReadMutex.lock();
-            log->d(TAG, "onReadMutex LOCKED");
-
-            for(auto w : resources)
+            if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
             {
-                if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
-                {
-                    log->d(TAG, "Resource found in cache");
-                    r = new Resource(w.resource);
-                    break;
-                }
+                log->d(TAG, "Resource found in cache");
+                r = new Resource(w.resource);
+                break;
             }
+        }
 
-            if(r != NULL)
+        if(r != NULL)
+        {
+            QueryParamsMap qpm;
+            AGILE::PayloadObject *po;
+            string output = "";
+            DelayedCallback *readDelayedCallback = new DelayedCallback(READ_TIMEOUT*1000, true, bind(&IoTivityProtocol::onReadTimeout, this, r));
+            r->resource->get(qpm, bind(&IoTivityProtocol::onReadCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, &output, readDelayedCallback));
+
+            onReadMutex.lock();
+            if(readDelayedCallback->isFired())
             {
-                QueryParamsMap qpm;
-                AGILE::RecordObject *ro;
-                string output = "";
-                DelayedCallback *readDelayedCallback = new DelayedCallback(READ_TIMEOUT*1000, true, bind(&IoTivityProtocol::onReadTimeout, this, r));
-                r->resource->get(qpm, bind(&IoTivityProtocol::onReadCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, &output, readDelayedCallback));
+                po = new AGILE::PayloadObject(deviceId, componentAddr, g_variant_new_string("timeout"));
+                manageTimeout(r);
+            }
+            else
+            {
+                log->v(TAG, "Read Payload: " + output);
+                po = new AGILE::PayloadObject(deviceId, componentAddr, g_variant_new_string(output.c_str()));
 
-                onReadMutex.lock();
-                if(readDelayedCallback->isFired())
-                {
-                    ro = new AGILE::RecordObject(deviceId, string(value_uri), "timeout", "", "");
-                    manageTimeout(r);
-                }
-                else
-                {
-                    log->v(TAG, "Read Payload: " + output);
-                    ro = new AGILE::RecordObject(deviceId, string(value_uri), output, "json", "json");
-                    storeRecordObject(ro);
+                IoTivityDevice *iotd = (IoTivityDevice *) getDeviceFromId(r->resource->host());
+                iotd->resetTimeoutCounter();
 
-                    IoTivityDevice *iotd = (IoTivityDevice *) getDeviceFromId(r->resource->host());
-                    iotd->resetTimeoutCounter();
-
-                    delete r;
-                }
-                onReadMutex.unlock();
-                log->d(TAG, "onReadMutex UNLOCKED");
-                return ro;
+                delete r;
             }
             onReadMutex.unlock();
             log->d(TAG, "onReadMutex UNLOCKED");
-            log->w(TAG, "Resource NOT found, Read ignored...");
+            return po;
         }
-        else
-        {
-            log->e(TAG, "Key URI is absent, Read ignored...");
-        }
+        onReadMutex.unlock();
+        log->d(TAG, "onReadMutex UNLOCKED");
+        log->w(TAG, "Resource NOT found, Read ignored...");
     }
     else
     {
-        log->e(TAG, "Arguments: " + string(g_variant_print(arguments, TRUE)));
-        log->e(TAG, "Arguments Variant has an UNEXPECTED signature: " + string(g_variant_get_type_string(arguments)));
+        log->e(TAG, "Key URI is absent, Read ignored...");
     }
 
-    return new AGILE::RecordObject();
+    return new AGILE::PayloadObject();
 }
 
 void IoTivityProtocol::onReadCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode, string *output, DelayedCallback* timeoutDelayedCallback)

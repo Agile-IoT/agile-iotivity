@@ -38,6 +38,7 @@
 #include "agile/constants.h"
 #include "agile/Protocol.h"
 #include "agile/DeviceOverview.h"
+#include "agile/PayloadObject.h"
 
 #include <unistd.h>
 #include <cstdlib>
@@ -117,7 +118,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     void Disconnect(string);
     void StartDiscovery(int);
     void StopDiscovery();
-    AGILE::RecordObject* Read(string, GVariant*);
+    AGILE::PayloadObject* Read(string, std::map<string, GVariant *>);
     string Write(string, GVariant*);
     void Subscribe(string, GVariant*);
     void Unsubscribe(string, GVariant*);

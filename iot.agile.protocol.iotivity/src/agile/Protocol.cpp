@@ -240,11 +240,30 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
     else if(g_strcmp0(method_name, METHOD_READ.c_str()) == 0)
     {
         const gchar *deviceId;
-        GVariant *arguments;
-        g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
-        RecordObject *data = instance->Read(string(deviceId), arguments);
-        out = g_variant_new("((sssssd))", data->deviceId.c_str(), data->componentId.c_str(), data->value.c_str(), data->unit.c_str(), data->format.c_str(), data->lastUpdate);
-        delete data;
+        GVariantIter *iterator;
+        GVariantBuilder *compAddr;
+        GVariant *value;
+        const gchar *key;
+
+        std::map<string, GVariant *> componentAddr;
+        componentAddr.clear();
+
+        g_variant_get (parameters, "(&sa(sv))", &deviceId, &iterator);
+        compAddr = g_variant_builder_new(G_VARIANT_TYPE("a(sv)"));
+        //Extraction component address from dbus to map
+        while(g_variant_iter_loop(iterator, "(&sv)", &key, &value))
+        {
+            componentAddr.insert({string(key), g_variant_deep_copy(value)});
+             g_variant_builder_add(compAddr, "(sv)", string(key).c_str(), g_variant_deep_copy(value));
+        }
+        g_variant_iter_free(iterator);
+        //passare la mappa al metodo read vero e ritornare un payload object
+        //RecordObject *data = instance->Read(string(deviceId), arguments);
+        PayloadObject *data = instance->Read(string(deviceId), componentAddr);
+        out = g_variant_new("((sa(sv)vd))", data->deviceId.c_str(), compAddr , data->payload, data->lastUpdate);
+        //delete data;
+        // deallocare i variant?
+        g_variant_builder_unref(compAddr);
     }
     //METHOD WRITE
     else if(g_strcmp0(method_name, METHOD_WRITE.c_str()) == 0)
@@ -519,10 +538,10 @@ void AGILE::Protocol::StopDiscovery()
     std::cout << "StopDiscovery not implemented!" << std::endl;
 }
 
-AGILE::RecordObject* AGILE::Protocol::Read(string deviceId, GVariant* arguments)
+AGILE::PayloadObject* AGILE::Protocol::Read(string deviceId, std::map<string, GVariant *> componentAddr)
 {
     std::cout << "Read not Implemented." << std::endl;
-    return new RecordObject();
+    return new PayloadObject();
 }
 
 string AGILE::Protocol::Write(string deviceId, GVariant* arguments)

@@ -45,6 +45,8 @@
 #include "DeviceOverview.h"
 #include "constants.h"
 #include "RecordObject.h"
+#include "PayloadObject.h"
+#include "DBusUtility.h"
 
 using namespace std;
 
@@ -208,7 +210,7 @@ class AGILE::Protocol {
     virtual void StartDiscovery(int);
     virtual void StopDiscovery();
     virtual string Write(string, GVariant*);
-    virtual AGILE::RecordObject* Read(string, GVariant*);
+    virtual AGILE::PayloadObject* Read(string, std::map<string, GVariant *>);
     virtual void Subscribe(string, GVariant*);
     virtual void Unsubscribe(string, GVariant*);
 };
