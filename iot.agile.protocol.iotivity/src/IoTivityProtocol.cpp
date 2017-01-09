@@ -316,7 +316,7 @@ void IoTivityProtocol::onReadTimeout(Resource *r)
     onReadMutex.unlock();
 }
 
-string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
+void IoTivityProtocol::Write(string deviceId, std::map<string, GVariant *> componentAddr, uint32_t flags, GVariant *payload)
 {
     gchar *value_uri;
     gchar *value_payload;
@@ -325,82 +325,64 @@ string IoTivityProtocol::Write(string deviceId, GVariant* arguments)
     log->v(TAG, "Write invoked");
     log->v(TAG, "DeviceID: " + deviceId);
 
-    if(g_variant_type_equal(g_variant_get_type(arguments), "a{ss}"))
+    if(componentAddr.find(KEY_URI) != componentAddr.end())
     {
-        if(g_variant_lookup(arguments, KEY_URI.c_str(), "&s", &value_uri) &&
-           g_variant_lookup(arguments, KEY_PAYLOAD.c_str(), "&s", &value_payload))
+        log->d(TAG, "Key URI is present");
+        g_variant_get(componentAddr[KEY_URI], "&s", &value_uri);
+        g_variant_get(payload, "&s", &value_payload);
+
+        log->v(TAG, "URI: " + string(value_uri));
+        log->v(TAG, "Payload: " + string(value_payload));
+        onWriteMutex.lock();
+
+        for(Resource w : resources)
         {
-            log->d(TAG, "Keys URI and payload are present");
-            log->v(TAG, "URI: " + string(value_uri));
-            log->v(TAG, "Payload: " + string(value_payload));
+            if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
+            {
+                log->d(TAG, "Resource found in cache");
+                r = new Resource(w.resource);
+                break;
+            }
+        }
+
+        if(r != nullptr)
+        {
+            OC::OCRepresentation rep = generateRepresentationFromJSON(string(value_payload));
+            QueryParamsMap queryParamsMap;
+            bool writeDone = false;
+
+            DelayedCallback *writeDelayedCallback = new DelayedCallback(WRITE_TIMEOUT*1000, true, bind(&IoTivityProtocol::onWriteTimeout, this, r, string(value_payload)));
+
+            r->resource->put(rep, queryParamsMap, bind(&IoTivityProtocol::onWriteCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, writeDelayedCallback, r, string(value_payload), &writeDone));
+
+            log->d(TAG, "onWriteMutex LOCKED");
             onWriteMutex.lock();
-
-            for(Resource w : resources)
-            {
-                if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
-                {
-                    log->d(TAG, "Resource found in cache");
-                    r = new Resource(w.resource);
-                    break;
-                }
-            }
-
-            if(r != nullptr)
-            {
-                OC::OCRepresentation rep = generateRepresentationFromJSON(string(value_payload));
-                QueryParamsMap queryParamsMap;
-                bool writeDone = false;
-
-                DelayedCallback *writeDelayedCallback = new DelayedCallback(WRITE_TIMEOUT*1000, true, bind(&IoTivityProtocol::onWriteTimeout, this, r, string(value_payload)));
-
-                r->resource->put(rep, queryParamsMap, bind(&IoTivityProtocol::onWriteCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, writeDelayedCallback, r, string(value_payload), &writeDone));
-
-                log->d(TAG, "onWriteMutex LOCKED");
-                onWriteMutex.lock();
-                onWriteMutex.unlock();
-
-                if(writeDelayedCallback->isFired())
-                {
-                    manageTimeout(r);
-                    delete r;
-                    return PROTOCOL_WRITE_STATUS_TIMEOUT;
-                }
-
-                IoTivityDevice *iotd = (IoTivityDevice *) getDeviceFromId(r->resource->host());
-                iotd->resetTimeoutCounter();
-
-                delete r;
-
-                log->d(TAG, "onWriteMutex UNLOCKED");
-
-                if(writeDone)
-                {
-                    return PROTOCOL_WRITE_STATUS_DONE;
-                }
-                else
-                {
-                    return PROTOCOL_WRITE_STATUS_FAILED;
-                }
-            }
             onWriteMutex.unlock();
+
+            if(writeDelayedCallback->isFired())
+            {
+                manageTimeout(r);
+                delete r;
+                return;
+            }
+
+            IoTivityDevice *iotd = (IoTivityDevice *) getDeviceFromId(r->resource->host());
+            iotd->resetTimeoutCounter();
+
+            delete r;
+
             log->d(TAG, "onWriteMutex UNLOCKED");
-            log->w(TAG, "Resource NOT found, Write ignored...");
-            return PROTOCOL_WRITE_STATUS_GENERICERROR;
+
+            return;
         }
-        else
-        {
-            log->e(TAG, "Key URI and/or payload is/are absent, Write ignored...");
-        }
-        return PROTOCOL_WRITE_STATUS_ARGSNOTVALID;
+        onWriteMutex.unlock();
+        log->d(TAG, "onWriteMutex UNLOCKED");
+        log->w(TAG, "Resource NOT found, Write ignored...");
     }
     else
     {
-        log->e(TAG, "Arguments: " + string(g_variant_print(arguments, TRUE)));
-        log->e(TAG, "Arguments Variant has an UNEXPECTED signature: " + string(g_variant_get_type_string(arguments)));
-        return PROTOCOL_WRITE_STATUS_SIGARGSNOTVALID;
+        log->e(TAG, "Key URI is absent, Write ignored...");
     }
-
-    return PROTOCOL_WRITE_STATUS_GENERICERROR;
 }
 
 OC::OCRepresentation IoTivityProtocol::generateRepresentationFromJSON(string json)

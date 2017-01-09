@@ -109,17 +109,6 @@ class AGILE::Protocol {
     static const int PROTOCOL_DBUS_INIT_NOERR = 0;
     static const int PROTOCOL_DBUS_INIT_ERROR = 1;
 
-    /**
-     * Write Errors
-     */
-    static const string PROTOCOL_WRITE_STATUS_DONE;
-    static const string PROTOCOL_WRITE_STATUS_NOTIMPLEMENTED;
-    static const string PROTOCOL_WRITE_STATUS_ARGSNOTVALID;
-    static const string PROTOCOL_WRITE_STATUS_SIGARGSNOTVALID;
-    static const string PROTOCOL_WRITE_STATUS_GENERICERROR;
-    static const string PROTOCOL_WRITE_STATUS_TIMEOUT;
-    static const string PROTOCOL_WRITE_STATUS_FAILED;
-
     private:
     std::vector<AGILE::DeviceOverview> devices;
     AGILE::RecordObject *data;
@@ -210,7 +199,7 @@ class AGILE::Protocol {
     virtual void Disconnect(string);
     virtual void StartDiscovery(int);
     virtual void StopDiscovery();
-    virtual string Write(string, GVariant*);
+    virtual void Write(string, std::map<string, GVariant *>, uint32_t, GVariant *);
     virtual AGILE::PayloadObject* Read(string, std::map<string, GVariant *>);
     virtual void Subscribe(string, GVariant*);
     virtual void Unsubscribe(string, GVariant*);

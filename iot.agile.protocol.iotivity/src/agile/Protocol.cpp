@@ -58,13 +58,6 @@ const string AGILE::Protocol::PROTOCOL_STATUS_FAILURE = "FAILURE";
 const string AGILE::Protocol::PROTOCOL_DISCOVERY_STATUS_RUNNING = "RUNNING";
 const string AGILE::Protocol::PROTOCOL_DISCOVERY_STATUS_NONE = "NONE";
 const string AGILE::Protocol::PROTOCOL_DISCOVERY_STATUS_FAILURE = "FAILURE";
-const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_DONE = "DONE";
-const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_NOTIMPLEMENTED = "NOTIMPLEMENTED";
-const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_ARGSNOTVALID = "ARGSNOTVALID";
-const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_SIGARGSNOTVALID = "SIGARGSNOTVALID";
-const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_GENERICERROR = "ERROR";
-const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_TIMEOUT = "TIMEOUT";
-const string AGILE::Protocol::PROTOCOL_WRITE_STATUS_FAILED = "FAILED";
 const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "<node name='/iot/agile/Protocol'>"
     "  <interface name='iot.agile.Protocol'>"
@@ -86,7 +79,7 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "  <method name='Write'>"
     "    <arg name='deviceId' type='s' direction='in'/>"
     "    <arg name='componentAddr' type='a(sv)' direction='in'/>"
-    "    <arg name='flags' type='i' direction='in'/>"
+    "    <arg name='flags' type='u' direction='in'/>"
     "    <arg name='payload' type='v' direction='in'/>"
     "  </method>"
     "  <method name='Read'>"
@@ -259,10 +252,18 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
     else if(g_strcmp0(method_name, METHOD_WRITE.c_str()) == 0)
     {
         const gchar *deviceId;
-        GVariant *arguments;
-        g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
-        string ret = instance->Write(string(deviceId), arguments);
-        out = g_variant_new("(s)", ret.c_str());
+        uint32_t flags;
+        GVariant *payload;
+        GVariantIter *iterator;
+        GVariantBuilder *compAddrBuilder;
+
+        std::map<string, GVariant *> componentAddr;
+        componentAddr.clear();
+
+        g_variant_get (parameters, "(&sa(sv)uv)", &deviceId, &iterator, &flags, &payload);
+        parseComponentAddr(iterator, &componentAddr, &compAddrBuilder);
+
+        instance->Write(string(deviceId), componentAddr, flags, payload);
     }
     //METHOD SUBSCRIBE
     else if(g_strcmp0(method_name, METHOD_SUBSCRIBE.c_str()) == 0)
@@ -550,10 +551,9 @@ AGILE::PayloadObject* AGILE::Protocol::Read(string deviceId, std::map<string, GV
     return new PayloadObject();
 }
 
-string AGILE::Protocol::Write(string deviceId, GVariant* arguments)
+void AGILE::Protocol::Write(string deviceId, std::map<string, GVariant *> componentAddr, uint32_t flags, GVariant *payload)
 {
     std::cout << "Write not Implemented." << std::endl;
-    return PROTOCOL_WRITE_STATUS_NOTIMPLEMENTED;
 }
 
 void AGILE::Protocol::Subscribe(string deviceId, GVariant* arguments)
