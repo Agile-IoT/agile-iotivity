@@ -621,9 +621,13 @@ void IoTivityProtocol::onObserveCallback(const HeaderOptions &hOps, const OCRepr
     log->v(TAG, "SequenceNumber: " + to_string(sequenceNumber));
     log->v(TAG, "Payload: " + json);
 
-    AGILE::RecordObject *ro = new AGILE::RecordObject(string(r->resource->host()), string(r->resource->uri()), json, "json", "json");
+    map<string, GVariant *> compAddr;
+    compAddr.clear();
+    compAddr[KEY_URI] = g_variant_new_string(string(r->resource->uri()).c_str());
 
-    if(emitNewRecordSignal(ro))
+    AGILE::PayloadObject *po = new AGILE::PayloadObject(string(r->resource->host()), compAddr, g_variant_new_string(json.c_str()));
+
+    if(emitNotificationSignal(po))
     {
         log->d(TAG, "NewRecordSignal emitted");
     }
@@ -631,6 +635,8 @@ void IoTivityProtocol::onObserveCallback(const HeaderOptions &hOps, const OCRepr
     {
         log->e(TAG, "NewRecordSignal CANNOT be emitted");
     }
+
+    delete po;
 
     onNotificationMutex.unlock();
     log->d(TAG, "onNotificationMutex UNLOCKED");

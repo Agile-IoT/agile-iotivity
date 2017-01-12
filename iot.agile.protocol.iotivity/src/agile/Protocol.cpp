@@ -48,7 +48,7 @@ const string AGILE::Protocol::METHOD_READ = "Read";
 const string AGILE::Protocol::METHOD_SUBSCRIBE = "Subscribe";
 const string AGILE::Protocol::METHOD_UNSUBSCRIBE = "Unsubscribe";
 const string AGILE::Protocol::SIGNAL_FOUNDNEWDEVICE = "FoundNewDeviceSignal";
-const string AGILE::Protocol::SIGNAL_NEWRECORD = "NewRecordSignal";
+const string AGILE::Protocol::SIGNAL_NOTIFICATION = "NotificationSignal";
 const string AGILE::Protocol::PROTOCOL_STATUS_AVAILABLE = "AVAILABLE";
 const string AGILE::Protocol::PROTOCOL_STATUS_UNAVAILABLE = "UNAVAILABLE";
 const string AGILE::Protocol::PROTOCOL_STATUS_NOT_CONFIGURED = "NOT_CONFIGURED";
@@ -472,16 +472,6 @@ int AGILE::Protocol::getDeviceListSize()
     return devices.size();
 }
 
-AGILE::RecordObject* AGILE::Protocol::getLastRecordObject()
-{
-    return data;
-}
-
-void AGILE::Protocol::storeRecordObject(AGILE::RecordObject* ro)
-{
-    *data = *ro;
-}
-
 void AGILE::Protocol::parseComponentAddr(GVariantIter *iter, map<string, GVariant*> *caMap, GVariantBuilder **caBuilder)
 {
     GVariant *value;
@@ -498,24 +488,32 @@ void AGILE::Protocol::parseComponentAddr(GVariantIter *iter, map<string, GVarian
     g_variant_iter_free(iter);
 }
 
-bool AGILE::Protocol::emitNewRecordSignal(AGILE::RecordObject *ro)
+bool AGILE::Protocol::emitNotificationSignal(AGILE::PayloadObject *po)
 {
     GError *local_error;
-    GVariant * record_variant;
+    GVariant * notification_variant;
+    GVariantBuilder *compAddrBuilder;
 
     local_error = NULL;
 
-    record_variant = g_variant_new("((sssssd))", ro->deviceId.c_str(), ro->componentId.c_str(), ro->value.c_str(), ro->unit.c_str(), ro->format.c_str(), ro->lastUpdate);
+    compAddrBuilder = g_variant_builder_new(G_VARIANT_TYPE("a(sv)"));
+
+    for(auto const& elem : po->componentAddr)
+    {
+        g_variant_builder_add(compAddrBuilder, "(sv)", string(elem.first).c_str(), g_variant_deep_copy(elem.second));
+    }
+
+    notification_variant = g_variant_new("((sa(sv)vd))", po->deviceId.c_str(), compAddrBuilder, g_variant_deep_copy(po->payload), po->lastUpdate);
 
     g_dbus_connection_emit_signal(connection,
                                   NULL,
                                   BUS_PATH.c_str(),
                                   AGILE::AGILE_PROTOCOL_INTERFACE.c_str(), 
-                                  SIGNAL_NEWRECORD.c_str(),
-                                  record_variant,
+                                  SIGNAL_NOTIFICATION.c_str(),
+                                  notification_variant,
                                   &local_error);
 
-    storeRecordObject(ro);
+    g_variant_builder_unref(compAddrBuilder);
 
     if(local_error == NULL)
     {

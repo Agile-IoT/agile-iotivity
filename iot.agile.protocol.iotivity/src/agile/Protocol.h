@@ -84,7 +84,7 @@ class AGILE::Protocol {
      * Signals
      */
     static const string SIGNAL_FOUNDNEWDEVICE;
-    static const string SIGNAL_NEWRECORD;
+    static const string SIGNAL_NOTIFICATION;
 
     /**
      * Protocol status
@@ -186,10 +186,7 @@ class AGILE::Protocol {
     int getDeviceListSize();
     bool emitFoundNewDeviceSignal(AGILE::DeviceOverview *);
 
-    //RecordObjectManipulation
-    AGILE::RecordObject* getLastRecordObject();
-    void storeRecordObject(AGILE::RecordObject *);
-    bool emitNewRecordSignal(AGILE::RecordObject *);
+    bool emitNotificationSignal(AGILE::PayloadObject *);
 
     //DiscoveryStatus Manipulation
     void setDiscoveryStatus(string);
