@@ -214,7 +214,7 @@ class AGILE::Protocol {
     virtual void Write(string, std::map<string, GVariant *>, uint32_t, GVariant *);
     virtual AGILE::PayloadObject* Read(string, std::map<string, GVariant *>);
     virtual void Subscribe(string, std::map<string, GVariant *>);
-    virtual void Unsubscribe(string, GVariant*);
+    virtual void Unsubscribe(string, std::map<string, GVariant *>);
 };
 
 #endif

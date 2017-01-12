@@ -121,7 +121,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     AGILE::PayloadObject* Read(string, std::map<string, GVariant *>);
     void Write(string, std::map<string, GVariant *>, uint32_t, GVariant *);
     void Subscribe(string, std::map<string, GVariant *>);
-    void Unsubscribe(string, GVariant*);
+    void Unsubscribe(string, std::map<string, GVariant *>);
 
     //IoTivity callbacks
     void doDiscovery();

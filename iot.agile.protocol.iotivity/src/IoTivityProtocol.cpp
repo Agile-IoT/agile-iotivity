@@ -644,7 +644,7 @@ void IoTivityProtocol::onObserveTimeout(Resource *r)
     onSubscribeMutex.unlock();
 }
 
-void IoTivityProtocol::Unsubscribe(string deviceId, GVariant* arguments)
+void IoTivityProtocol::Unsubscribe(string deviceId, std::map<string, GVariant *> componentAddr)
 {
     gchar *value_uri;
     Resource *r = NULL;
@@ -652,63 +652,56 @@ void IoTivityProtocol::Unsubscribe(string deviceId, GVariant* arguments)
     log->v(TAG, "Unsubscribe invoked");
     log->v(TAG, "DeviceID: " + deviceId);
 
-    if(g_variant_type_equal(g_variant_get_type(arguments), "a{ss}"))
+    if(componentAddr.find(KEY_URI) != componentAddr.end())
     {
-        if(g_variant_lookup(arguments, KEY_URI.c_str(), "&s", &value_uri))
+        log->d(TAG, "Key URI is present");
+        g_variant_get(componentAddr[KEY_URI], "&s", &value_uri);
+        log->v(TAG, "URI: " + string(value_uri));
+        onUnsubscribeMutex.lock();
+        log->d(TAG, "onUnsubscribeMutex LOCKED");
+
+        for(auto w : resources)
         {
-            log->d(TAG, "Key URI is present");
-            log->v(TAG, "URI: " + string(value_uri));
-            onUnsubscribeMutex.lock();
-            log->d(TAG, "onUnsubscribeMutex LOCKED");
-
-            for(auto w : resources)
+            if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
             {
-                if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
-                {
-                    log->d(TAG, "Resource found in cache");
-                    r = new Resource(w.resource);
-                    break;
-                }
+                log->d(TAG, "Resource found in cache");
+                r = new Resource(w.resource);
+                break;
             }
+        }
 
-            if(r != NULL)
+        if(r != NULL)
+        {
+            if(r->resource->isObservable())
             {
-                if(r->resource->isObservable())
+                try
                 {
-                    try
-                    {
-                        r->resource->cancelObserve();
-                    }
-                    catch(OC::OCException &e)
-                    {
-                        log->w(TAG, "This resource might NOT be already observed");
-                        log->w(TAG, "DeviceID: " + deviceId);
-                        log->w(TAG, "URI: " + string(value_uri));
-                    }
+                    r->resource->cancelObserve();
                 }
-                else
+                catch(OC::OCException &e)
                 {
-                    log->w(TAG, "Resource NOT observable");
+                    log->w(TAG, "This resource might NOT be already observed");
                     log->w(TAG, "DeviceID: " + deviceId);
                     log->w(TAG, "URI: " + string(value_uri));
                 }
-                onUnsubscribeMutex.unlock();
-                log->d(TAG, "onSubscribeMutex UNLOCKED");
-                return;
+            }
+            else
+            {
+                log->w(TAG, "Resource NOT observable");
+                log->w(TAG, "DeviceID: " + deviceId);
+                log->w(TAG, "URI: " + string(value_uri));
             }
             onUnsubscribeMutex.unlock();
             log->d(TAG, "onSubscribeMutex UNLOCKED");
-            log->w(TAG, "Resource NOT found, Subscribe ignored...");
+            return;
         }
-        else
-        {
-            log->e(TAG, "Key URI is absent, Subscribe ignored...");
-        }
+        onUnsubscribeMutex.unlock();
+        log->d(TAG, "onSubscribeMutex UNLOCKED");
+        log->w(TAG, "Resource NOT found, Unsubscribe ignored...");
     }
     else
     {
-        log->e(TAG, "Arguments: " + string(g_variant_print(arguments, TRUE)));
-        log->e(TAG, "Arguments Variant has an UNEXPECTED signature: " + string(g_variant_get_type_string(arguments)));
+        log->e(TAG, "Key URI is absent, Unsubscribe ignored...");
     }
 }
 

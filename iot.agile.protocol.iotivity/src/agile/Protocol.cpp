@@ -285,9 +285,16 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
     else if(g_strcmp0(method_name, METHOD_UNSUBSCRIBE.c_str()) == 0)
     {
         const gchar *deviceId;
-        GVariant *arguments;
-        g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
-        instance->Unsubscribe(string(deviceId), arguments);
+        GVariantIter *iterator;
+        GVariantBuilder *compAddrBuilder;
+
+        std::map<string, GVariant *> componentAddr;
+        componentAddr.clear();
+
+        g_variant_get (parameters, "(&sa(sv))", &deviceId, &iterator);
+        parseComponentAddr(iterator, &componentAddr, &compAddrBuilder);
+        instance->Unsubscribe(string(deviceId), componentAddr);
+        g_variant_builder_unref(compAddrBuilder);
     }
     else
     {
@@ -569,7 +576,7 @@ void AGILE::Protocol::Subscribe(string deviceId, std::map<string, GVariant *> co
     std::cout << "Subscribe not Implemented." << std::endl;
 }
 
-void AGILE::Protocol::Unsubscribe(string deviceId, GVariant* arguments)
+void AGILE::Protocol::Unsubscribe(string deviceId, std::map<string, GVariant *> componentAddr)
 {
     std::cout << "Unsubscribe not Implemented." << std::endl;
 }
