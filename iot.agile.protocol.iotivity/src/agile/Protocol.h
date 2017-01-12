@@ -109,6 +109,18 @@ class AGILE::Protocol {
     static const int PROTOCOL_DBUS_INIT_NOERR = 0;
     static const int PROTOCOL_DBUS_INIT_ERROR = 1;
 
+    /**
+     * Write OPTIONS
+     */
+    static const uint32_t PROTOCOL_WRITE_ASYNC = 0x0000;
+    static const uint32_t PROTOCOL_WRITE_SYNC = 0x0001;
+
+    static const uint32_t PROTOCOL_WRITE_NONREL = 0x0000;
+    static const uint32_t PROTOCOL_WRITE_REL = 0x0002;
+
+    static const uint32_t PROTOCOL_WRITE_NONSEC = 0x0000;
+    static const uint32_t PROTOCOL_WRITE_SEC = 0x0004;
+
     private:
     std::vector<AGILE::DeviceOverview> devices;
     AGILE::RecordObject *data;
@@ -201,7 +213,7 @@ class AGILE::Protocol {
     virtual void StopDiscovery();
     virtual void Write(string, std::map<string, GVariant *>, uint32_t, GVariant *);
     virtual AGILE::PayloadObject* Read(string, std::map<string, GVariant *>);
-    virtual void Subscribe(string, GVariant*);
+    virtual void Subscribe(string, std::map<string, GVariant *>);
     virtual void Unsubscribe(string, GVariant*);
 };
 

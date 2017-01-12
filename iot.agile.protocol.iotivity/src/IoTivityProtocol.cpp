@@ -333,6 +333,7 @@ void IoTivityProtocol::Write(string deviceId, std::map<string, GVariant *> compo
 
         log->v(TAG, "URI: " + string(value_uri));
         log->v(TAG, "Payload: " + string(value_payload));
+
         onWriteMutex.lock();
 
         for(Resource w : resources)
@@ -352,7 +353,7 @@ void IoTivityProtocol::Write(string deviceId, std::map<string, GVariant *> compo
             bool writeDone = false;
 
             DelayedCallback *writeDelayedCallback = new DelayedCallback(WRITE_TIMEOUT*1000, true, bind(&IoTivityProtocol::onWriteTimeout, this, r, string(value_payload)));
-
+            //TODO: Flags support is missing
             r->resource->put(rep, queryParamsMap, bind(&IoTivityProtocol::onWriteCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, writeDelayedCallback, r, string(value_payload), &writeDone));
 
             log->d(TAG, "onWriteMutex LOCKED");
@@ -487,7 +488,7 @@ void IoTivityProtocol::onWriteTimeout(Resource *r, string payload)
     onWriteMutex.unlock();
 }
 
-void IoTivityProtocol::Subscribe(string deviceId, GVariant* arguments)
+void IoTivityProtocol::Subscribe(string deviceId, std::map<string, GVariant *> componentAddr)
 {
     gchar *value_uri;
     Resource *r = NULL;
@@ -495,65 +496,57 @@ void IoTivityProtocol::Subscribe(string deviceId, GVariant* arguments)
     log->v(TAG, "Subscribe invoked");
     log->v(TAG, "DeviceID: " + deviceId);
 
-    if(g_variant_type_equal(g_variant_get_type(arguments), "a{ss}"))
+    if(componentAddr.find(KEY_URI) != componentAddr.end())
     {
-        if(g_variant_lookup(arguments, KEY_URI.c_str(), "&s", &value_uri))
+        log->d(TAG, "Key URI is present");
+        g_variant_get(componentAddr[KEY_URI], "&s", &value_uri);
+        log->v(TAG, "URI: " + string(value_uri));
+        onSubscribeMutex.lock();
+        log->d(TAG, "onSubscribeMutex LOCKED");
+
+        for(auto w : resources)
         {
-            log->d(TAG, "Key URI is present");
-            log->v(TAG, "URI: " + string(value_uri));
-            onSubscribeMutex.lock();
-            log->d(TAG, "onSubscribeMutex LOCKED");
-
-            for(auto w : resources)
+            if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
             {
-                if(w.resource->host() == deviceId && w.resource->uri() == value_uri)
-                {
-                    log->d(TAG, "Resource found in cache");
-                    r = new Resource(w.resource);
-                    break;
-                }
+                log->d(TAG, "Resource found in cache");
+                r = new Resource(w.resource);
+                break;
             }
+        }
 
-            if(r != NULL)
+        if(r != NULL)
+        {
+            if(r->resource->isObservable())
             {
-                if(r->resource->isObservable())
+                QueryParamsMap qpm;
+                try
                 {
-                    QueryParamsMap qpm;
-                    try
-                    {
-                        r->resource->observe(ObserveType::Observe, qpm, bind(&IoTivityProtocol::onObserveCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4, r));
-                    }
-                    catch(OC::OCException &e)
-                    {
-                        log->w(TAG, "This resource might be already observed");
-                        log->w(TAG, "DeviceID: " + deviceId);
-                        log->w(TAG, "URI: " + string(value_uri));
-                    }
+                    r->resource->observe(ObserveType::Observe, qpm, bind(&IoTivityProtocol::onObserveCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4, r));
                 }
-                else
+                catch(OC::OCException &e)
                 {
-                    log->w(TAG, "Resource NOT observable");
+                    log->w(TAG, "This resource might be already observed");
                     log->w(TAG, "DeviceID: " + deviceId);
                     log->w(TAG, "URI: " + string(value_uri));
-                }               
-                
-                onSubscribeMutex.unlock();
-                log->d(TAG, "onSubscribeMutex UNLOCKED");
-                return;
+                }
+            }
+            else
+            {
+                log->w(TAG, "Resource NOT observable");
+                log->w(TAG, "DeviceID: " + deviceId);
+                log->w(TAG, "URI: " + string(value_uri));
             }
             onSubscribeMutex.unlock();
             log->d(TAG, "onSubscribeMutex UNLOCKED");
-            log->w(TAG, "Resource NOT found, Subscribe ignored...");
+            return;
         }
-        else
-        {
-            log->e(TAG, "Key URI is absent, Subscribe ignored...");
-        }
+        onSubscribeMutex.unlock();
+        log->d(TAG, "onSubscribeMutex UNLOCKED");
+        log->w(TAG, "Resource NOT found, Subscribe ignored...");
     }
     else
     {
-        log->e(TAG, "Arguments: " + string(g_variant_print(arguments, TRUE)));
-        log->e(TAG, "Arguments Variant has an UNEXPECTED signature: " + string(g_variant_get_type_string(arguments)));
+        log->e(TAG, "Key URI is absent, Subscribe ignored...");
     }
 }
 

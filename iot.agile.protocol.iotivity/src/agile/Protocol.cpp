@@ -264,14 +264,22 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
         parseComponentAddr(iterator, &componentAddr, &compAddrBuilder);
 
         instance->Write(string(deviceId), componentAddr, flags, payload);
+        g_variant_builder_unref(compAddrBuilder);
     }
     //METHOD SUBSCRIBE
     else if(g_strcmp0(method_name, METHOD_SUBSCRIBE.c_str()) == 0)
     {
         const gchar *deviceId;
-        GVariant *arguments;
-        g_variant_get (parameters, "(&sv)", &deviceId, &arguments);
-        instance->Subscribe(string(deviceId), arguments);
+        GVariantIter *iterator;
+        GVariantBuilder *compAddrBuilder;
+
+        std::map<string, GVariant *> componentAddr;
+        componentAddr.clear();
+
+        g_variant_get (parameters, "(&sa(sv))", &deviceId, &iterator);
+        parseComponentAddr(iterator, &componentAddr, &compAddrBuilder);
+        instance->Subscribe(string(deviceId), componentAddr);
+        g_variant_builder_unref(compAddrBuilder);
     }
     //METHOD UNSUBSCRIBE
     else if(g_strcmp0(method_name, METHOD_UNSUBSCRIBE.c_str()) == 0)
@@ -556,7 +564,7 @@ void AGILE::Protocol::Write(string deviceId, std::map<string, GVariant *> compon
     std::cout << "Write not Implemented." << std::endl;
 }
 
-void AGILE::Protocol::Subscribe(string deviceId, GVariant* arguments)
+void AGILE::Protocol::Subscribe(string deviceId, std::map<string, GVariant *> componentAddr)
 {
     std::cout << "Subscribe not Implemented." << std::endl;
 }
