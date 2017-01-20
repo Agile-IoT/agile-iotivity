@@ -66,7 +66,7 @@ if [ $MODULE = 'all' ] || [ $MODULE = 'iotivity' ]; then
    fi
 
   echo "Launching... AGILE IoTivity protocol"
-  ./iot.agile.protocol.iotivity/bin/agile_iotivity
+  ./iot.agile.protocol.iotivity/bin/agile_iotivity realm
 fi
 
 

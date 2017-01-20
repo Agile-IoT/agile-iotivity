@@ -790,13 +790,40 @@ void IoTivityProtocol::onDiscovery(std::shared_ptr<OC::OCResource> resource)
 
 void print_usage(char* program_name)
 {
-    cout << "TODO: usage" << endl;
+    cout << "USAGE: " << program_name << " [local/realm]" <<endl;
+    cout << "\t\tlocal: discovery address is ff02::158"<< endl;
+    cout << "\t\trealm: discovery address is ff03::158"<< endl;
 }
 
 
 int main(int argc, char** argv)
 {
     //At the moment it supports only IPv6-based discoveries
-    IoTivityProtocol::getInstance()->startProtocol("ff03::158");
-    return 0;
+
+    string mode;
+
+    if(argc == 2)
+    {
+        mode = std::string(argv[1]);
+
+        if(mode == "local")
+        {
+            IoTivityProtocol::getInstance()->startProtocol("ff02::158");
+        }
+        else if(mode == "realm")
+        {
+            IoTivityProtocol::getInstance()->startProtocol("ff03::158");
+        }
+        else
+        {
+            print_usage(argv[0]);
+            return -1;
+        }
+        return 0;
+    }
+    else
+    {
+        print_usage(argv[0]);
+        return -1;
+    }
 }
