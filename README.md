@@ -1,7 +1,13 @@
 AGILE - IoTivity Integration
 ======================
 
-This repository contains instruction about the installation of [IoTivity] on a RaspberryPi and how to use it in conjunction with RIOT-OS.
+This repository contains the alpha version of the AGILE-IoTivity protocol.
+It contains also some IoTivity-based applications for Linux and RIOT-OS.
+
+Exposes the [iot.agile.Protocol V2](https://github.com/Agile-IoT/agile-api-spec/issues/15) interface
+
+- DBus interface name **iot.agile.protocol.iotivity**
+- DBus interface path **/iot/agile/protocol/iotivity**
 
 #IoTivity on RaspberryPi
 The installation of IoTivity on a RaspberryPi can be done by invoking
@@ -9,6 +15,16 @@ The installation of IoTivity on a RaspberryPi can be done by invoking
 $ sudo -k ./install_iotivity.sh
 ```
 It was tested on RaspberryPi 3 with Raspian Jessie version September 2016.
+
+#Run the AGILE-IoTivity Protocol
+
+Under the `scripts` directory you can find different scripts to setup and start / stop the modules.
+
+*Note* IoTivity must be already installed in the system.
+
+- `./scripts/start.sh iotivity` will compile and start the module.
+
+- `./scripts/stop.sh` will stop/kill the modules.
 
 #Applications
 ##RIOT-OS
