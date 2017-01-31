@@ -91,7 +91,25 @@ dbus.Struct((dbus.String(u'coap://[aaaa::5859:1c2a:64c7:c48a]:56789'), dbus.Arra
 ```
 
 ###Write
-TODO
+Command:
+```
+./test_method.sh "write.py coap://[aaaa::5859:1c2a:64c7:c48a]:56789 true"
+```
+
+Response:
+```
+>> DBus session available
+>> Loading DBus session instance address from local file
+>> Source: /path/to/.dbus/session-bus/0123456789abcdeffedcba9876543210-0
+
+PARAM:
+
+dbus.Array([dbus.Struct(('URI', '/light/1'), signature=dbus.Signature('(sv)'))], signature=dbus.Signature('a(sv)'), variant_level=1)
+{"state":true}
+
+RET:
+
+None
 
 ###Subscribe
 TODO
