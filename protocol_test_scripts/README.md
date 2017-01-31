@@ -110,6 +110,7 @@ dbus.Array([dbus.Struct(('URI', '/light/1'), signature=dbus.Signature('(sv)'))],
 RET:
 
 None
+```
 
 ###Subscribe
 Command:
