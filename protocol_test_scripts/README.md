@@ -55,7 +55,40 @@ None
 ```
 
 ###Read
-TODO
+Command:
+```
+ $ ./test_method.sh "read.py coap://[aaaa::5859:1c2a:64c7:c48a]:56789"
+```
+
+Response:
+```
+>> DBus session available
+>> Loading DBus session instance address from local file
+>> Source: /path/to/.dbus/session-bus/0123456789abcdeffedcba9876543210-0
+
+PARAM:
+
+dbus.Array([dbus.Struct(('URI', '/light/1'), signature=dbus.Signature('(sv)'))], signature=dbus.Signature('a(sv)'), variant_level=1)
+
+RET:
+
+dbus.Struct((dbus.String(u'coap://[aaaa::5859:1c2a:64c7:c48a]:56789'), dbus.Array([dbus.Struct((dbus.String(u'URI'), dbus.String(u'/light/1', variant_level=1)), signature=None)], signature=dbus.Signature('(sv)')), dbus.String(u'{"state": true}', variant_level=1), dbus.Double(1485854105.0)), signature=None)
+```
+
+Response on timeout:
+```
+>> DBus session available
+>> Loading DBus session instance address from local file
+>> Source: /path/to/.dbus/session-bus/0123456789abcdeffedcba9876543210-0
+
+PARAM:
+
+dbus.Array([dbus.Struct(('URI', '/light/1'), signature=dbus.Signature('(sv)'))], signature=dbus.Signature('a(sv)'), variant_level=1)
+
+RET:
+
+dbus.Struct((dbus.String(u'coap://[aaaa::5859:1c2a:64c7:c48a]:56789'), dbus.Array([dbus.Struct((dbus.String(u'URI'), dbus.String(u'/light/1', variant_level=1)), signature=None)], signature=dbus.Signature('(sv)')), dbus.String(u'timeout', variant_level=1), dbus.Double(1485853839.0)), signature=None)
+```
 
 ###Write
 TODO
