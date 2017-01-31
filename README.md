@@ -1,4 +1,4 @@
-AGAIL - IoTivity Integration
+AGAIL - IoTivity Integration (AGAIL APIv2)
 ======================
 
 This repository contains the alpha version of the AGAIL-IoTivity protocol.
