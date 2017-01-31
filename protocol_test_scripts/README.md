@@ -1,8 +1,8 @@
-#Test the AGILE-IoTivity Protocol
-This folder contains some test scripts for the AGILE-IoTivity Protocol.
+#Test the AGAIL-IoTivity Protocol
+This folder contains some test scripts for the AGAIL-IoTivity Protocol.
 
 ##Preliminary Step
- - Run the AGILE-IoTivity protocol
+ - Run the AGAIL-IoTivity protocol
  - Deploy the RIOT based scenario by following this [Tutorial](https://github.com/Agile-IoT/agile-iotivity/wiki/%5BTutorial%5D-Configure-IoTivity-on-a-RaspberryPi-and-test-it-with-RIOT-based-nodes#run_scenario) (Steps 4, 5.1 and 5.2)
 
 ##Usage

@@ -3,9 +3,9 @@
 import sys
 import dbus
 
-BUS_NAME = "iot.agile.protocol.iotivity"
-OBJECT_PATH = "/iot/agile/protocol/iotivity"
-BUS_IF = "iot.agile.Protocol"
+BUS_NAME = "iot.agail.protocol.iotivity"
+OBJECT_PATH = "/iot/agail/protocol/iotivity"
+BUS_IF = "iot.agail.Protocol"
 
 bus = dbus.SessionBus()
 
