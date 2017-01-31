@@ -16,10 +16,12 @@ uri_struct = dbus.Struct(["URI", "/light/1"], signature='(sv)')
 
 param_array = dbus.Array([uri_struct], signature='a(sv)', variant_level=1)
 
+devId = sys.argv[1]
+
 print "\nPARAM: \n"
 print param_array
 
-ret = proxy_if.Subscribe("coap://[aaaa::5859:1c2a:64c7:c48a]:56789", param_array)
+ret = proxy_if.Subscribe(devId, param_array)
 
 print "\nRET: \n"
 print ret
