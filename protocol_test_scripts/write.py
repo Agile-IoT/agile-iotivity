@@ -1,4 +1,4 @@
-#USAGE: python write.py <state>
+#USAGE: python write.py <devId> <state>
 
 import sys
 import dbus

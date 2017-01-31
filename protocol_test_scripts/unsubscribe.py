@@ -1,4 +1,4 @@
-#USAGE: python unsubscribe.py
+#USAGE: python unsubscribe.py <devId>
 
 import sys
 import dbus

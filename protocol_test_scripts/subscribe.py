@@ -1,4 +1,4 @@
-#USAGE: python subscribe.py
+#USAGE: python subscribe.py <devId>
 
 import sys
 import dbus

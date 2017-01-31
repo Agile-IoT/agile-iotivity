@@ -1,4 +1,4 @@
-#USAGE: python read.py <resourceID>
+#USAGE: python read.py <<devId>>
 
 import sys
 import dbus
