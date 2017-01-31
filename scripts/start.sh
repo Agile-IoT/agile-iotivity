@@ -52,21 +52,15 @@ export DBUS_SESSION_BUS_ADDRESS
 if [ $MODULE = 'all' ] || [ $MODULE = 'iotivity' ]; then
   ./scripts/stop.sh "protocol.iotivity"
 
-  # wait for ProtocolManager to initialize
-  #while `! qdbus iot.agile.ProtocolManager > /dev/null`; do
-  #  echo "waiting for ProtocolManager to initialize";
-  # sleep 1;
-  #done
-
-   if [ ! -e "./iot.agile.protocol.iotivity/bin" ]; then
+   if [ ! -e "./iot.agail.protocol.iotivity/bin" ]; then
      echo "Compiling..."
-     make -C ./iot.agile.protocol.iotivity/ agile_iotivity
+     make -C ./iot.agail.protocol.iotivity/ agail_iotivity
    else
-     make -C ./iot.agile.protocol.iotivity/ agile_iotivity_tmp
+     make -C ./iot.agail.protocol.iotivity/ agail_iotivity_tmp
    fi
 
-  echo "Launching... AGILE IoTivity protocol"
-  ./iot.agile.protocol.iotivity/bin/agile_iotivity realm
+  echo "Launching... AGAIL IoTivity protocol"
+  ./iot.agail.protocol.iotivity/bin/agail_iotivity realm
 fi
 
 

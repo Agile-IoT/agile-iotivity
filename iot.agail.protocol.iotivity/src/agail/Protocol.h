@@ -1,34 +1,24 @@
-/*
- * Copyright 2016 CREATE-NET
+/*******************************************************************************
+ * Copyright (c) 2016, 2017 FBK CREATE-NET
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * and Eclipse Distribution License v1.0 which accompany this distribution.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at
+ *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+ * Description: Protocol
+ *              Header file for AGAIL Base Protocol file
+ *
+ * Contributors:
+ *    Mattia Antonini
+ *******************************************************************************/
 
-/**
- * @ingroup
- * @{
- *
- * @file        Protocol.h
- * @brief       Header file for AGILE Base Protocol file
- *
- * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
- *                              <m.antonini@create-net.org>
- *
- * @}
- */
-
-#ifndef __AGILE_PROTOCOL_H__
-#define __AGILE_PROTOCOL_H__
+#ifndef __AGAIL_PROTOCOL_H__
+#define __AGAIL_PROTOCOL_H__
 
 #include <string>
 #include <unistd.h>
@@ -50,11 +40,11 @@
 
 using namespace std;
 
-namespace AGILE {
+namespace AGAIL {
     class Protocol;
 }
 
-class AGILE::Protocol {
+class AGAIL::Protocol {
 
     public:
     /**
@@ -122,8 +112,8 @@ class AGILE::Protocol {
     static const uint32_t PROTOCOL_WRITE_SEC = 0x0004;
 
     private:
-    std::vector<AGILE::DeviceOverview> devices;
-    AGILE::RecordObject *data;
+    std::vector<AGAIL::DeviceOverview> devices;
+    AGAIL::RecordObject *data;
     static const gchar PROTOCOL_INTROSPECTION[];
     guint owner_id;
     GMainLoop *mainloop;
@@ -145,12 +135,12 @@ class AGILE::Protocol {
     public:
     static Protocol *instance;
     /**
-     * Bus name for AGILE Protocol
+     * Bus name for AGAIL Protocol
      */
     string BUS_NAME;
 
     /**
-     * Bus path for AGILE Protocol
+     * Bus path for AGAIL Protocol
      */
     string BUS_PATH;
 
@@ -177,16 +167,16 @@ class AGILE::Protocol {
     void saveGDBusConnection(GDBusConnection *);
 
     //Devices list manipulation functions
-    bool isNewDevice(AGILE::DeviceOverview *);
-    bool addDevice(AGILE::DeviceOverview *);
-    bool updateDevice(AGILE::DeviceOverview *);
-    bool removeDevice(AGILE::DeviceOverview *);
-    AGILE::DeviceOverview* getDeviceFromId(string);
-    AGILE::DeviceOverview* getDeviceAt(int);
+    bool isNewDevice(AGAIL::DeviceOverview *);
+    bool addDevice(AGAIL::DeviceOverview *);
+    bool updateDevice(AGAIL::DeviceOverview *);
+    bool removeDevice(AGAIL::DeviceOverview *);
+    AGAIL::DeviceOverview* getDeviceFromId(string);
+    AGAIL::DeviceOverview* getDeviceAt(int);
     int getDeviceListSize();
-    bool emitFoundNewDeviceSignal(AGILE::DeviceOverview *);
+    bool emitFoundNewDeviceSignal(AGAIL::DeviceOverview *);
 
-    bool emitNotificationSignal(AGILE::PayloadObject *);
+    bool emitNotificationSignal(AGAIL::PayloadObject *);
 
     //DiscoveryStatus Manipulation
     void setDiscoveryStatus(string);
@@ -209,7 +199,7 @@ class AGILE::Protocol {
     virtual void StartDiscovery(int);
     virtual void StopDiscovery();
     virtual void Write(string, std::map<string, GVariant *>, uint32_t, GVariant *);
-    virtual AGILE::PayloadObject* Read(string, std::map<string, GVariant *>);
+    virtual AGAIL::PayloadObject* Read(string, std::map<string, GVariant *>);
     virtual void Subscribe(string, std::map<string, GVariant *>);
     virtual void Unsubscribe(string, std::map<string, GVariant *>);
 };

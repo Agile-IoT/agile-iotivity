@@ -1,31 +1,21 @@
-/*
- * Copyright 2016 CREATE-NET
+/*******************************************************************************
+ * Copyright (c) 2016, 2017 FBK CREATE-NET
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * and Eclipse Distribution License v1.0 which accompany this distribution.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at
+ *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/**
- * @ingroup
- * @{
+ * Description: IoTivityProtocol
+ *              Header file for IoTivity protocol implementation for AGAIL
  *
- * @file        IoTivityProtocol.h
- * @brief       Header file for IoTivity protocol implementation for AGILE
- *
- * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
- *                              <m.antonini@create-net.org>
- *
- * @}
- */
+ * Contributors:
+ *    Mattia Antonini
+ *******************************************************************************/
 
 #ifndef __IOTIVITY_PROTOCOL_H__
 #define __IOTIVITY_PROTOCOL_H__
@@ -35,10 +25,10 @@
 #include "common/PeriodicCallback.h"
 #include "common/DelayedCallback.h"
 
-#include "agile/constants.h"
-#include "agile/Protocol.h"
-#include "agile/DeviceOverview.h"
-#include "agile/PayloadObject.h"
+#include "agail/constants.h"
+#include "agail/Protocol.h"
+#include "agail/DeviceOverview.h"
+#include "agail/PayloadObject.h"
 
 #include <unistd.h>
 #include <cstdlib>
@@ -70,7 +60,7 @@ using namespace std;
 using namespace OC;
 using namespace boost::property_tree;
 
-class IoTivityProtocol : public AGILE::Protocol {
+class IoTivityProtocol : public AGAIL::Protocol {
     private:
     string destinationAddress = "127.0.0.1";
     static const string TAG;
@@ -118,7 +108,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     void Disconnect(string);
     void StartDiscovery(int);
     void StopDiscovery();
-    AGILE::PayloadObject* Read(string, std::map<string, GVariant *>);
+    AGAIL::PayloadObject* Read(string, std::map<string, GVariant *>);
     void Write(string, std::map<string, GVariant *>, uint32_t, GVariant *);
     void Subscribe(string, std::map<string, GVariant *>);
     void Unsubscribe(string, std::map<string, GVariant *>);
