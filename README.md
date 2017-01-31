@@ -26,6 +26,8 @@ Under the `scripts` directory you can find different scripts to setup and start 
 
 - `./scripts/stop.sh` will stop/kill the modules.
 
+Under the `protocol_test_scripts` directory you can find different test script for the protocol.
+
 #Applications
 ##RIOT-OS
 The RIOT folder contains the IoTivity pkg for [RIOT-OS]. It allows to create embedded devices on which IoTivity runs. At the moment, the **Security** module is **disabled**! 
