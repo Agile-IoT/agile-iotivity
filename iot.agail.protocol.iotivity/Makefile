@@ -8,7 +8,7 @@
 
 default: all
 
-package?=agile_iotivity
+package?=agail_iotivity
 
 local_bindir?=bin
 local_bindir?=opt
@@ -45,29 +45,29 @@ V=1
 
 CXXFLAGS+=-std=c++0x
 
-srcs?=$(wildcard ./src/*.cpp ./src/common/*.cpp ./src/agile/*.cpp)
+srcs?=$(wildcard ./src/*.cpp ./src/common/*.cpp ./src/agail/*.cpp)
 objs?=${srcs:.cpp=.o}
 
-agile_iotivity?=${local_bindir}/agile_iotivity
+agail_iotivity?=${local_bindir}/agail_iotivity
 
-all?= ${agile_iotivity} 
+all?= ${agail_iotivity}s
 
 all: prep ${all}
 
 ###############
 
-agile_iotivity_tmp: remove_agile_iotivity ${agile_iotivity}
+agail_iotivity_tmp: remove_agail_iotivity ${agail_iotivity}
 	exit
 
-agile_iotivity: clean remove_agile_iotivity prep ${agile_iotivity}
+agail_iotivity: clean remove_agail_iotivity prep ${agail_iotivity}
 	exit
 
-remove_agile_iotivity:
-	rm -f ${agile_iotivity}
+remove_agail_iotivity:
+	rm -f ${agail_iotivity}
 
 ###############
 
-${local_bindir}/agile_iotivity: ${objs}
+${local_bindir}/agail_iotivity: ${objs}
 	@-mkdir -p ${@D}
 	${CXX} -o ${@} $^ ${LD_LIBRARY_PATHS} ${LIBS}
 
@@ -76,7 +76,7 @@ clean:
 	rm -rf ${local_bindir}
 
 distclean: clean
-	rm -f ${agile_iotivity}
+	rm -f ${agail_iotivity}
 
 iotivity: ${iotivity_dir}
 	@echo "IoTivity symlink created"

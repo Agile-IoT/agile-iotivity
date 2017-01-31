@@ -11,7 +11,7 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Description: IoTivityProtocol
- *              IoTivity protocol implementation for AGILE
+ *              IoTivity protocol implementation for AGAIL
  *
  * Contributors:
  *    Mattia Antonini
@@ -29,12 +29,12 @@ const string IoTivityProtocol::KEY_PAYLOAD = "payload";
 OCConnectivityType connectivityType(CT_ADAPTER_IP);
 //End Attributes
 
-IoTivityProtocol::IoTivityProtocol() : AGILE::Protocol()
+IoTivityProtocol::IoTivityProtocol() : AGAIL::Protocol()
 {
     srand(time(NULL));
 
-    BUS_NAME = "iot.agile.protocol.iotivity";
-    BUS_PATH = "/iot/agile/protocol/iotivity";
+    BUS_NAME = "iot.agail.protocol.iotivity";
+    BUS_PATH = "/iot/agail/protocol/iotivity";
     PROTOCOL_NAME = "IoTivity";
     PROTOCOL_ID = "iotivity-" + to_string(rand()%65536);
     PROTOCOL_IMPLEMENTATIONID = "IoTivity-V1.2.0";
@@ -172,7 +172,7 @@ void IoTivityProtocol::StopDiscovery()
     log->d(TAG, "DiscoveryPeriodicCallback removed");
 }
 
-AGILE::PayloadObject* IoTivityProtocol::Read(string deviceId, std::map<string, GVariant *> componentAddr)
+AGAIL::PayloadObject* IoTivityProtocol::Read(string deviceId, std::map<string, GVariant *> componentAddr)
 {
     gchar *value_uri;
     Resource *r = NULL;
@@ -200,7 +200,7 @@ AGILE::PayloadObject* IoTivityProtocol::Read(string deviceId, std::map<string, G
         if(r != NULL)
         {
             QueryParamsMap qpm;
-            AGILE::PayloadObject *po;
+            AGAIL::PayloadObject *po;
             string output = "";
             DelayedCallback *readDelayedCallback = new DelayedCallback(READ_TIMEOUT*1000, true, bind(&IoTivityProtocol::onReadTimeout, this, r));
             r->resource->get(qpm, bind(&IoTivityProtocol::onReadCallback, this, placeholders::_1, placeholders::_2, placeholders::_3, &output, readDelayedCallback));
@@ -208,13 +208,13 @@ AGILE::PayloadObject* IoTivityProtocol::Read(string deviceId, std::map<string, G
             onReadMutex.lock();
             if(readDelayedCallback->isFired())
             {
-                po = new AGILE::PayloadObject(deviceId, componentAddr, g_variant_new_string("timeout"));
+                po = new AGAIL::PayloadObject(deviceId, componentAddr, g_variant_new_string("timeout"));
                 manageTimeout(r);
             }
             else
             {
                 log->v(TAG, "Read Payload: " + output);
-                po = new AGILE::PayloadObject(deviceId, componentAddr, g_variant_new_string(output.c_str()));
+                po = new AGAIL::PayloadObject(deviceId, componentAddr, g_variant_new_string(output.c_str()));
 
                 IoTivityDevice *iotd = (IoTivityDevice *) getDeviceFromId(r->resource->host());
                 iotd->resetTimeoutCounter();
@@ -234,7 +234,7 @@ AGILE::PayloadObject* IoTivityProtocol::Read(string deviceId, std::map<string, G
         log->e(TAG, "Key URI is absent, Read ignored...");
     }
 
-    return new AGILE::PayloadObject();
+    return new AGAIL::PayloadObject();
 }
 
 void IoTivityProtocol::onReadCallback(const HeaderOptions &hOps, const OCRepresentation &rep, int errCode, string *output, DelayedCallback* timeoutDelayedCallback)
@@ -628,7 +628,7 @@ void IoTivityProtocol::onObserveCallback(const HeaderOptions &hOps, const OCRepr
     compAddr.clear();
     compAddr[KEY_URI] = g_variant_new_string(string(r->resource->uri()).c_str());
 
-    AGILE::PayloadObject *po = new AGILE::PayloadObject(string(r->resource->host()), compAddr, g_variant_new_string(json.c_str()));
+    AGAIL::PayloadObject *po = new AGAIL::PayloadObject(string(r->resource->host()), compAddr, g_variant_new_string(json.c_str()));
 
     if(emitNotificationSignal(po))
     {

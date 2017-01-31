@@ -21,7 +21,7 @@
 
 #include "PayloadObject.h"
 
-AGILE::PayloadObject::PayloadObject()
+AGAIL::PayloadObject::PayloadObject()
 {
     this->deviceId = "Unknown";
     this->componentAddr.clear();
@@ -29,7 +29,7 @@ AGILE::PayloadObject::PayloadObject()
     this->lastUpdate = 0;
 }
 
-AGILE::PayloadObject::PayloadObject(string deviceId, map<string, GVariant *> componentAddr, GVariant *payload)
+AGAIL::PayloadObject::PayloadObject(string deviceId, map<string, GVariant *> componentAddr, GVariant *payload)
 {
     this->deviceId = deviceId;
     this->componentAddr = componentAddr;
@@ -37,7 +37,7 @@ AGILE::PayloadObject::PayloadObject(string deviceId, map<string, GVariant *> com
     this->lastUpdate = std::time(0);
 }
 
-AGILE::PayloadObject::PayloadObject(string deviceId, map<string, GVariant *> componentAddr, GVariant *payload, double lastUpdate)
+AGAIL::PayloadObject::PayloadObject(string deviceId, map<string, GVariant *> componentAddr, GVariant *payload, double lastUpdate)
 {
     this->deviceId = deviceId;
     this->componentAddr = componentAddr;
@@ -45,14 +45,14 @@ AGILE::PayloadObject::PayloadObject(string deviceId, map<string, GVariant *> com
     this->lastUpdate = lastUpdate;
 }
 
-void AGILE::PayloadObject::updateLastUpdateToNow()
+void AGAIL::PayloadObject::updateLastUpdateToNow()
 {
     this->lastUpdate = std::time(0);
 }
 
-bool AGILE::PayloadObject::operator==(const AGILE::PayloadObject & ro) const
+bool AGAIL::PayloadObject::operator==(const AGAIL::PayloadObject & ro) const
 {
-    const AGILE::PayloadObject t = *this;
+    const AGAIL::PayloadObject t = *this;
     return (t.deviceId == ro.deviceId && t.componentAddr == ro.componentAddr &&
             t.payload == ro.payload && t.lastUpdate == ro.lastUpdate);
 }

@@ -11,23 +11,23 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Description: constant
- *              Header file for AGILE constants file
+ *              Header file for AGAIL constants file
  *
  * Contributors:
  *    Mattia Antonini
  *******************************************************************************/
 
-#ifndef __AGILE_CONSTANTS_H__
-#define __AGILE_CONSTANTS_H__
+#ifndef __AGAIL_CONSTANTS_H__
+#define __AGAIL_CONSTANTS_H__
 
 #include <string>
 
-namespace AGILE {
+namespace AGAIL {
 
 /* AGILE DBus Constants */
-    static const std::string AGILE_NEW_DEVICE_SIGNAL_PATH = "/iot/agile/NewDevice";
-    static const std::string AGILE_NEW_RECORD_SIGNAL_PATH = "/iot/agile/NewRecord";
-    static const std::string AGILE_PROTOCOL_INTERFACE = "iot.agile.Protocol";
+    static const std::string AGAIL_NEW_DEVICE_SIGNAL_PATH = "/iot/agail/NewDevice";
+    static const std::string AGAIL_NEW_RECORD_SIGNAL_PATH = "/iot/agail/NewRecord";
+    static const std::string AGAIL_PROTOCOL_INTERFACE = "iot.agail.Protocol";
 }
 
 #endif

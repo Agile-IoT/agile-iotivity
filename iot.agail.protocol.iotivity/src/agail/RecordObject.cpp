@@ -21,7 +21,7 @@
 
 #include "RecordObject.h"
 
-AGILE::RecordObject::RecordObject()
+AGAIL::RecordObject::RecordObject()
 {
     this->deviceId = "Unknown";
     this->componentId = "Unknown";
@@ -31,7 +31,7 @@ AGILE::RecordObject::RecordObject()
     this->lastUpdate = 0;
 }
 
-AGILE::RecordObject::RecordObject(string deviceId, string componentId, string value, string unit, string format)
+AGAIL::RecordObject::RecordObject(string deviceId, string componentId, string value, string unit, string format)
 {
     this->deviceId = deviceId;
     this->componentId = componentId;
@@ -41,7 +41,7 @@ AGILE::RecordObject::RecordObject(string deviceId, string componentId, string va
     this->lastUpdate = std::time(0);
 }
 
-AGILE::RecordObject::RecordObject(string deviceId, string componentId, string value, string unit, string format, double lastUpdate)
+AGAIL::RecordObject::RecordObject(string deviceId, string componentId, string value, string unit, string format, double lastUpdate)
 {
     this->deviceId = deviceId;
     this->componentId = componentId;
@@ -51,14 +51,14 @@ AGILE::RecordObject::RecordObject(string deviceId, string componentId, string va
     this->lastUpdate = lastUpdate;
 }
 
-void AGILE::RecordObject::updateLastUpdateToNow()
+void AGAIL::RecordObject::updateLastUpdateToNow()
 {
     this->lastUpdate = std::time(0);
 }
 
-bool AGILE::RecordObject::operator==(const AGILE::RecordObject & ro) const
+bool AGAIL::RecordObject::operator==(const AGAIL::RecordObject & ro) const
 {
-    const AGILE::RecordObject t = *this;
+    const AGAIL::RecordObject t = *this;
     return (t.deviceId == ro.deviceId && t.componentId == ro.componentId &&
             t.value == ro.value && t.unit == ro.unit &&
             t.format == ro.format && t.lastUpdate == ro.lastUpdate);

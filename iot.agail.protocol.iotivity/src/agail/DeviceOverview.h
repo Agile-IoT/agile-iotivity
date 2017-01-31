@@ -18,8 +18,8 @@
  *    Mattia Antonini
  *******************************************************************************/
 
-#ifndef __AGILE_DEVICEOVERVIEW_H__
-#define __AGILE_DEVICEOVERVIEW_H__
+#ifndef __AGAIL_DEVICEOVERVIEW_H__
+#define __AGAIL_DEVICEOVERVIEW_H__
 
 #include <string>
 #include <unistd.h>
@@ -29,11 +29,11 @@
 
 using namespace std;
 
-namespace AGILE {
+namespace AGAIL {
     class DeviceOverview;
 }
 
-class AGILE::DeviceOverview {
+class AGAIL::DeviceOverview {
     public:
     static const string STATUS_CONNECTED;
     static const string STATUS_DISCONNECTED;
@@ -67,7 +67,7 @@ class AGILE::DeviceOverview {
 
     void setName(string);
 
-    bool operator==(const AGILE::DeviceOverview& dev) const;
+    bool operator==(const AGAIL::DeviceOverview& dev) const;
 };
 
 #endif

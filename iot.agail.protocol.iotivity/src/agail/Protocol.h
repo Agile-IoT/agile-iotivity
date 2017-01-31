@@ -11,14 +11,14 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Description: Protocol
- *              Header file for AGILE Base Protocol file
+ *              Header file for AGAIL Base Protocol file
  *
  * Contributors:
  *    Mattia Antonini
  *******************************************************************************/
 
-#ifndef __AGILE_PROTOCOL_H__
-#define __AGILE_PROTOCOL_H__
+#ifndef __AGAIL_PROTOCOL_H__
+#define __AGAIL_PROTOCOL_H__
 
 #include <string>
 #include <unistd.h>
@@ -40,11 +40,11 @@
 
 using namespace std;
 
-namespace AGILE {
+namespace AGAIL {
     class Protocol;
 }
 
-class AGILE::Protocol {
+class AGAIL::Protocol {
 
     public:
     /**
@@ -112,8 +112,8 @@ class AGILE::Protocol {
     static const uint32_t PROTOCOL_WRITE_SEC = 0x0004;
 
     private:
-    std::vector<AGILE::DeviceOverview> devices;
-    AGILE::RecordObject *data;
+    std::vector<AGAIL::DeviceOverview> devices;
+    AGAIL::RecordObject *data;
     static const gchar PROTOCOL_INTROSPECTION[];
     guint owner_id;
     GMainLoop *mainloop;
@@ -135,12 +135,12 @@ class AGILE::Protocol {
     public:
     static Protocol *instance;
     /**
-     * Bus name for AGILE Protocol
+     * Bus name for AGAIL Protocol
      */
     string BUS_NAME;
 
     /**
-     * Bus path for AGILE Protocol
+     * Bus path for AGAIL Protocol
      */
     string BUS_PATH;
 
@@ -167,16 +167,16 @@ class AGILE::Protocol {
     void saveGDBusConnection(GDBusConnection *);
 
     //Devices list manipulation functions
-    bool isNewDevice(AGILE::DeviceOverview *);
-    bool addDevice(AGILE::DeviceOverview *);
-    bool updateDevice(AGILE::DeviceOverview *);
-    bool removeDevice(AGILE::DeviceOverview *);
-    AGILE::DeviceOverview* getDeviceFromId(string);
-    AGILE::DeviceOverview* getDeviceAt(int);
+    bool isNewDevice(AGAIL::DeviceOverview *);
+    bool addDevice(AGAIL::DeviceOverview *);
+    bool updateDevice(AGAIL::DeviceOverview *);
+    bool removeDevice(AGAIL::DeviceOverview *);
+    AGAIL::DeviceOverview* getDeviceFromId(string);
+    AGAIL::DeviceOverview* getDeviceAt(int);
     int getDeviceListSize();
-    bool emitFoundNewDeviceSignal(AGILE::DeviceOverview *);
+    bool emitFoundNewDeviceSignal(AGAIL::DeviceOverview *);
 
-    bool emitNotificationSignal(AGILE::PayloadObject *);
+    bool emitNotificationSignal(AGAIL::PayloadObject *);
 
     //DiscoveryStatus Manipulation
     void setDiscoveryStatus(string);
@@ -199,7 +199,7 @@ class AGILE::Protocol {
     virtual void StartDiscovery(int);
     virtual void StopDiscovery();
     virtual void Write(string, std::map<string, GVariant *>, uint32_t, GVariant *);
-    virtual AGILE::PayloadObject* Read(string, std::map<string, GVariant *>);
+    virtual AGAIL::PayloadObject* Read(string, std::map<string, GVariant *>);
     virtual void Subscribe(string, std::map<string, GVariant *>);
     virtual void Unsubscribe(string, std::map<string, GVariant *>);
 };

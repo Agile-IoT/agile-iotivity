@@ -20,9 +20,9 @@
 #ifndef __IOTIVITY_DEVICE_H__
 #define __IOTIVITY_DEVICE_H__
 
-#include "agile/DeviceOverview.h"
+#include "agail/DeviceOverview.h"
 
-class IoTivityDevice : public AGILE::DeviceOverview {
+class IoTivityDevice : public AGAIL::DeviceOverview {
     private:
     int timeoutCounter = 0;
     

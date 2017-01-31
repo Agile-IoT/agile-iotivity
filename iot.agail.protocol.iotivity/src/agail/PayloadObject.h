@@ -10,8 +10,8 @@
  * and the Eclipse Distribution License is available at
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
- * Description: RecordObject
- *              RecordObject header file. This class contains the
+ * Description: PayloadObject
+ *              PayloadObject header file. This class contains the
  *              measurment from a sensor and the metadata regarding
  *              its source
  *
@@ -19,36 +19,38 @@
  *    Mattia Antonini
  *******************************************************************************/
 
-#ifndef __AGILE_RECORDOBJECT_H__
-#define __AGILE_RECORDOBJECT_H__
+#ifndef __AGAIL_PAYLOADOBJECT_H__
+#define __AGAIL_PAYLOADOBJECT_H__
 
 #include <string>
 #include <iostream>
 #include <algorithm>
 #include <ctime>
+#include <map>
+
+#include <gio/gio.h>
+
 
 using namespace std;
 
-namespace AGILE {
-    class RecordObject;
+namespace AGAIL {
+    class PayloadObject;
 }
 
-class AGILE::RecordObject {
+class AGAIL::PayloadObject {
     public:
     string deviceId;
-    string componentId;
-    string value;
-    string unit;
-    string format;
+    map<string, GVariant *> componentAddr;
+    GVariant* payload;
     double lastUpdate;
 
-    RecordObject();
-    RecordObject(string, string, string, string, string);
-    RecordObject(string, string, string, string, string, double);
+    PayloadObject();
+    PayloadObject(string, map<string, GVariant *>, GVariant *);
+    PayloadObject(string, map<string, GVariant *>, GVariant *, double);
 
     void updateLastUpdateToNow();
 
-    bool operator==(const AGILE::RecordObject&) const;
+    bool operator==(const AGAIL::PayloadObject&) const;
 };
 
 #endif

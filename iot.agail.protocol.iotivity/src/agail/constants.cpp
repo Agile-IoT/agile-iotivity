@@ -11,7 +11,7 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Description: constant
- *              AGILE constants file
+ *              AGAIL constants file
  *
  * Contributors:
  *    Mattia Antonini

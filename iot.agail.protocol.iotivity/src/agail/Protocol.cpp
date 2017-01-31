@@ -11,7 +11,7 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Description: Protocol
- *              AGILE Base Protocol file
+ *              AGAIL Base Protocol file
  *
  * Contributors:
  *    Mattia Antonini
@@ -21,36 +21,36 @@
 #include <iostream>
 
 
-AGILE::Protocol *AGILE::Protocol::instance = nullptr;
-const string AGILE::Protocol::PROPERTY_STATUS = "Status";
-const string AGILE::Protocol::PROPERTY_ID = "Id";
-const string AGILE::Protocol::PROPERTY_NAME = "Name";
-const string AGILE::Protocol::PROPERTY_IMPLEMENTATIONID = "ImplementationId";
-const string AGILE::Protocol::PROPERTY_DEVICES = "Devices";
-const string AGILE::Protocol::PROPERTY_DISCOVERYSTATUS = "DiscoveryStatus";
-const string AGILE::Protocol::PROPERTY_CAPABILITIES = "Capabilities";
-const string AGILE::Protocol::METHOD_CONNECT = "Connect";
-const string AGILE::Protocol::METHOD_DISCONNECT = "Disconnect";
-const string AGILE::Protocol::METHOD_STARTDISCOVERY = "StartDiscovery";
-const string AGILE::Protocol::METHOD_STOPDISCOVERY = "StopDiscovery";
-const string AGILE::Protocol::METHOD_WRITE = "Write";
-const string AGILE::Protocol::METHOD_READ = "Read";
-const string AGILE::Protocol::METHOD_SUBSCRIBE = "Subscribe";
-const string AGILE::Protocol::METHOD_UNSUBSCRIBE = "Unsubscribe";
-const string AGILE::Protocol::SIGNAL_FOUNDNEWDEVICE = "FoundNewDeviceSignal";
-const string AGILE::Protocol::SIGNAL_NOTIFICATION = "NotificationSignal";
-const string AGILE::Protocol::PROTOCOL_STATUS_AVAILABLE = "AVAILABLE";
-const string AGILE::Protocol::PROTOCOL_STATUS_UNAVAILABLE = "UNAVAILABLE";
-const string AGILE::Protocol::PROTOCOL_STATUS_NOT_CONFIGURED = "NOT_CONFIGURED";
-const string AGILE::Protocol::PROTOCOL_STATUS_DISABLED = "DISABLED";
-const string AGILE::Protocol::PROTOCOL_STATUS_ENABLED = "ENABLED";
-const string AGILE::Protocol::PROTOCOL_STATUS_FAILURE = "FAILURE";
-const string AGILE::Protocol::PROTOCOL_DISCOVERY_STATUS_RUNNING = "RUNNING";
-const string AGILE::Protocol::PROTOCOL_DISCOVERY_STATUS_NONE = "NONE";
-const string AGILE::Protocol::PROTOCOL_DISCOVERY_STATUS_FAILURE = "FAILURE";
-const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
-    "<node name='/iot/agile/Protocol'>"
-    "  <interface name='iot.agile.Protocol'>"
+AGAIL::Protocol *AGAIL::Protocol::instance = nullptr;
+const string AGAIL::Protocol::PROPERTY_STATUS = "Status";
+const string AGAIL::Protocol::PROPERTY_ID = "Id";
+const string AGAIL::Protocol::PROPERTY_NAME = "Name";
+const string AGAIL::Protocol::PROPERTY_IMPLEMENTATIONID = "ImplementationId";
+const string AGAIL::Protocol::PROPERTY_DEVICES = "Devices";
+const string AGAIL::Protocol::PROPERTY_DISCOVERYSTATUS = "DiscoveryStatus";
+const string AGAIL::Protocol::PROPERTY_CAPABILITIES = "Capabilities";
+const string AGAIL::Protocol::METHOD_CONNECT = "Connect";
+const string AGAIL::Protocol::METHOD_DISCONNECT = "Disconnect";
+const string AGAIL::Protocol::METHOD_STARTDISCOVERY = "StartDiscovery";
+const string AGAIL::Protocol::METHOD_STOPDISCOVERY = "StopDiscovery";
+const string AGAIL::Protocol::METHOD_WRITE = "Write";
+const string AGAIL::Protocol::METHOD_READ = "Read";
+const string AGAIL::Protocol::METHOD_SUBSCRIBE = "Subscribe";
+const string AGAIL::Protocol::METHOD_UNSUBSCRIBE = "Unsubscribe";
+const string AGAIL::Protocol::SIGNAL_FOUNDNEWDEVICE = "FoundNewDeviceSignal";
+const string AGAIL::Protocol::SIGNAL_NOTIFICATION = "NotificationSignal";
+const string AGAIL::Protocol::PROTOCOL_STATUS_AVAILABLE = "AVAILABLE";
+const string AGAIL::Protocol::PROTOCOL_STATUS_UNAVAILABLE = "UNAVAILABLE";
+const string AGAIL::Protocol::PROTOCOL_STATUS_NOT_CONFIGURED = "NOT_CONFIGURED";
+const string AGAIL::Protocol::PROTOCOL_STATUS_DISABLED = "DISABLED";
+const string AGAIL::Protocol::PROTOCOL_STATUS_ENABLED = "ENABLED";
+const string AGAIL::Protocol::PROTOCOL_STATUS_FAILURE = "FAILURE";
+const string AGAIL::Protocol::PROTOCOL_DISCOVERY_STATUS_RUNNING = "RUNNING";
+const string AGAIL::Protocol::PROTOCOL_DISCOVERY_STATUS_NONE = "NONE";
+const string AGAIL::Protocol::PROTOCOL_DISCOVERY_STATUS_FAILURE = "FAILURE";
+const gchar AGAIL::Protocol::PROTOCOL_INTROSPECTION[] =
+    "<node name='/iot/agail/Protocol'>"
+    "  <interface name='iot.agail.Protocol'>"
     "  <method name='Connect'>"
     "  <annotation name='org.freedesktop.DBus.Description' value='Setup connection and initialize protocol connection for the given device' />"
     "    <arg name='deviceId' type='s' direction='in'/>"
@@ -101,14 +101,14 @@ const gchar AGILE::Protocol::PROTOCOL_INTROSPECTION[] =
     "  </interface>"
     "</node>";
 
-const GDBusInterfaceVTable AGILE::Protocol::interface_vtable =
+const GDBusInterfaceVTable AGAIL::Protocol::interface_vtable =
 {
-  AGILE::Protocol::handleMethodCall,
-  AGILE::Protocol::handleGetProperty,
-  AGILE::Protocol::handleSetProperty
+  AGAIL::Protocol::handleMethodCall,
+  AGAIL::Protocol::handleGetProperty,
+  AGAIL::Protocol::handleSetProperty
 };
 
-AGILE::Protocol::Protocol()
+AGAIL::Protocol::Protocol()
 {
     BUS_NAME = "Unknown";
     BUS_PATH = "Unknown";
@@ -116,15 +116,15 @@ AGILE::Protocol::Protocol()
     PROTOCOL_ID = "Unknown";
     PROTOCOL_IMPLEMENTATIONID = "Unknown";
 
-    data = new AGILE::RecordObject();
+    data = new AGAIL::RecordObject();
 }
 
 // TODO: implement it
-AGILE::Protocol::~Protocol()
+AGAIL::Protocol::~Protocol()
 {
 }
 
-int AGILE::Protocol::initBus()
+int AGAIL::Protocol::initBus()
 {
     introspection_data = g_dbus_node_info_new_for_xml (PROTOCOL_INTROSPECTION, NULL);
     if(introspection_data == NULL)
@@ -135,9 +135,9 @@ int AGILE::Protocol::initBus()
     owner_id = g_bus_own_name(G_BUS_TYPE_SESSION,
                              BUS_NAME.c_str(),
                              G_BUS_NAME_OWNER_FLAGS_NONE,
-                             &AGILE::Protocol::onBusAcquired,
-                             &AGILE::Protocol::onNameAcquired,
-                             &AGILE::Protocol::onNameLost,
+                             &AGAIL::Protocol::onBusAcquired,
+                             &AGAIL::Protocol::onNameAcquired,
+                             &AGAIL::Protocol::onNameLost,
                              NULL,
                              NULL);
 
@@ -146,12 +146,12 @@ int AGILE::Protocol::initBus()
     return PROTOCOL_DBUS_INIT_NOERR;
 }
 
-void AGILE::Protocol::saveGDBusConnection(GDBusConnection *conn)
+void AGAIL::Protocol::saveGDBusConnection(GDBusConnection *conn)
 {
     connection = conn;
 }
 
-void AGILE::Protocol::onBusAcquired(GDBusConnection *conn, const gchar *name, gpointer user_data)
+void AGAIL::Protocol::onBusAcquired(GDBusConnection *conn, const gchar *name, gpointer user_data)
 {
     guint registration_id;
 
@@ -167,27 +167,27 @@ void AGILE::Protocol::onBusAcquired(GDBusConnection *conn, const gchar *name, gp
     instance->onBusAcquiredCb(conn, name, user_data);
 }
 
-void AGILE::Protocol::onNameAcquired(GDBusConnection *conn, const gchar *name, gpointer user_data)
+void AGAIL::Protocol::onNameAcquired(GDBusConnection *conn, const gchar *name, gpointer user_data)
 {
     instance->onNameAcquiredCb(conn, name, user_data);
 }
 
-void AGILE::Protocol::onNameLost(GDBusConnection *conn, const gchar *name, gpointer user_data)
+void AGAIL::Protocol::onNameLost(GDBusConnection *conn, const gchar *name, gpointer user_data)
 {
     instance->onNameLostCb(conn, name, user_data);
 }
 
-void AGILE::Protocol::onUnknownMethod(string method)
+void AGAIL::Protocol::onUnknownMethod(string method)
 {
     std::cout << "onUnknownMethod not implemented! Arg: " << method << std::endl;
 }
 
-void AGILE::Protocol::onUnknownProperty(string property)
+void AGAIL::Protocol::onUnknownProperty(string property)
 {
     std::cout << "onUnknownProperty not implemented! Arg: " << property << std::endl;
 }
 
-void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar *sender, const gchar *object_path, const gchar *interface_name, const gchar *method_name, GVariant *parameters, GDBusMethodInvocation *invocation, gpointer user_data)
+void AGAIL::Protocol::handleMethodCall(GDBusConnection *connection, const gchar *sender, const gchar *object_path, const gchar *interface_name, const gchar *method_name, GVariant *parameters, GDBusMethodInvocation *invocation, gpointer user_data)
 {
     GVariant * out;
     out = NULL;
@@ -294,7 +294,7 @@ void AGILE::Protocol::handleMethodCall(GDBusConnection *connection, const gchar 
     g_dbus_method_invocation_return_value(invocation, out);
 }
 
-GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const gchar *sender, const gchar *obj_path, const gchar *interface_name, const gchar *property_name, GError **error, gpointer user_data)
+GVariant* AGAIL::Protocol::handleGetProperty(GDBusConnection *connection, const gchar *sender, const gchar *obj_path, const gchar *interface_name, const gchar *property_name, GError **error, gpointer user_data)
 {
     GVariant * ret;
     ret = NULL;
@@ -319,7 +319,7 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     {
         GVariantBuilder *builder = g_variant_builder_new(G_VARIANT_TYPE("a(ssssd)"));
         for(int i=0; i<instance->getDeviceListSize(); i++) {
-           AGILE::DeviceOverview *d = instance->getDeviceAt(i);
+           AGAIL::DeviceOverview *d = instance->getDeviceAt(i);
            g_variant_builder_add(builder, "(ssssd)", d->getName().c_str(),
                d->getProtocol().c_str(), d->getId().c_str(), d->getStatus().c_str(), d->getLastSeen());
         }
@@ -352,12 +352,12 @@ GVariant* AGILE::Protocol::handleGetProperty(GDBusConnection *connection, const 
     return ret;
 }
 
-gboolean AGILE::Protocol::handleSetProperty(GDBusConnection *connection, const gchar *sender, const gchar *obj_path, const gchar *interface_name, const gchar *property_name, GVariant *value, GError **error, gpointer user_data)
+gboolean AGAIL::Protocol::handleSetProperty(GDBusConnection *connection, const gchar *sender, const gchar *obj_path, const gchar *interface_name, const gchar *property_name, GVariant *value, GError **error, gpointer user_data)
 {
     cout << "handleSetProperty" << endl;
 }
 
-void AGILE::Protocol::keepAliveProtocol()
+void AGAIL::Protocol::keepAliveProtocol()
 {
     g_main_loop_run(mainloop);
     g_bus_unown_name(owner_id);
@@ -366,7 +366,7 @@ void AGILE::Protocol::keepAliveProtocol()
     return;
 }
 
-bool AGILE::Protocol::emitFoundNewDeviceSignal(AGILE::DeviceOverview *dev)
+bool AGAIL::Protocol::emitFoundNewDeviceSignal(AGAIL::DeviceOverview *dev)
 {
     GError *local_error;
     GVariant * device_variant;
@@ -379,7 +379,7 @@ bool AGILE::Protocol::emitFoundNewDeviceSignal(AGILE::DeviceOverview *dev)
     g_dbus_connection_emit_signal(connection,
                                   NULL,
                                   BUS_PATH.c_str(),
-                                  AGILE::AGILE_PROTOCOL_INTERFACE.c_str(), 
+                                  AGAIL::AGAIL_PROTOCOL_INTERFACE.c_str(), 
                                   SIGNAL_FOUNDNEWDEVICE.c_str(),
                                   device_variant,
                                   &local_error);
@@ -392,12 +392,12 @@ bool AGILE::Protocol::emitFoundNewDeviceSignal(AGILE::DeviceOverview *dev)
     return false;
 }
 
-bool AGILE::Protocol::isNewDevice(AGILE::DeviceOverview *dev)
+bool AGAIL::Protocol::isNewDevice(AGAIL::DeviceOverview *dev)
 {
     return (std::find(devices.begin(), devices.end(), *dev) == devices.end());
 }
 
-bool AGILE::Protocol::addDevice(AGILE::DeviceOverview *dev)
+bool AGAIL::Protocol::addDevice(AGAIL::DeviceOverview *dev)
 {
     if(isNewDevice(dev)) {
         devices.push_back(*dev);
@@ -406,7 +406,7 @@ bool AGILE::Protocol::addDevice(AGILE::DeviceOverview *dev)
     return false;
 }
 
-bool AGILE::Protocol::updateDevice(AGILE::DeviceOverview *dev)
+bool AGAIL::Protocol::updateDevice(AGAIL::DeviceOverview *dev)
 {
     if(!isNewDevice(dev)) {
         for(int i=0; i<devices.size(); i++) {
@@ -420,7 +420,7 @@ bool AGILE::Protocol::updateDevice(AGILE::DeviceOverview *dev)
     return false;
 }
 
-bool AGILE::Protocol::removeDevice(AGILE::DeviceOverview *dev)
+bool AGAIL::Protocol::removeDevice(AGAIL::DeviceOverview *dev)
 {
     if(!isNewDevice(dev)) {
         for(int i=0; i<devices.size(); i++) {
@@ -434,9 +434,9 @@ bool AGILE::Protocol::removeDevice(AGILE::DeviceOverview *dev)
     return false;
 }
 
-AGILE::DeviceOverview* AGILE::Protocol::getDeviceFromId(string id)
+AGAIL::DeviceOverview* AGAIL::Protocol::getDeviceFromId(string id)
 {
-    AGILE::DeviceOverview* t = new AGILE::DeviceOverview("", PROTOCOL_NAME, id);
+    AGAIL::DeviceOverview* t = new AGAIL::DeviceOverview("", PROTOCOL_NAME, id);
     if(!isNewDevice(t)) {
         for(int i=0; i<devices.size(); i++) {
             if(devices.at(i) == *t)
@@ -448,7 +448,7 @@ AGILE::DeviceOverview* AGILE::Protocol::getDeviceFromId(string id)
     return NULL;
 }
 
-AGILE::DeviceOverview* AGILE::Protocol::getDeviceAt(int pos)
+AGAIL::DeviceOverview* AGAIL::Protocol::getDeviceAt(int pos)
 {
     if(pos>=0 || pos<devices.size())
     {
@@ -457,12 +457,12 @@ AGILE::DeviceOverview* AGILE::Protocol::getDeviceAt(int pos)
     return NULL;
 }
 
-int AGILE::Protocol::getDeviceListSize()
+int AGAIL::Protocol::getDeviceListSize()
 {
     return devices.size();
 }
 
-void AGILE::Protocol::parseComponentAddr(GVariantIter *iter, map<string, GVariant*> *caMap, GVariantBuilder **caBuilder)
+void AGAIL::Protocol::parseComponentAddr(GVariantIter *iter, map<string, GVariant*> *caMap, GVariantBuilder **caBuilder)
 {
     GVariant *value;
     const gchar *key;
@@ -478,7 +478,7 @@ void AGILE::Protocol::parseComponentAddr(GVariantIter *iter, map<string, GVarian
     g_variant_iter_free(iter);
 }
 
-bool AGILE::Protocol::emitNotificationSignal(AGILE::PayloadObject *po)
+bool AGAIL::Protocol::emitNotificationSignal(AGAIL::PayloadObject *po)
 {
     GError *local_error;
     GVariant * notification_variant;
@@ -498,7 +498,7 @@ bool AGILE::Protocol::emitNotificationSignal(AGILE::PayloadObject *po)
     g_dbus_connection_emit_signal(connection,
                                   NULL,
                                   BUS_PATH.c_str(),
-                                  AGILE::AGILE_PROTOCOL_INTERFACE.c_str(), 
+                                  AGAIL::AGAIL_PROTOCOL_INTERFACE.c_str(), 
                                   SIGNAL_NOTIFICATION.c_str(),
                                   notification_variant,
                                   &local_error);
@@ -513,7 +513,7 @@ bool AGILE::Protocol::emitNotificationSignal(AGILE::PayloadObject *po)
     return false;
 }
 
-void AGILE::Protocol::setDiscoveryStatus(string status)
+void AGAIL::Protocol::setDiscoveryStatus(string status)
 {
     if(status == PROTOCOL_DISCOVERY_STATUS_RUNNING ||
        status == PROTOCOL_DISCOVERY_STATUS_NONE ||
@@ -523,63 +523,63 @@ void AGILE::Protocol::setDiscoveryStatus(string status)
     }
 }
 
-string AGILE::Protocol::getDiscoveryStatus()
+string AGAIL::Protocol::getDiscoveryStatus()
 {
     return discoveryStatus;
 }
 
-void AGILE::Protocol::Connect(string deviceId)
+void AGAIL::Protocol::Connect(string deviceId)
 {
     std::cout << "Connect not implemented! Arg: " << deviceId << std::endl;
 }
 
-void AGILE::Protocol::Disconnect(string deviceId)
+void AGAIL::Protocol::Disconnect(string deviceId)
 {
     std::cout << "Disconnect not implemented! Arg: " << deviceId << std::endl;
 }
 
-void AGILE::Protocol::StartDiscovery(int duration)
+void AGAIL::Protocol::StartDiscovery(int duration)
 {
     std::cout << "StartDiscovery not implemented! Duration: " << duration <<std::endl;
 }
 
-void AGILE::Protocol::StopDiscovery()
+void AGAIL::Protocol::StopDiscovery()
 {
     std::cout << "StopDiscovery not implemented!" << std::endl;
 }
 
-AGILE::PayloadObject* AGILE::Protocol::Read(string deviceId, std::map<string, GVariant *> componentAddr)
+AGAIL::PayloadObject* AGAIL::Protocol::Read(string deviceId, std::map<string, GVariant *> componentAddr)
 {
     std::cout << "Read not Implemented." << std::endl;
     return new PayloadObject();
 }
 
-void AGILE::Protocol::Write(string deviceId, std::map<string, GVariant *> componentAddr, uint32_t flags, GVariant *payload)
+void AGAIL::Protocol::Write(string deviceId, std::map<string, GVariant *> componentAddr, uint32_t flags, GVariant *payload)
 {
     std::cout << "Write not Implemented." << std::endl;
 }
 
-void AGILE::Protocol::Subscribe(string deviceId, std::map<string, GVariant *> componentAddr)
+void AGAIL::Protocol::Subscribe(string deviceId, std::map<string, GVariant *> componentAddr)
 {
     std::cout << "Subscribe not Implemented." << std::endl;
 }
 
-void AGILE::Protocol::Unsubscribe(string deviceId, std::map<string, GVariant *> componentAddr)
+void AGAIL::Protocol::Unsubscribe(string deviceId, std::map<string, GVariant *> componentAddr)
 {
     std::cout << "Unsubscribe not Implemented." << std::endl;
 }
 
-void AGILE::Protocol::onBusAcquiredCb(GDBusConnection *conn, const gchar *name, gpointer user_data)
+void AGAIL::Protocol::onBusAcquiredCb(GDBusConnection *conn, const gchar *name, gpointer user_data)
 {
     std::cout << "onBusAcquiredCb not implemented!" << std::endl;
 }
 
-void AGILE::Protocol::onNameAcquiredCb(GDBusConnection *conn, const gchar *name, gpointer user_data)
+void AGAIL::Protocol::onNameAcquiredCb(GDBusConnection *conn, const gchar *name, gpointer user_data)
 {
     std::cout << "onNameAcquiredCb not implemented!" << std::endl;
 }
 
-void AGILE::Protocol::onNameLostCb(GDBusConnection *conn, const gchar *name, gpointer user_data)
+void AGAIL::Protocol::onNameLostCb(GDBusConnection *conn, const gchar *name, gpointer user_data)
 {
     std::cout << "onNameLostCb not implemented!" << std::endl;
 }

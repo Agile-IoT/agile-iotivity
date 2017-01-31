@@ -20,12 +20,12 @@
 
 #include "DeviceOverview.h"
 
-const string AGILE::DeviceOverview::STATUS_CONNECTED = "CONNECTED";
-const string AGILE::DeviceOverview::STATUS_DISCONNECTED = "DISCONNECTED";
-const string AGILE::DeviceOverview::STATUS_AVAILABLE = "AVAILABLE";
-const string AGILE::DeviceOverview::STATUS_UNAVAILABLE = "UNAVAILABLE";
+const string AGAIL::DeviceOverview::STATUS_CONNECTED = "CONNECTED";
+const string AGAIL::DeviceOverview::STATUS_DISCONNECTED = "DISCONNECTED";
+const string AGAIL::DeviceOverview::STATUS_AVAILABLE = "AVAILABLE";
+const string AGAIL::DeviceOverview::STATUS_UNAVAILABLE = "UNAVAILABLE";
 
-AGILE::DeviceOverview::DeviceOverview()
+AGAIL::DeviceOverview::DeviceOverview()
 {
     this->name = "Unknown";
     this->protocol = "Unknown";
@@ -34,7 +34,7 @@ AGILE::DeviceOverview::DeviceOverview()
     this->lastSeen = 0;
 }
 
-AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id)
+AGAIL::DeviceOverview::DeviceOverview(string name, string protocol, string id)
 {
     this->name = name;
     this->protocol = protocol;
@@ -43,7 +43,7 @@ AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id)
     setLastSeen2Now();
 }
 
-AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id, string status)
+AGAIL::DeviceOverview::DeviceOverview(string name, string protocol, string id, string status)
 {
     this->name = name;
     this->protocol = protocol;
@@ -59,7 +59,7 @@ AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id, s
     setLastSeen2Now();
 }
 
-AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id, double lastSeen)
+AGAIL::DeviceOverview::DeviceOverview(string name, string protocol, string id, double lastSeen)
 {
     this->name = name;
     this->protocol = protocol;
@@ -68,7 +68,7 @@ AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id, d
     this->lastSeen = lastSeen;
 }
 
-AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id, string status, double lastSeen)
+AGAIL::DeviceOverview::DeviceOverview(string name, string protocol, string id, string status, double lastSeen)
 {
     this->name = name;
     this->protocol = protocol;
@@ -85,11 +85,11 @@ AGILE::DeviceOverview::DeviceOverview(string name, string protocol, string id, s
 }
 
 
-AGILE::DeviceOverview::~DeviceOverview()
+AGAIL::DeviceOverview::~DeviceOverview()
 {
 }
 
-bool AGILE::DeviceOverview::isValidStatus(string status)
+bool AGAIL::DeviceOverview::isValidStatus(string status)
 {
     return (status == STATUS_CONNECTED || 
             status == STATUS_DISCONNECTED ||
@@ -97,43 +97,43 @@ bool AGILE::DeviceOverview::isValidStatus(string status)
             status == STATUS_UNAVAILABLE );
 }
 
-string AGILE::DeviceOverview::getName() const
+string AGAIL::DeviceOverview::getName() const
 {
     return name;
 }
 
-string AGILE::DeviceOverview::getProtocol() const
+string AGAIL::DeviceOverview::getProtocol() const
 {
     return protocol;
 }
 
-string AGILE::DeviceOverview::getId() const
+string AGAIL::DeviceOverview::getId() const
 {
     return id;
 }
 
-string AGILE::DeviceOverview::getStatus() const
+string AGAIL::DeviceOverview::getStatus() const
 {
     return status;
 }
 
-double AGILE::DeviceOverview::getLastSeen() const
+double AGAIL::DeviceOverview::getLastSeen() const
 {
     return lastSeen;
 }
 
-void AGILE::DeviceOverview::setName(string name)
+void AGAIL::DeviceOverview::setName(string name)
 {
     this->name = name;
 }
 
-void AGILE::DeviceOverview::setLastSeen2Now()
+void AGAIL::DeviceOverview::setLastSeen2Now()
 {
     this->lastSeen = std::time(0);
 }
 
-bool AGILE::DeviceOverview::operator==(const AGILE::DeviceOverview & dev) const
+bool AGAIL::DeviceOverview::operator==(const AGAIL::DeviceOverview & dev) const
 {
-    const AGILE::DeviceOverview t = *this;
+    const AGAIL::DeviceOverview t = *this;
     return (dev.getProtocol() == t.getProtocol() && t.getId() == dev.getId());
 }

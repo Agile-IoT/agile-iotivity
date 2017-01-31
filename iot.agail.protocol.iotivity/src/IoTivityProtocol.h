@@ -11,7 +11,7 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Description: IoTivityProtocol
- *              Header file for IoTivity protocol implementation for AGILE
+ *              Header file for IoTivity protocol implementation for AGAIL
  *
  * Contributors:
  *    Mattia Antonini
@@ -25,10 +25,10 @@
 #include "common/PeriodicCallback.h"
 #include "common/DelayedCallback.h"
 
-#include "agile/constants.h"
-#include "agile/Protocol.h"
-#include "agile/DeviceOverview.h"
-#include "agile/PayloadObject.h"
+#include "agail/constants.h"
+#include "agail/Protocol.h"
+#include "agail/DeviceOverview.h"
+#include "agail/PayloadObject.h"
 
 #include <unistd.h>
 #include <cstdlib>
@@ -60,7 +60,7 @@ using namespace std;
 using namespace OC;
 using namespace boost::property_tree;
 
-class IoTivityProtocol : public AGILE::Protocol {
+class IoTivityProtocol : public AGAIL::Protocol {
     private:
     string destinationAddress = "127.0.0.1";
     static const string TAG;
@@ -108,7 +108,7 @@ class IoTivityProtocol : public AGILE::Protocol {
     void Disconnect(string);
     void StartDiscovery(int);
     void StopDiscovery();
-    AGILE::PayloadObject* Read(string, std::map<string, GVariant *>);
+    AGAIL::PayloadObject* Read(string, std::map<string, GVariant *>);
     void Write(string, std::map<string, GVariant *>, uint32_t, GVariant *);
     void Subscribe(string, std::map<string, GVariant *>);
     void Unsubscribe(string, std::map<string, GVariant *>);
