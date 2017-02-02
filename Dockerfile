@@ -1,5 +1,4 @@
 FROM resin/raspberrypi2-debian:jessie-20161010
-MAINTAINER Mattia Antonini (m.antonini@create-net.org)
 
 # Install wget and curl
 RUN apt-get clean && apt-get update && apt-get install -y \
@@ -33,7 +32,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 WORKDIR /usr/src/app
 
-
 RUN apt-get update \
   && apt-get upgrade -y \
   && apt-get clean  && rm -rf /var/lib/apt/lists/*
@@ -52,24 +50,25 @@ RUN apt-get update && apt-get -y install \
   uuid-dev \
   libssl-dev \
   libglib2.0-dev \
+  dbus \
+  libdbus-glib-1-dev \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN wget -c http://mirrors.kernel.org/iotivity/1.2.0/iotivity-1.2.0.zip \
   && unzip iotivity-1.2.0.zip \
   && rm iotivity-1.2.0.zip \
   && cd iotivity-1.2.0 \
-  && git clone https://github.com/01org/tinycbor.git extlibs/tinycbor/tinycbor -b v0.3.2
-
-RUN cd iotivity-1.2.0 \
+  && git clone https://github.com/01org/tinycbor.git extlibs/tinycbor/tinycbor -b v0.3.2 \
+  && cd /usr/src/app/iotivity-1.2.0 \
   && scons TARGET_ARCH=arm-v7a \
   TARGET_OS=linux \
   TARGET_TRANSPORT=IP \
   RELEASE=yes \
   SECURED=0 \
   ROUTING=EP \
-  BUILD_SAMPLE=OFF
-
-RUN cd ./iotivity-1.2.0/out/linux/arm-v7a/release \
+  BUILD_SAMPLE=OFF \
+  && cd .. \
+  && cd ./iotivity-1.2.0/out/linux/arm-v7a/release \
   && cp *.a /usr/lib \
   && cp *.so /usr/lib \
   && mkdir /usr/include/iotivity \
@@ -79,3 +78,13 @@ RUN cd ./iotivity-1.2.0/out/linux/arm-v7a/release \
   && cd ../../../../.. \
   && rm -rf iotivity-1.2.0 \
   && ls -l
+
+RUN git clone https://github.com/agile-iot/agile-iotivity \
+  && cd agile-iotivity \
+  && ls \
+  && cd iot.agail.protocol.iotivity \
+  && make agail_iotivity \
+  && cd /usr/src/app \
+  && mkdir .agile_bus
+
+CMD [ "/bin/bash", "/usr/src/app/agile-iotivity/scripts/start.sh" ]
