@@ -4,6 +4,8 @@ MODULE=${1:-all}
 
 TOEXPORT=""
 
+BASEDIR=$(dirname $0)
+
 if [ ! -z "$DISPLAY" ]; then
   echo ">> DISPLAY available, reusing current display"
 else
@@ -52,15 +54,15 @@ export DBUS_SESSION_BUS_ADDRESS
 if [ $MODULE = 'all' ] || [ $MODULE = 'iotivity' ]; then
   ./scripts/stop.sh "protocol.iotivity"
 
-   if [ ! -e "./iot.agail.protocol.iotivity/bin" ]; then
+   if [ ! -e "$BASEDIR/../iot.agail.protocol.iotivity/bin" ]; then
      echo "Compiling..."
-     make -C ./iot.agail.protocol.iotivity/ agail_iotivity
+     make -C $BASEDIR/../iot.agail.protocol.iotivity/ agail_iotivity
    else
-     make -C ./iot.agail.protocol.iotivity/ agail_iotivity_tmp
+     make -C $BASEDIR/../iot.agail.protocol.iotivity/ agail_iotivity_tmp
    fi
 
   echo "Launching... AGAIL IoTivity protocol"
-  ./iot.agail.protocol.iotivity/bin/agail_iotivity realm
+  $BASEDIR/../iot.agail.protocol.iotivity/bin/agail_iotivity realm
 fi
 
 
