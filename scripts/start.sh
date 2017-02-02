@@ -52,7 +52,7 @@ fi
 export DBUS_SESSION_BUS_ADDRESS
 
 if [ $MODULE = 'all' ] || [ $MODULE = 'iotivity' ]; then
-  ./scripts/stop.sh "protocol.iotivity"
+   $BASEDIR/stop.sh "protocol.iotivity"
 
    if [ ! -e "$BASEDIR/../iot.agail.protocol.iotivity/bin" ]; then
      echo "Compiling..."
