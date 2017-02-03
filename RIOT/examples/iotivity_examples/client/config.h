@@ -24,6 +24,10 @@
 
 #define OC_DEBUG 0
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Time resolution */
 #include <stdint.h>
 typedef uint64_t oc_clock_time_t;
@@ -66,5 +70,9 @@ typedef uint64_t oc_clock_time_t;
 
 /* Max inactivity timeout before tearing down DTLS connection */
 #define DTLS_INACTIVITY_TIMEOUT (10)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* CONFIG_H */

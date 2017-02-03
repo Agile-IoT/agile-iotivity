@@ -49,13 +49,13 @@ app_init(void)
 
 
 static void
-register_resources(void)
+register_resources_func(void)
 {
     res_light_register();
 }
 
 static void
-signal_event_loop(void)
+signal_event_loop_func(void)
 {
     mutex_lock(&mutex);
     pthread_cond_signal(&cv);
@@ -70,9 +70,9 @@ oc_main_thread(void *arg)
     pthread_cond_init(&cv, NULL);
 
     static const oc_handler_t handler = { .init = app_init,
-                                          .signal_event_loop = signal_event_loop,
+                                          .signal_event_loop = signal_event_loop_func,
                                           .register_resources =
-                                              register_resources };
+                                              register_resources_func };
 
     msg_init_queue(_oc_msg_queue, OC_QUEUE_SIZE);
 
@@ -119,7 +119,7 @@ main(void)
     fgetc(stdin);
 
     quit = 1;
-    signal_event_loop();
+    signal_event_loop_func();
 
     return 0;
 }

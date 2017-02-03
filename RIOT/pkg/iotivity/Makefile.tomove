@@ -37,5 +37,5 @@ $(OBJ): %.o: %.c
 
 clean: clean_iotivity
 
-clean_iotivity: 
+clean_iotivity:
 	rm -rf ${OBJ}

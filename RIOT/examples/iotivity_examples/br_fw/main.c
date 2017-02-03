@@ -119,7 +119,7 @@ void *start_oic_forwarding_loop(void *arg)
         n = conn_udp_recvfrom(&conn, (char *)buffer2, MAX_PAYLOAD_SIZE, remote_addr,
                               &remote_addr_len, &remote_port);
         if (n < 0) {
-            printf("forwarder_multicast_recv: error in conn_udp_recvfrom().n=%u\n", n);
+            printf("forwarder_multicast_recv: error in conn_udp_recvfrom().n=%d\n", n);
             continue;
         }
 
