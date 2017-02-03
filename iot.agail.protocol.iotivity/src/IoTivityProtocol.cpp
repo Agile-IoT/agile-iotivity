@@ -701,11 +701,11 @@ void IoTivityProtocol::Unsubscribe(string deviceId, std::map<string, GVariant *>
                 log->w(TAG, "URI: " + string(value_uri));
             }
             onUnsubscribeMutex.unlock();
-            log->d(TAG, "onSubscribeMutex UNLOCKED");
+            log->d(TAG, "onUnsubscribeMutex UNLOCKED");
             return;
         }
         onUnsubscribeMutex.unlock();
-        log->d(TAG, "onSubscribeMutex UNLOCKED");
+        log->d(TAG, "onUnsubscribeMutex UNLOCKED");
         log->w(TAG, "Resource NOT found, Unsubscribe ignored...");
     }
     else
