@@ -1,0 +1,35 @@
+language: generic
+
+sudo: required
+
+services:
+  - docker
+
+cache:
+  directories:
+    - $HOME/docker-cache/
+
+env:
+  - IMAGE=agileiot/agile-iotivity-armv7l
+    DOCKER_CACHE_FILE=/home/travis/docker-cache/cache.tar.gz
+
+before_install:
+  - if [ -f /home/travis/docker-cache/cache.tar.gz ]; then
+      gunzip -c /home/travis/docker-cache/cache.tar.gz | docker load || true;
+    fi
+
+script:
+  - docker run --rm --privileged multiarch/qemu-user-static:register
+  - docker build -t $IMAGE:$TRAVIS_BRANCH .
+  - if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then
+      mkdir -p $(dirname ${DOCKER_CACHE_FILE});
+      docker save $(docker history -q $IMAGE:$TRAVIS_BRANCH | grep -v '<missing>') | gzip > ${DOCKER_CACHE_FILE};
+    fi
+
+after_success:
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+  - docker push $IMAGE:$TRAVIS_BRANCH;
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker tag $IMAGE:$TRAVIS_BRANCH $IMAGE;
+      docker push $IMAGE;
+    fi
