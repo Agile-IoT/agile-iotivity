@@ -1,3 +1,13 @@
+#-------------------------------------------------------------------------------
+# Copyright (C) 2017 Create-Net / FBK.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+# 
+# Contributors:
+#     Create-Net / FBK - initial API and implementation
+#-------------------------------------------------------------------------------
 PKG_NAME=iotivity-constrained
 PKG_URL=https://github.com/iotivity/iotivity-constrained
 PKG_VERSION=96b50da1762d016790ac7fa516d95a0252bb2f72

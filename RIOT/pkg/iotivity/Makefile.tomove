@@ -1,3 +1,13 @@
+#-------------------------------------------------------------------------------
+# Copyright (C) 2017 Create-Net / FBK.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+# 
+# Contributors:
+#     Create-Net / FBK - initial API and implementation
+#-------------------------------------------------------------------------------
 IOTIVITY_CFLAGS = -std=gnu99 -fno-asynchronous-unwind-tables -fno-omit-frame-pointer -Wall -Wno-format-zero-length -Wno-main -ffreestanding -Os -fno-stack-protector -ffunction-sections -fdata-sections -Wno-unused-but-set-variable -fno-reorder-functions -fno-defer-pop -Wno-pointer-sign -fno-strict-overflow -Werror=implicit-int
 
 CBOR = ./deps/tinycbor/src/cborencoder.c ./deps/tinycbor/src/cborencoder_close_container_checked.c ./deps/tinycbor/src/cborparser.c
