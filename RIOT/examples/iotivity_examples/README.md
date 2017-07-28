@@ -1,3 +1,14 @@
+<!--
+# Copyright (C) 2017 Create-Net / FBK.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+# 
+# Contributors:
+#     Create-Net / FBK - initial API and implementation
+-->
+
 IoTivity Examples
 ===============
 These examples implement some simple clients and a server to test the IoTivity package for RIOT-OS. The pkg is based on the [IoTivity-Constrained][1] library.
