@@ -17,7 +17,7 @@
  * @brief       This is an IoTivity Server.
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
- *                              <m.antonini@create-net.org>
+ *                              <m.antonini@fbk.eu>
  *
  * @}
  */

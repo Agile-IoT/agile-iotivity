@@ -17,7 +17,7 @@
  * @brief       This is a configuration file for IoTivity environment
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
- *                              <m.antonini@create-net.org>
+ *                              <m.antonini@fbk.eu>
  *
  * @}
  */

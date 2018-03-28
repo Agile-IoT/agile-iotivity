@@ -1,10 +1,13 @@
-/*
- * Copyright (C) 2016 CREATE-NET
- *
- * This file is subject to the terms and conditions of the GNU Lesser
- * General Public License v2.1. See the file LICENSE in the top level
- * directory for more details.
- */
+/*******************************************************************************
+ * Copyright (C) 2017 Create-Net / FBK.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Create-Net / FBK - initial API and implementation
+ ******************************************************************************/
 
 /**
  * @ingroup
@@ -14,7 +17,7 @@
  * @brief       Header file of a generic IoTivity Linux Client
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
- *                              <m.antonini@create-net.org>
+ *                              <m.antonini@fbk.eu>
  *
  * @}
  */

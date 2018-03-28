@@ -17,7 +17,7 @@
  * @brief       Resource light definition. Handler are defined here.
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
- *                              <m.antonini@create-net.org>
+ *                              <m.antonini@fbk.eu>
  *
  * @}
  */

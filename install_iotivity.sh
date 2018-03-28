@@ -14,7 +14,7 @@
 # Installation Script for IoTivity                                  #
 #                                                                   #
 # Author: Mattia Antonini <mattia.antonini1@studenti.unipr.it>      #
-#                         <m.antonini@create-net.org>               #
+#                         <m.antonini@fbk.eu>	                    #
 #                                                                   #
 # This script downloads, unzips, compiles IoTivity and then it      #
 # copies binaries in /usr. Tested with IoTivity 1.2.0.              #

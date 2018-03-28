@@ -14,7 +14,7 @@
 # Installation Script for the building env for RIOT-OS on RPi       #
 #                                                                   #
 # Author: Mattia Antonini <mattia.antonini1@studenti.unipr.it>      #
-#                         <m.antonini@create-net.org>               #
+#                         <m.antonini@fbk.eu>                       #
 #                                                                   #
 # This script installs the toolchain for RIOT OS                    #
 #####################################################################

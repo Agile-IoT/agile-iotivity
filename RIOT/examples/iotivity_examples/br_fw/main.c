@@ -18,7 +18,7 @@
  * @brief       This is a BR with multicast forwarding for OIC discovery
  *
  * @author      Mattia Antonini <mattia.antonini1@studenti.unipr.it>
- *                              <m.antonini@create-net.org>
+ *                              <m.antonini@fbk.eu>
  *
  * @}
  */
