@@ -14,7 +14,7 @@ IoTivity Examples
 These examples implement some simple clients and a server to test the IoTivity package for RIOT-OS. The pkg is based on the [IoTivity-Constrained][1] library.
 All examples use the realm-local multicast address **ff03:158** instead of the link-local multicast address **ff02::158**. Every payload is [CBOR][2] encoded.
 All examples have been tested on Native and SAMR21-XPRO.
-##Index
+## Index
  - [Iotivity Examples](#examples)
    - [Server Example](#server_ex)
    - [Client Example](#client_ex)
@@ -33,9 +33,9 @@ All examples have been tested on Native and SAMR21-XPRO.
      - [Testing](#l2n_tst)
  - [Good Practice](#good)
 
-#<a name="examples"></a>Examples
+# <a name="examples"></a>Examples
 
-##<a name="server_ex"></a>Server Example
+## <a name="server_ex"></a>Server Example
 This example implements an IoTivity Server that contains 4 resources.
  1. */oic/res*: returns the representation of resources available on the server.  Defined [here][3].
  2. */oic/p*: returns information about the platform on which the server runs. Defined [here][3].
@@ -48,16 +48,16 @@ This example implements an IoTivity Server that contains 4 resources.
 ## <a name="client_ex"></a>Client Example
 This example implements a simple client. It is able to discover resources with ResourceType *oic.r.light*. Once it finds a resource, it registers for OBSERVE notifications. It changes the status every second by sending a periodic PUT request.
 
-##<a name="client_sw_ex"></a>Client_Switch Example
+## <a name="client_sw_ex"></a>Client_Switch Example
 This example implements a simple client. It is able to discover resources with ResourceType *oic.r.light*. Once it finds a resource, it registers for OBSERVE notifications. It changes the status when the User Button is pressed. If the button  is not present it is just an observer.
 
-##<a name="br_fw_ex"></a>BR_FW Example
+## <a name="br_fw_ex"></a>BR_FW Example
 It is an "enhanced" version of the GNRC Border Router. It implements a simple forwarder (UDP server/client) for multicast requests with destination ff03::158 port 5683.
 
-#<a name="scenarios"></a>Scenarios
+# <a name="scenarios"></a>Scenarios
 It is possible to deploy 2 different scenarios with these examples.
 
-##<a name="n2n_comm"></a>Node-to-Node Communications
+## <a name="n2n_comm"></a>Node-to-Node Communications
 In this scenario, we will deploy an IoTivity Client and IoTivity Server on different nodes. We can choose two different clients for this scenario: client (periodic PUT) or client_switch (PUT sent on User Button pressed). The first one runs well both on native either on SAMR21-XPRO boards, the second one runs just on SAMR21-XPRO boards. Native target hasn't the button.
 
 ### <a name="sc_pput_native"></a>Server and Client (Periodic PUT) - native target
@@ -180,7 +180,7 @@ TAPs interfaces can be easily deleted. Go to `/dist/tools/tapsetup` and type
 $ sudo ./tapsetup -d
 ```
 
-###<a name="sc_pput_samr21"></a> Server and Client (Periodic PUT) - SAMR21-XPRO target
+### <a name="sc_pput_samr21"></a> Server and Client (Periodic PUT) - SAMR21-XPRO target
 Now, we reproduce the previous scenario using two [SAMR21-XPRO][4] nodes.
 Connect your nodes, go to `/examples/iotivity-examples/server` and check the list of USB-connected nodes by typing:
 ```
@@ -209,7 +209,7 @@ $ make term BOARD=samr21-xpro SERIAL=client_node_serial
 Client starts the discovery phase. Once it finds a resource (with ResourceType **oic.r.light**), it registers as an observer on the resource, then it switches on its LED and it finally starts with periodic PUT requests. The server LED will blink periodically.
 Client and Server terminal outputs are similar to the outputs in case of native target.
 
-###<a name="sc_sw_samr21"></a> Server and Client_Switch - SAMR21-XPRO target
+### <a name="sc_sw_samr21"></a> Server and Client_Switch - SAMR21-XPRO target
 This deployment emulates a smart home scenario in which we have a SmartBulb (server) and a SmartSwitch (client_switch). It requires two SAMR21-XPRO nodes or similar.
 Connect your nodes, go to `/examples/iotivity-examples/server` and check the list of USB-connected nodes by typing:
 ```
@@ -240,10 +240,10 @@ $ make term BOARD=samr21-xpro SERIAL=client_node_serial
 Client performs the discovery phase. Once it is completed, client registers as an Observer of the resource, then it switches on its LED.
 Client is now ready to send a PUT request when the User Button is pressed. The server LED will change the status when the button is pressed. Terminal outputs are similar to outputs in previous examples.
 
-##<a name="l2n_comm"></a>Linux-to-Nodes communications
+## <a name="l2n_comm"></a>Linux-to-Nodes communications
 In this scenario, we will deploy an IoTivity server on a RIOT node and the IoTivity client will run on a Linux machine. This architecture requires the "enhanced" version of the Border Router [BR_FW](br_fw). It requires two SAMR21-XPRO nodes or similar.
 
-###<a name="l2n_pre"></a>Preliminary step
+### <a name="l2n_pre"></a>Preliminary step
 Connect your nodes, go to `/examples/iotivity-examples/server` and check the list of USB-connected nodes by typing:
 ```
 $ make list-ttys
@@ -255,7 +255,7 @@ The output will be similar to
 ```
 We will use Serial Numbers in order to identify the designed node during the compilation phase.
 
-###<a name="l2n_srv"></a>Start the Server
+### <a name="l2n_srv"></a>Start the Server
 Open a terminal window, go to `/examples/iotivity-examples/server` and type
 ```
 $ make flash BOARD=samr21-xpro SERIAL=server_node_serial
@@ -266,7 +266,7 @@ $ make term BOARD=samr21-xpro SERIAL=server_node_serial
 ```
 The server starts the initialization phase, then it is ready for incoming requests.
 
-###<a name="l2n_br"></a>Start the Border Router
+### <a name="l2n_br"></a>Start the Border Router
 Step 1) Open a terminal window in `/example/iotivity-examples/br_fw/` and type
 ```
 $ make flash BOARD=samr21-xpro SERIAL=br_node_serial
@@ -308,7 +308,7 @@ if  Router                          state      type
  6  2001:db8::5859:1c2a:64c7:c48a   REACHABLE   REG
 ```
 
-###<a name="l2n_out"></a>Server Output
+### <a name="l2n_out"></a>Server Output
 Managing a GET request the output is like
 ```
 2016-11-04 14:39:32,115 - INFO # ipadapter: got server request
@@ -329,13 +329,13 @@ Managing a PUT request the output is like
 2016-11-04 14:39:35,141 - INFO # Outgoing message to [2001:0db8:0000:0000:0000:0000:0000:0001]:56214
 ```
 
-###<a name="l2n_tst"></a>Testing
+### <a name="l2n_tst"></a>Testing
 There are many different ways to test this scenario.
 
  - Tools: you can use [coap-cbor-cli][5] to perform get request. Put -c as argument.
  - Iotivity Client: you can write an iotivity client that runs on Linux. [Here][6] and [Here][7] there are some sample clients that can be used to test this scenario.
 
-#<a name="good"></a>Good Practice
+# <a name="good"></a>Good Practice
 Discoveries and Requests are usually fast, but a timeout delay of some seconds on responses can be useful. In these examples, delays are set to 1 second for discoveries and they can be increased. For requests coming from a linux-based client, timeout delays should be higher (e.g. 5-10 seconds for discoveries and 3 seconds for requests). They can be tuned depending on the application. The minimum value is around 1 second.
 
 [1]: https://github.com/iotivity/iotivity-constrained/
