@@ -13,7 +13,7 @@ Interactive Client Linux
 ====================
 This is an IoTivity-based client written for Linux. It is able to discover every resource by doing a query to a specific IP address (unicast or multicast). This client was tested with the [IoTivity example] for RIOT-OS.
 
-#Features
+# Features
 At the moment this client is not complete. It supports:
  - Resource Discovery (finds all resources)
  - Retrieving device Information and parsing
@@ -28,14 +28,14 @@ Next versions will support also:
 	 - DELETE
 	 - OBSERVE
 
-#Build
+# Build
 Go to the /Interactive-Client-Linux and type
 ```
  $ make client
 ```
 NOTE: IoTivity was installed using the script install_iotivity.sh available on this re
 
-#Usage
+# Usage
 The command syntax is
 ```
  $ bin/client <destination>
@@ -50,7 +50,7 @@ or
  $ bin/client 224.0.1.187
 ```
 
-#Test with the RIOT-based Application
+# Test with the RIOT-based Application
 This is a general IoTivity client but can be used to test the RIOT-based applications.
 First of all, run the client:
 ```
@@ -88,7 +88,7 @@ What do you want to do?
 Choice:
 ```
 Type one option and it enters in the chosen option (without typing ENTER).
-##Discovery ALL
+## Discovery ALL
 This feature allows to discover new resources that are not found during the previous discoveries. The output is:
 ```
 Client: Discovery...
@@ -105,7 +105,7 @@ If a resource is just discovered it is marked with the NEW label.
 
 *Note*: The Discovery delay is hard-coded set to 5 seconds.
 
-##Print Resources information (From Cache)
+## Print Resources information (From Cache)
 This functionality prints the information on cached (discovered) resources. It returns Host, URI, Types and Interfaces:
 ```
 Client: Resource(s) discovered:
@@ -137,7 +137,7 @@ Resource Interfaces:
 Client: Press any key to return to main menu...
 ```
 
-##Show all Devices (From Nodes)
+## Show all Devices (From Nodes)
 This feature sends a GET query to every resource with URI `/oic/d`. It parses responses and returns information:
 ```
 Client: Host: coap://[2001:db8::5859:1c2a:64c7:c48a]:56789
@@ -146,7 +146,7 @@ Client: UUID: 0d9f5186-7a60-42df-6e6c-02890136b058
 Client: Resource Type: oic.d.light
 ```
 
-##Interact with Resources
+## Interact with Resources
 This functionality allows to create custom requests to discovered resources. First of all, choose a resource:
 ```
 ++================================================++
@@ -184,10 +184,10 @@ state: false
 Client: Press any key to return to continue...
 ```
 
-###Create
+### Create
 It performs a POST request to the selected resource. NOTE: This functionality is not implemented yet.
 
-###Update
+### Update
 It performs a PUT request to the selected resource. It is possible to set which attributes you want.
 ```
 Client: Now, you can define attributes for the request.
@@ -214,7 +214,7 @@ Client: Press any key to return to continue...
 You can verify if the resource is changed by performing a GET on this resource.
 Note: PUT requests can be performed to resource without the `oic.if.r` (READABLE) interface.
 
-###Delete
+### Delete
 It performs a DELETE request to the selected resource. NOTE: This functionality is not implemented yet.
 
 
