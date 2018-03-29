@@ -14,14 +14,14 @@ Simple Client Linux Example
 
 This is a simple IoTivity client written for Linux. It is able to discover every resource by doing a query to a specific IP address (unicast or multicast). If some resources have as ResourceType *oic.r.light*, it tries to interact with them. This client was tested with the [IoTivity example][1] for RIOT-OS. 
 
-#Build
+# Build
 Go to the /Simple-Client-Linux and type
 ```
  $ make
 ```
 NOTE: IoTivity was installed using the script `install_iotivity.sh` available on this repo.
 
-#Usage
+# Usage
 The command syntax is
 ```
  $ bin/simple_client <destination> [command]
@@ -38,7 +38,7 @@ An example is:
  $ bin/simple_client ff03::158 toggle
 ```
 
-#Test the RIOT-based application
+# Test the RIOT-based application
 As mentioned previously, this client was developed as test client for this [IoTivity example][1]. In order to run the test, type
 ```
  $ bin/simple_client ff03::158 toggle
